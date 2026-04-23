@@ -408,8 +408,7 @@ export default function Index() {
               <div className="space-y-6 mb-8">
                 {[
                   { icon: "Phone", label: "Телефон", value: "8 800 444-14-19", sub: "Ежедневно с 8:00 до 22:00" },
-                  { icon: "Mail", label: "Email", value: "hello@myasomarket.ru", sub: "Ответим в течение часа" },
-                  { icon: "MapPin", label: "Адрес", value: "ул. Мясницкая, д. 15", sub: "Пункт выдачи заказов" },
+                  { icon: "MapPin", label: "Город доставки", value: "Иркутск", sub: "Доставляем по всему городу" },
                   { icon: "MessageCircle", label: "WhatsApp / Telegram", value: "8 800 444-14-19", sub: "Удобный мессенджер" },
                 ].map(c => (
                   <div key={c.label} className="flex items-start gap-4">
