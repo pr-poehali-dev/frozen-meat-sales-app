@@ -10,17 +10,53 @@ const BURGER_IMAGE = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-5
 const DUMPLINGS_IMAGE = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/305d9f94-183d-41c2-a075-80289d166615.jpg";
 
 const products = [
-  { id: 1, name: "Котлеты «Домашние»", category: "Котлеты", weight: "500г", price: 320, badge: "Хит продаж", img: BURGER_IMAGE },
-  { id: 2, name: "Пельмени сибирские", category: "Пельмени", weight: "800г", price: 450, badge: "Новинка", img: DUMPLINGS_IMAGE },
-  { id: 3, name: "Стейк из говядины", category: "Стейки", weight: "300г", price: 890, badge: null, img: HERO_IMAGE },
-  { id: 4, name: "Фарш говяжий", category: "Фарш", weight: "500г", price: 380, badge: null, img: BURGER_IMAGE },
-  { id: 5, name: "Котлеты «Пожарские»", category: "Котлеты", weight: "400г", price: 360, badge: "Новинка", img: BURGER_IMAGE },
-  { id: 6, name: "Вареники с картофелем", category: "Пельмени", weight: "600г", price: 280, badge: null, img: DUMPLINGS_IMAGE },
-  { id: 7, name: "Антрекот из свинины", category: "Стейки", weight: "350г", price: 420, badge: null, img: HERO_IMAGE },
-  { id: 8, name: "Фарш куриный", category: "Фарш", weight: "500г", price: 260, badge: "Хит продаж", img: BURGER_IMAGE },
+  // Пельмени
+  { id: 1,  name: "Пельмени Домашние", category: "Пельмени", desc: "Свинина + говядина + лук + специи", price: 650, priceUnit: "за кг", badge: "Хит продаж", img: DUMPLINGS_IMAGE },
+  { id: 2,  name: "Мини Пельмини", category: "Пельмени", desc: "Свинина + говядина + лук + специи", price: 600, priceUnit: "за кг", badge: null, img: DUMPLINGS_IMAGE },
+  { id: 3,  name: "Пельмени Оригинальные", category: "Пельмени", desc: "Говядина + курица", price: 490, priceUnit: "за кг", badge: null, img: DUMPLINGS_IMAGE },
+  { id: 4,  name: "Пельмени из говядины", category: "Пельмени", desc: "Говядина + лук + специи", price: 510, priceUnit: "за кг", badge: null, img: DUMPLINGS_IMAGE },
+  { id: 5,  name: "Пельмени куриные", category: "Пельмени", desc: "Курица + лук + специи", price: 470, priceUnit: "за кг", badge: null, img: DUMPLINGS_IMAGE },
+  { id: 6,  name: "Пельмени из горбуши", category: "Пельмени", desc: "Горбуша + лук + специи", price: 510, priceUnit: "за кг", badge: null, img: DUMPLINGS_IMAGE },
+  // Вареники
+  { id: 7,  name: "Вареники с картофелем", category: "Вареники", desc: "Картофельное пюре на молоке + обжаренный лук + специи", price: 250, priceUnit: "за кг", badge: null, img: DUMPLINGS_IMAGE },
+  { id: 8,  name: "Вареники с картофелем и грибами", category: "Вареники", desc: "Картофельное пюре + обжаренный лук + грибы + специи", price: 350, priceUnit: "за кг", badge: null, img: DUMPLINGS_IMAGE },
+  { id: 9,  name: "Вареники с картофелем и мясом", category: "Вареники", desc: "Картофельное пюре + мясной фарш", price: 380, priceUnit: "за кг", badge: null, img: DUMPLINGS_IMAGE },
+  { id: 10, name: "Вареники с капустой", category: "Вареники", desc: "Капуста + лук + специи", price: 280, priceUnit: "за кг", badge: null, img: DUMPLINGS_IMAGE },
+  { id: 11, name: "Вареники с капустой и мясом", category: "Вареники", desc: "Капуста + мясо + специи", price: 380, priceUnit: "за кг", badge: null, img: DUMPLINGS_IMAGE },
+  { id: 12, name: "Вареники с творогом", category: "Вареники", desc: "Творог + специи", price: 350, priceUnit: "за кг", badge: null, img: DUMPLINGS_IMAGE },
+  // Позы и Хинкали
+  { id: 13, name: "Позы", category: "Позы / Хинкали", desc: "Свинина + говядина + лук + специи", price: 75, priceUnit: "за шт", badge: null, img: DUMPLINGS_IMAGE },
+  { id: 14, name: "Хинкали", category: "Позы / Хинкали", desc: "Говядина + баранина + специи", price: 75, priceUnit: "за шт", badge: null, img: DUMPLINGS_IMAGE },
+  // Котлеты
+  { id: 15, name: "Котлеты Деревенские", category: "Котлеты", desc: "Свинина + говядина + лук + специи", price: 650, priceUnit: "за кг", badge: "Хит продаж", img: BURGER_IMAGE },
+  { id: 16, name: "Котлеты куриные", category: "Котлеты", desc: "Курица + лук + специи", price: 510, priceUnit: "за кг", badge: null, img: BURGER_IMAGE },
+  { id: 17, name: "Котлеты рыбные", category: "Котлеты", desc: "Рыбный фарш + специи", price: 510, priceUnit: "за кг", badge: null, img: BURGER_IMAGE },
+  // Тефтели и фрикадельки
+  { id: 18, name: "Тефтели", category: "Тефтели / Фрикадельки", desc: "Свинина + говядина + рис + лук + морковь + специи", price: 590, priceUnit: "за кг", badge: null, img: BURGER_IMAGE },
+  { id: 19, name: "Фрикадельки", category: "Тефтели / Фрикадельки", desc: "Свинина + говядина + лук + морковь + специи", price: 590, priceUnit: "за кг", badge: null, img: BURGER_IMAGE },
+  // Голубцы
+  { id: 20, name: "Голубцы", category: "Голубцы", desc: "Свинина + говядина + рис + лук + морковь + специи + капуста", price: 600, priceUnit: "за кг", badge: null, img: HERO_IMAGE },
+  { id: 21, name: "Голубцы в листе пекинской капусты", category: "Голубцы", desc: "Свинина + говядина + рис + лук + специи", price: 650, priceUnit: "за кг", badge: null, img: HERO_IMAGE },
+  { id: 22, name: "Ленивые голубцы", category: "Голубцы", desc: "Свинина + говядина + рис + лук + морковь + капуста + специи", price: 610, priceUnit: "за кг", badge: null, img: HERO_IMAGE },
+  // Чебуреки
+  { id: 23, name: "Чебуреки", category: "Чебуреки", desc: "6–7 шт в упаковке", price: 470, priceUnit: "за кг", badge: null, img: BURGER_IMAGE },
+  { id: 24, name: "Чебуреки с мясом", category: "Чебуреки", desc: "Баранина + лук + специи, 6–7 шт", price: 580, priceUnit: "за кг", badge: null, img: BURGER_IMAGE },
+  // Долма, перцы, зразы
+  { id: 25, name: "Долма", category: "Разное", desc: "Мясо + рис + специи в виноградном листе", price: 550, priceUnit: "за кг", badge: null, img: HERO_IMAGE },
+  { id: 26, name: "Перцы фаршированные", category: "Разное", desc: "Свинина + говядина + рис + лук + специи", price: 650, priceUnit: "за кг", badge: null, img: HERO_IMAGE },
+  { id: 27, name: "Зразы картофельные с грибами", category: "Разное", desc: "Картофель + грибы + специи", price: 570, priceUnit: "за кг", badge: null, img: HERO_IMAGE },
+  { id: 28, name: "Зразы мясные с яйцом", category: "Разное", desc: "Мясной фарш + яйцо + специи", price: 610, priceUnit: "за кг", badge: null, img: BURGER_IMAGE },
+  // Блины
+  { id: 29, name: "Блины с творогом", category: "Блины", desc: "0.5 кг в упаковке", price: 250, priceUnit: "за 0.5 кг", badge: null, img: DUMPLINGS_IMAGE },
+  { id: 30, name: "Блины с ветчиной и сыром", category: "Блины", desc: "0.5 кг в упаковке", price: 300, priceUnit: "за 0.5 кг", badge: null, img: DUMPLINGS_IMAGE },
+  { id: 31, name: "Блины с рисом и куриной печенью", category: "Блины", desc: "0.5 кг в упаковке", price: 325, priceUnit: "за 0.5 кг", badge: null, img: DUMPLINGS_IMAGE },
+  { id: 32, name: "Блины с рисом и свиной печенью", category: "Блины", desc: "0.5 кг в упаковке", price: 280, priceUnit: "за 0.5 кг", badge: null, img: DUMPLINGS_IMAGE },
+  { id: 33, name: "Блины с рисом и курицей", category: "Блины", desc: "Куриное бедро, 0.5 кг в упаковке", price: 300, priceUnit: "за 0.5 кг", badge: null, img: DUMPLINGS_IMAGE },
+  // Фарш
+  { id: 34, name: "Фарш свино-говяжий", category: "Фарш", desc: "Свинина + говядина, без добавок", price: 700, priceUnit: "за кг", badge: null, img: BURGER_IMAGE },
 ];
 
-const categories = ["Все", "Котлеты", "Пельмени", "Стейки", "Фарш"];
+const categories = ["Все", "Пельмени", "Вареники", "Позы / Хинкали", "Котлеты", "Голубцы", "Тефтели / Фрикадельки", "Чебуреки", "Блины", "Разное", "Фарш"];
 
 
 const navLinks = [
