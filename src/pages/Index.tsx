@@ -144,7 +144,7 @@ export default function Index() {
             </h1>
 
             <p className="font-body text-lg text-muted-foreground mb-8 max-w-lg animate-fade-in-up delay-200">
-              Свежие полуфабрикаты из отборного мяса с доставкой на дом. Котлеты, пельмени, стейки и многое другое — без консервантов и добавок.
+              Свежие полуфабрикаты из отборного мяса с доставкой на дом. Котлеты, пельмени, голубцы, купаты, долма — без консервантов и добавок.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up delay-300">
