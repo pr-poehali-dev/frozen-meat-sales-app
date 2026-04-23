@@ -100,6 +100,14 @@ export default function Index() {
             ))}
           </div>
 
+          <a
+            href="tel:88004441419"
+            className="hidden md:flex items-center gap-2 font-body text-sm font-semibold text-foreground hover:text-primary transition-colors duration-200"
+          >
+            <Icon name="Phone" size={16} className="text-primary" />
+            8 800 444-14-19
+          </a>
+
           <div className="flex items-center gap-3">
             <button className="relative p-2 text-muted-foreground hover:text-foreground transition-colors">
               <Icon name="ShoppingCart" size={20} />
