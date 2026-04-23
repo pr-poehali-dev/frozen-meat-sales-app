@@ -85,7 +85,7 @@ export default function Index() {
             <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center animate-pulse-red">
               <span className="text-white text-sm font-bold">🥩</span>
             </div>
-            <span className="font-display text-xl font-bold tracking-wide text-foreground">МЯСО<span className="text-primary">МАРКЕТ</span></span>
+            <span className="font-display text-xl font-bold tracking-wide text-foreground">ВКУС,<span className="text-primary"> ЗНАКОМЫЙ С ДЕТСТВА</span></span>
           </div>
 
           <div className="hidden md:flex items-center gap-8">
@@ -150,7 +150,7 @@ export default function Index() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-2xl">
             <Badge className="mb-6 bg-primary/20 text-primary border-primary/30 font-body text-xs animate-fade-in-up">
-              🔥 Доставка от 2 часов · Свежее мясо каждый день
+              🔥 Если есть в наличии — доставка от 2 часов · Принимаем заказы за 2–3 дня
             </Badge>
 
             <h1 className="font-display text-5xl md:text-7xl font-bold leading-none mb-6 animate-fade-in-up delay-100">
@@ -506,7 +506,7 @@ export default function Index() {
               <div className="w-7 h-7 bg-primary rounded-sm flex items-center justify-center">
                 <span className="text-white text-xs">🥩</span>
               </div>
-              <span className="font-display text-lg font-bold">МЯСО<span className="text-primary">МАРКЕТ</span></span>
+              <span className="font-display text-lg font-bold">ВКУС,<span className="text-primary"> ЗНАКОМЫЙ С ДЕТСТВА</span></span>
             </div>
 
             <div className="flex gap-6">
@@ -522,7 +522,7 @@ export default function Index() {
             </div>
 
             <p className="font-body text-xs text-muted-foreground">
-              © 2025 МясоМаркет. Все права защищены.
+              © 2025 Вкус, знакомый с детства. Все права защищены.
             </p>
           </div>
         </div>
