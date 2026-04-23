@@ -22,32 +22,6 @@ const products = [
 
 const categories = ["Все", "Котлеты", "Пельмени", "Стейки", "Фарш"];
 
-const subscriptionPlans = [
-  {
-    name: "Старт",
-    price: 1990,
-    period: "мес",
-    desc: "Для одного",
-    items: ["2 вида котлет", "1 кг пельменей", "500г фарша", "Доставка раз в 2 недели"],
-    accent: false,
-  },
-  {
-    name: "Семейный",
-    price: 3490,
-    period: "мес",
-    desc: "Для семьи",
-    items: ["4 вида котлет", "2 кг пельменей", "1 кг фарша", "2 стейка", "Доставка раз в неделю"],
-    accent: true,
-  },
-  {
-    name: "Гурман",
-    price: 5990,
-    period: "мес",
-    desc: "Для ценителей",
-    items: ["6 видов котлет", "3 кг пельменей", "Премиальные стейки", "Эксклюзивные новинки", "Доставка 2 раза в неделю"],
-    accent: false,
-  },
-];
 
 const navLinks = [
   { label: "Главная", href: "#hero" },
@@ -183,10 +157,10 @@ export default function Index() {
                 size="lg"
                 variant="outline"
                 className="border-border text-foreground hover:bg-secondary font-display text-base tracking-wide px-8 h-12"
-                onClick={() => scrollTo("#subscription")}
+                onClick={() => scrollTo("#contacts")}
               >
-                <Icon name="RefreshCw" size={18} className="mr-2" />
-                ПОДПИСКА
+                <Icon name="Phone" size={18} className="mr-2" />
+                СВЯЗАТЬСЯ С НАМИ
               </Button>
             </div>
 
@@ -284,61 +258,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* ПОДПИСКА */}
-      <section id="subscription" className="py-20 bg-card relative overflow-hidden">
-        <div className="absolute inset-0 hero-glow opacity-50" />
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="text-center mb-14">
-            <p className="font-body text-primary text-sm font-medium mb-2 uppercase tracking-widest">Регулярные поставки</p>
-            <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">СИСТЕМА ПОДПИСКИ</h2>
-            <p className="font-body text-muted-foreground max-w-lg mx-auto">
-              Получайте свежие полуфабрикаты автоматически по расписанию. Экономьте до 20% и никогда не думайте о заказе.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {subscriptionPlans.map((plan) => (
-              <div
-                key={plan.name}
-                className={`rounded-2xl p-6 border transition-all duration-300 hover:-translate-y-2 ${
-                  plan.accent
-                    ? "bg-primary border-transparent shadow-2xl shadow-primary/30 md:scale-105"
-                    : "bg-secondary border-border"
-                }`}
-              >
-                {plan.accent && (
-                  <Badge className="mb-4 bg-accent text-accent-foreground border-0 font-body text-xs">
-                    🌟 Популярный выбор
-                  </Badge>
-                )}
-                <p className={`font-body text-sm mb-1 ${plan.accent ? "text-white/70" : "text-muted-foreground"}`}>{plan.desc}</p>
-                <h3 className={`font-display text-2xl font-bold mb-4 ${plan.accent ? "text-white" : "text-foreground"}`}>{plan.name}</h3>
-                <div className="mb-6">
-                  <span className={`font-display text-4xl font-bold ${plan.accent ? "text-white" : "text-primary"}`}>{plan.price.toLocaleString()}</span>
-                  <span className={`font-body text-sm ml-1 ${plan.accent ? "text-white/70" : "text-muted-foreground"}`}>₽/{plan.period}</span>
-                </div>
-                <ul className="space-y-2 mb-6">
-                  {plan.items.map(item => (
-                    <li key={item} className={`flex items-center gap-2 font-body text-sm ${plan.accent ? "text-white/90" : "text-muted-foreground"}`}>
-                      <Icon name="Check" size={14} className={plan.accent ? "text-white" : "text-primary"} />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  className={`w-full font-display tracking-wide ${
-                    plan.accent
-                      ? "bg-white text-primary hover:bg-white/90"
-                      : "bg-primary text-white hover:bg-primary/90"
-                  }`}
-                >
-                  ВЫБРАТЬ ПЛАН
-                </Button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ДОСТАВКА И ОПЛАТА */}
       <section id="delivery" className="py-20 container mx-auto px-4">
