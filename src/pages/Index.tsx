@@ -428,10 +428,10 @@ export default function Index() {
             <div>
               <div className="space-y-6 mb-8">
                 {[
-                  { icon: "Phone", label: "Телефон", value: "+7 (999) 123-45-67", sub: "Ежедневно с 8:00 до 22:00" },
+                  { icon: "Phone", label: "Телефон", value: "8 800 444-14-19", sub: "Ежедневно с 8:00 до 22:00" },
                   { icon: "Mail", label: "Email", value: "hello@myasomarket.ru", sub: "Ответим в течение часа" },
                   { icon: "MapPin", label: "Адрес", value: "ул. Мясницкая, д. 15", sub: "Пункт выдачи заказов" },
-                  { icon: "MessageCircle", label: "WhatsApp / Telegram", value: "+7 (999) 123-45-67", sub: "Удобный мессенджер" },
+                  { icon: "MessageCircle", label: "WhatsApp / Telegram", value: "8 800 444-14-19", sub: "Удобный мессенджер" },
                 ].map(c => (
                   <div key={c.label} className="flex items-start gap-4">
                     <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center shrink-0">
