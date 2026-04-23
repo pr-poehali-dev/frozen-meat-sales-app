@@ -59,7 +59,10 @@ export default function Index() {
             <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center animate-pulse-red">
               <span className="text-white text-sm font-bold">🥩</span>
             </div>
-            <span className="font-display text-xl font-bold tracking-wide text-foreground">ЛЕНИВЫЙ<span className="text-primary"> МЯСНИК</span></span>
+            <div>
+              <span className="font-display text-xl font-bold tracking-wide text-foreground">ЛЕНИВЫЙ<span className="text-primary"> МЯСНИК</span></span>
+              <p className="font-body text-xs text-muted-foreground leading-none mt-0.5">Вкус, знакомый с детства</p>
+            </div>
           </div>
 
           <div className="hidden md:flex items-center gap-8">
