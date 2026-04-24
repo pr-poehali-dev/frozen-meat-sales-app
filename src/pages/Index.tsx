@@ -189,8 +189,8 @@ export default function Index() {
             </Badge>
 
             <h1 className="font-display text-5xl md:text-7xl font-bold leading-none mb-6 animate-fade-in-up delay-100">
-              ЛЕНИВЫЙ<br />
-              <span className="text-gradient">МЯСНИК</span>
+              ФАБРИКАНТ<br />
+              <span className="text-gradient">ЮРКО</span>
             </h1>
 
             <p className="font-body text-lg text-muted-foreground mb-8 max-w-lg animate-fade-in-up delay-200">
