@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-const HERO_IMAGE = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/2ae814dc-027e-4ce5-868f-8b2909498366.jpg";
+const HERO_IMAGE = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/681635b6-666f-467e-bf60-476e4fc5a3a2.jpg";
 const IMG_PELMENI_1 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/d3c25850-4b97-4ddc-850a-3e3381baea01.jpg";
 const IMG_PELMENI_2 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/ebd9f2f1-71d6-459e-9ea8-42ae6de288f9.jpg";
 const IMG_PELMENI_3 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/41e0020d-bbe1-44cf-aef3-78e713f709b1.jpg";
@@ -207,7 +207,7 @@ export default function Index() {
             </h1>
 
             <p className="font-body text-lg text-muted-foreground mb-8 max-w-lg animate-fade-in-up delay-200">
-              Свежие полуфабрикаты из отборного мяса с доставкой на дом. Котлеты, пельмени, голубцы, купаты, долма — без консервантов и добавок.
+              Свежие полуфабрикаты из домашнего мяса с доставкой на дом. Котлеты, пельмени, голубцы, долма, чебуреки — без консервантов и добавок.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up delay-300">
