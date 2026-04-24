@@ -23,6 +23,8 @@ const IMG_KOTLETY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-55
 const IMG_GOLUBTSY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/05f335b3-e5c7-4a07-b1b6-5faf959d116b.jpg";
 const IMG_TEFTELI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/42f29f76-e963-4e42-8c25-a1007b61356f.jpg";
 const IMG_FRIKADELKI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/eb0e4dda-aa0f-4523-862f-dac3620ab6da.jpg";
+const IMG_ZRAZY_KARTOF = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/cf92c5f0-6725-4178-8b98-c9ac7e96e45d.jpg";
+const IMG_ZRAZY_MYASNYE = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/21f07a72-771f-4d2d-9fd5-f7619c25695a.jpg";
 const IMG_CHEBUREKI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/69f9e64c-2a35-4696-82a3-0b1819c83d9d.jpg";
 const IMG_CHEBUREKI2 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/593f7284-8272-49c1-8be2-09926801e902.jpg";
 const IMG_BLINY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/ff22d957-5a58-42ec-bd2a-8830c23443dd.jpg";
@@ -69,8 +71,8 @@ const products = [
   // Долма, перцы, зразы
   { id: 25, name: "Долма", category: "Разное", desc: "Мясо + рис + специи в виноградном листе", price: 550, priceUnit: "за кг", badge: null, img: IMG_DOLMA },
   { id: 26, name: "Перцы фаршированные", category: "Разное", desc: "Свинина + говядина + рис + лук + специи", price: 650, priceUnit: "за кг", badge: null, img: IMG_PERCY },
-  { id: 27, name: "Зразы картофельные с грибами", category: "Разное", desc: "Картофель + грибы + специи", price: 570, priceUnit: "за кг", badge: null, img: IMG_VARENIKI_1 },
-  { id: 28, name: "Зразы мясные с яйцом", category: "Разное", desc: "Мясной фарш + яйцо + специи", price: 610, priceUnit: "за кг", badge: null, img: IMG_KOTLETY },
+  { id: 27, name: "Зразы картофельные с грибами", category: "Разное", desc: "Картофель + грибы + специи", price: 570, priceUnit: "за кг", badge: null, img: IMG_ZRAZY_KARTOF },
+  { id: 28, name: "Зразы мясные с яйцом", category: "Разное", desc: "Мясной фарш + яйцо + специи", price: 610, priceUnit: "за кг", badge: null, img: IMG_ZRAZY_MYASNYE },
   // Блины
   { id: 29, name: "Блины с творогом", category: "Блины", desc: "0.5 кг в упаковке", price: 250, priceUnit: "за 0.5 кг", badge: null, img: IMG_BLINY },
   { id: 30, name: "Блины с ветчиной и сыром", category: "Блины", desc: "0.5 кг в упаковке", price: 300, priceUnit: "за 0.5 кг", badge: null, img: IMG_BLINY },
