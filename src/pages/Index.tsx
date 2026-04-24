@@ -177,12 +177,12 @@ export default function Index() {
                   <p className="text-sm text-muted-foreground mt-1">Добавьте товары из каталога</p>
                 </div>
               ) : cartItems.map(p => (
-                <div key={p.id} className="bg-card border rounded-xl p-3">
-                  <div className="flex items-center gap-3">
-                    <img src={p.img} alt={p.name} className="w-20 h-20 rounded-lg object-cover shrink-0" />
+                <div key={p.id} className="bg-card border rounded-xl p-4">
+                  <div className="flex items-center gap-4">
+                    <img src={p.img} alt={p.name} className="w-28 h-28 rounded-xl object-cover shrink-0" />
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm leading-tight">{p.name}</p>
-                      <p className="text-xs text-muted-foreground">{p.price} ₽ {p.priceUnit}</p>
+                      <p className="font-semibold text-base leading-tight">{p.name}</p>
+                      <p className="text-sm text-muted-foreground mt-1">{p.price} ₽ {p.priceUnit}</p>
                     </div>
                     <div className="flex items-center gap-1 shrink-0">
                       <button onClick={() => removeFromCart(p.id)} className="w-7 h-7 rounded-full border flex items-center justify-center hover:bg-red-50 text-red-500"><Icon name="Trash2" size={12} /></button>
@@ -207,7 +207,7 @@ export default function Index() {
                 </div>
 
                 <div className="flex flex-col items-center gap-2">
-                  <img src="https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/bucket/c37202ab-de78-44b5-b1b4-0ba0490e56a3.png" alt="QR СБП" className="w-1/2 rounded-2xl" />
+                  <img src="https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/bucket/c37202ab-de78-44b5-b1b4-0ba0490e56a3.png" alt="QR СБП" className="w-1/4 rounded-2xl" />
                   <p className="text-xs text-muted-foreground text-center leading-snug">⚠️ Оплачивайте только после подтверждения наличия товара</p>
                 </div>
                 <Button variant="outline" className="w-full" onClick={() => setCart({})}>Очистить корзину</Button>
