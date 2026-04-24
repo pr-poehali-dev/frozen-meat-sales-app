@@ -586,6 +586,19 @@ export default function Index() {
                 </a>
               </div>
 
+              <div className="mt-6 bg-card border border-border rounded-2xl p-5">
+                <p className="font-display text-sm font-bold mb-3 flex items-center gap-2"><Icon name="Building2" size={16} className="text-primary" /> Реквизиты</p>
+                <div className="space-y-1.5 text-xs font-body text-muted-foreground">
+                  <p><span className="text-foreground font-semibold">Наименование:</span> ООО "ЮРКО"</p>
+                  <p><span className="text-foreground font-semibold">ИНН / КПП:</span> 3849111690 / 384901001</p>
+                  <p><span className="text-foreground font-semibold">ОГРН:</span> 1253800021430</p>
+                  <p><span className="text-foreground font-semibold">Банк:</span> АО «ТБАНК»</p>
+                  <p><span className="text-foreground font-semibold">БИК:</span> 044525974</p>
+                  <p><span className="text-foreground font-semibold">Р/с:</span> 40702810910002031736</p>
+                  <p><span className="text-foreground font-semibold">К/с:</span> 30101810145250000974</p>
+                </div>
+              </div>
+
               <div className="mt-6 bg-[#FFD100] rounded-2xl p-5 max-w-[220px]">
                 <p className="font-display text-xl font-bold text-black leading-tight mb-1">Сканируй<br />и плати</p>
                 <p className="font-body text-xs text-black/70 mb-4">В приложении своего банка</p>
