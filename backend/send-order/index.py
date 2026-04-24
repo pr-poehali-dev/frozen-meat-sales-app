@@ -28,7 +28,7 @@ def handler(event: dict, context) -> dict:
 
     text = f"""🛒 НОВЫЙ ЗАКАЗ
 
-👤 Клиент: {name}
+⏱ Доставить через: {name}
 📞 Телефон: {phone}
 
 📦 Состав заказа:
@@ -49,7 +49,7 @@ def handler(event: dict, context) -> dict:
     msg = MIMEMultipart()
     msg['From'] = sender
     msg['To'] = recipient
-    msg['Subject'] = f'Новый заказ от {name} на {total} ₽'
+    msg['Subject'] = f'Новый заказ на {total} ₽ (доставка через {name})'
     msg.attach(MIMEText(text, 'plain', 'utf-8'))
 
     with smtplib.SMTP_SSL('smtp.yandex.ru', 465) as server:

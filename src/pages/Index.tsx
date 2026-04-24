@@ -270,12 +270,23 @@ export default function Index() {
                     <p className="font-display text-xl font-bold">Адрес доставки</p>
 
                     <div>
-                      <label className="font-body text-xs text-muted-foreground mb-1 block">Ваше имя *</label>
-                      <Input placeholder="Иван Иванов" value={deliveryForm.name} onChange={e => setDeliveryForm(f => ({ ...f, name: e.target.value }))} className="bg-secondary border-border font-body text-sm" />
-                    </div>
-                    <div>
                       <label className="font-body text-xs text-muted-foreground mb-1 block">Телефон *</label>
                       <Input placeholder="+7 (___) ___-__-__" value={deliveryForm.phone} onChange={e => setDeliveryForm(f => ({ ...f, phone: e.target.value }))} className="bg-secondary border-border font-body text-sm" />
+                    </div>
+                    <div>
+                      <label className="font-body text-xs text-muted-foreground mb-1 block">Через сколько часов доставить *</label>
+                      <div className="grid grid-cols-4 gap-2">
+                        {['2 ч', '3 ч', '4 ч', '5 ч'].map(h => (
+                          <button
+                            key={h}
+                            type="button"
+                            onClick={() => setDeliveryForm(f => ({ ...f, name: h }))}
+                            className={`py-2 rounded-lg font-body text-sm font-semibold border transition-colors ${deliveryForm.name === h ? 'bg-primary text-white border-primary' : 'bg-secondary border-border text-foreground hover:border-primary'}`}
+                          >
+                            {h}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                     <div>
                       <label className="font-body text-xs text-muted-foreground mb-1 block">Улица *</label>
