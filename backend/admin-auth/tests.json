@@ -13,7 +13,7 @@
       "name": "Login with correct credentials",
       "method": "POST",
       "path": "/",
-      "body": {"login": "admin", "password": "admin123"},
+      "body": {"login": "admin", "password": "admin2024"},
       "expectedStatus": 200,
       "expectedBody": {"ok": true},
       "bodyMatcher": "partial"

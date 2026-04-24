@@ -5,22 +5,29 @@ import secrets
 import psycopg2
 
 SCHEMA = "t_p10284751_frozen_meat_sales_ap"
-sessions = {}
+
+def get_conn():
+    return psycopg2.connect(os.environ['DATABASE_URL'])
 
 def handler(event: dict, context) -> dict:
     """Авторизация администратора"""
     if event.get('httpMethod') == 'OPTIONS':
-        return {'statusCode': 200, 'headers': {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, X-Session-Id'}, 'body': ''}
+        return {'statusCode': 200, 'headers': {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, X-Session-Id'}, 'body': ''}
 
     method = event.get('httpMethod')
     path = event.get('path', '/')
-
     headers = {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'}
 
     # Проверка сессии
     if method == 'GET' and path.endswith('/check'):
         session_id = event.get('headers', {}).get('X-Session-Id', '')
-        if session_id in sessions:
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute(f"SELECT admin_id FROM {SCHEMA}.admin_sessions WHERE session_id = %s", (session_id,))
+        row = cur.fetchone()
+        cur.close()
+        conn.close()
+        if row:
             return {'statusCode': 200, 'headers': headers, 'body': json.dumps({'ok': True})}
         return {'statusCode': 401, 'headers': headers, 'body': json.dumps({'ok': False})}
 
@@ -31,23 +38,30 @@ def handler(event: dict, context) -> dict:
         password = body.get('password', '')
         password_hash = hashlib.md5(password.encode()).hexdigest()
 
-        conn = psycopg2.connect(os.environ['DATABASE_URL'])
+        conn = get_conn()
         cur = conn.cursor()
-        cur.execute(f"SELECT id FROM {SCHEMA}.admin_users WHERE login = '{login}' AND password_hash = '{password_hash}'")
+        cur.execute(f"SELECT id FROM {SCHEMA}.admin_users WHERE login = %s AND password_hash = %s", (login, password_hash))
         row = cur.fetchone()
-        cur.close()
-        conn.close()
-
         if row:
             session_id = secrets.token_hex(32)
-            sessions[session_id] = {'admin_id': row[0], 'login': login}
+            cur.execute(f"INSERT INTO {SCHEMA}.admin_sessions (session_id, admin_id, login) VALUES (%s, %s, %s)", (session_id, row[0], login))
+            conn.commit()
+            cur.close()
+            conn.close()
             return {'statusCode': 200, 'headers': headers, 'body': json.dumps({'ok': True, 'session_id': session_id})}
+        cur.close()
+        conn.close()
         return {'statusCode': 401, 'headers': headers, 'body': json.dumps({'ok': False, 'error': 'Неверный логин или пароль'})}
 
     # Выход
     if method == 'DELETE':
         session_id = event.get('headers', {}).get('X-Session-Id', '')
-        sessions.pop(session_id, None)
+        conn = get_conn()
+        cur = conn.cursor()
+        cur.execute(f"DELETE FROM {SCHEMA}.admin_sessions WHERE session_id = %s", (session_id,))
+        conn.commit()
+        cur.close()
+        conn.close()
         return {'statusCode': 200, 'headers': headers, 'body': json.dumps({'ok': True})}
 
     return {'statusCode': 404, 'headers': headers, 'body': json.dumps({'error': 'Not found'})}
