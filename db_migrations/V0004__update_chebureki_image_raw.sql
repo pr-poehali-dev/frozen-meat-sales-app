@@ -1,0 +1,1 @@
+UPDATE t_p10284751_frozen_meat_sales_ap.products SET img_url = 'https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/7f9594fc-041c-46cd-aa5d-646eadf53886.jpg' WHERE name ILIKE '%чебур%';
