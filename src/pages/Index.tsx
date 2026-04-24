@@ -7,7 +7,12 @@ import { Textarea } from "@/components/ui/textarea";
 
 const HERO_IMAGE = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/2ae814dc-027e-4ce5-868f-8b2909498366.jpg";
 const IMG_PELMENI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/055242f4-ded4-4353-ba74-63d68131e4f3.jpg";
-const IMG_VARENIKI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/946d2a6e-507d-4ae8-aaa4-05aa2935945c.jpg";
+const IMG_VARENIKI_1 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/0adc4cce-0410-4992-abc5-0092a2c1e88f.jpg";
+const IMG_VARENIKI_2 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/4fe8c83c-1486-4439-a299-1eb87eab5a99.jpg";
+const IMG_VARENIKI_3 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/4ef9b762-dc32-4b88-9d00-189872bf7ed6.jpg";
+const IMG_VARENIKI_4 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/d97d4db1-aea5-4319-aed7-4ed6fd8ec624.jpg";
+const IMG_VARENIKI_5 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/b4c87111-ca45-4d76-ab25-751b67b14240.jpg";
+const IMG_VARENIKI_6 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/fa439453-fc9a-4b5f-8916-44c86b8d86b9.jpg";
 const IMG_KHINKALI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/ba9aec9a-4fab-4aae-99fb-36c264a5a725.jpg";
 const IMG_KOTLETY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/1fea3f73-338e-459e-93f5-f7216edce7b9.jpg";
 const IMG_GOLUBTSY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/05f335b3-e5c7-4a07-b1b6-5faf959d116b.jpg";
@@ -33,12 +38,12 @@ const products = [
   { id: 5,  name: "Пельмени куриные", category: "Пельмени", desc: "Курица + лук + специи", price: 470, priceUnit: "за кг", badge: null, img: IMG_PELMENI },
   { id: 6,  name: "Пельмени из горбуши", category: "Пельмени", desc: "Горбуша + лук + специи", price: 510, priceUnit: "за кг", badge: null, img: IMG_PELMENI },
   // Вареники
-  { id: 7,  name: "Вареники с картофелем", category: "Вареники", desc: "Картофельное пюре на молоке + обжаренный лук + специи", price: 250, priceUnit: "за кг", badge: null, img: IMG_VARENIKI },
-  { id: 8,  name: "Вареники с картофелем и грибами", category: "Вареники", desc: "Картофельное пюре + обжаренный лук + грибы + специи", price: 350, priceUnit: "за кг", badge: null, img: IMG_VARENIKI },
-  { id: 9,  name: "Вареники с картофелем и мясом", category: "Вареники", desc: "Картофельное пюре + мясной фарш", price: 380, priceUnit: "за кг", badge: null, img: IMG_VARENIKI },
-  { id: 10, name: "Вареники с капустой", category: "Вареники", desc: "Капуста + лук + специи", price: 280, priceUnit: "за кг", badge: null, img: IMG_VARENIKI },
-  { id: 11, name: "Вареники с капустой и мясом", category: "Вареники", desc: "Капуста + мясо + специи", price: 380, priceUnit: "за кг", badge: null, img: IMG_VARENIKI },
-  { id: 12, name: "Вареники с творогом", category: "Вареники", desc: "Творог + специи", price: 350, priceUnit: "за кг", badge: null, img: IMG_VARENIKI },
+  { id: 7,  name: "Вареники с картофелем", category: "Вареники", desc: "Картофельное пюре на молоке + обжаренный лук + специи", price: 250, priceUnit: "за кг", badge: null, img: IMG_VARENIKI_1 },
+  { id: 8,  name: "Вареники с картофелем и грибами", category: "Вареники", desc: "Картофельное пюре + обжаренный лук + грибы + специи", price: 350, priceUnit: "за кг", badge: null, img: IMG_VARENIKI_2 },
+  { id: 9,  name: "Вареники с картофелем и мясом", category: "Вареники", desc: "Картофельное пюре + мясной фарш", price: 380, priceUnit: "за кг", badge: null, img: IMG_VARENIKI_3 },
+  { id: 10, name: "Вареники с капустой", category: "Вареники", desc: "Капуста + лук + специи", price: 280, priceUnit: "за кг", badge: null, img: IMG_VARENIKI_4 },
+  { id: 11, name: "Вареники с капустой и мясом", category: "Вареники", desc: "Капуста + мясо + специи", price: 380, priceUnit: "за кг", badge: null, img: IMG_VARENIKI_5 },
+  { id: 12, name: "Вареники с творогом", category: "Вареники", desc: "Творог + специи", price: 350, priceUnit: "за кг", badge: null, img: IMG_VARENIKI_6 },
   // Позы и Хинкали
   { id: 13, name: "Позы", category: "Позы / Хинкали", desc: "Свинина + говядина + лук + специи", price: 75, priceUnit: "за шт", badge: null, img: IMG_POZY },
   { id: 14, name: "Хинкали", category: "Позы / Хинкали", desc: "Говядина + баранина + специи", price: 75, priceUnit: "за шт", badge: null, img: IMG_KHINKALI },
