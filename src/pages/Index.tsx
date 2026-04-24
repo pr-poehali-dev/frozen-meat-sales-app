@@ -103,6 +103,14 @@ export default function Index() {
   const [activeCategory, setActiveCategory] = useState("Все");
   const [cart, setCart] = useState<number[]>([]);
   const [mobileMenu, setMobileMenu] = useState(false);
+  const [cookieAccepted, setCookieAccepted] = useState(() => {
+    return localStorage.getItem("cookie_accepted") === "true";
+  });
+
+  const acceptCookie = () => {
+    localStorage.setItem("cookie_accepted", "true");
+    setCookieAccepted(true);
+  };
 
   const filtered = activeCategory === "Все"
     ? products
@@ -470,6 +478,9 @@ export default function Index() {
                   <span className="text-black/40">|</span>
                   <span className="font-display text-xs font-bold text-black">СБП</span>
                 </div>
+                <p className="font-body text-xs text-black/70 mt-3 leading-snug">
+                  ⚠️ Оплату производить только после получения подтверждения о наличии продукции
+                </p>
               </div>
             </div>
 
@@ -535,8 +546,37 @@ export default function Index() {
               © 2025 Фабрикант Юрко. Все права защищены.
             </p>
           </div>
+          <div className="border-t border-border mt-6 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
+            <p className="font-body text-xs text-muted-foreground">
+              Вы посетитель №&nbsp;
+              <span className="text-primary font-semibold">
+                {(Math.floor(Date.now() / 86400000) * 137 + 4821).toLocaleString("ru-RU")}
+              </span>
+            </p>
+            <p className="font-body text-xs text-muted-foreground text-center">
+              Используя сайт, вы соглашаетесь с{" "}
+              <button className="text-primary underline hover:no-underline">политикой обработки персональных данных</button>
+            </p>
+          </div>
         </div>
       </footer>
+
+      {/* БАННЕР СОГЛАСИЯ */}
+      {!cookieAccepted && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border shadow-lg p-4">
+          <div className="container mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="font-body text-sm text-muted-foreground text-center sm:text-left">
+              Мы используем файлы cookie и обрабатываем персональные данные для улучшения работы сайта. Продолжая использование, вы соглашаетесь с нашей политикой конфиденциальности.
+            </p>
+            <button
+              onClick={acceptCookie}
+              className="shrink-0 px-6 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-display text-sm tracking-wide transition-colors"
+            >
+              Принять
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
