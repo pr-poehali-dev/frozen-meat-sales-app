@@ -107,7 +107,7 @@ export default function HeroSection({ onAddToCart, scrollTo }: HeroSectionProps)
       <section className="py-4 bg-primary overflow-hidden">
         <div className="flex gap-12 whitespace-nowrap" style={{ animation: "marquee 20s linear infinite", width: "max-content" }}>
           {[...Array(4)].flatMap(() =>
-            ["Свежие котлеты", "Сибирские пельмени", "Мраморная говядина", "Куриный фарш", "Свиные стейки", "Домашние вареники"].map(t => (
+            ["Приглашаем к сотрудничеству", "Кафе", "Рестораны", "Магазины"].map(t => (
               <span key={Math.random()} className="font-display text-sm font-bold text-white tracking-[0.2em] uppercase px-6">
                 ✦ {t}
               </span>
