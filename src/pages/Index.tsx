@@ -212,50 +212,16 @@ export default function Index() {
                   <span className="font-display text-2xl font-bold text-primary">{cartTotal} ₽</span>
                 </div>
 
-                {cartOrderSent ? (
-                  <div className="text-center py-4">
-                    <Icon name="CheckCircle" size={44} className="text-green-500 mx-auto mb-2" />
-                    <p className="font-semibold">Заявка отправлена!</p>
-                    <p className="text-sm text-muted-foreground mt-1">Мы свяжемся с вами для подтверждения</p>
-                    <div className="bg-[#FFD100] rounded-2xl p-4 flex items-center gap-4 mt-4">
-                      <img src={QR_URL} alt="QR СБП" className="w-20 h-20 rounded-xl bg-white p-1 shrink-0" />
-                      <div>
-                        <p className="font-display text-base font-bold text-black">Оплатить {cartTotal} ₽</p>
-                        <p className="text-xs text-black/70 mt-0.5">СБП · Т-Банк</p>
-                        <p className="text-xs text-black/60 mt-2 leading-snug">Сканируйте QR в приложении банка</p>
-                        <p className="text-[10px] text-black/50 mt-1 leading-snug">⚠️ Только после подтверждения наличия</p>
-                      </div>
-                    </div>
-                    <Button variant="outline" className="w-full mt-3" onClick={() => { setCart({}); setCartOrderSent(false); setCartForm({ name: '', phone: '' }); setCartOpen(false); }}>
-                      Закрыть
-                    </Button>
+                <div className="bg-[#FFD100] rounded-2xl p-4 flex items-center gap-4">
+                  <img src={QR_URL} alt="QR СБП" className="w-20 h-20 rounded-xl bg-white p-1 shrink-0" />
+                  <div>
+                    <p className="font-display text-base font-bold text-black">Оплатить {cartTotal} ₽</p>
+                    <p className="text-xs text-black/70 mt-0.5">СБП · Т-Банк</p>
+                    <p className="text-xs text-black/60 mt-2 leading-snug">Сканируйте QR в приложении банка</p>
+                    <p className="text-[10px] text-black/50 mt-1 leading-snug">⚠️ Только после подтверждения наличия</p>
                   </div>
-                ) : (
-                  <>
-                    <div className="space-y-2">
-                      <p className="text-sm font-semibold">Ваши контакты для связи</p>
-                      <Input
-                        placeholder="Ваше имя *"
-                        value={cartForm.name}
-                        onChange={e => setCartForm(f => ({ ...f, name: e.target.value }))}
-                      />
-                      <Input
-                        placeholder="Телефон *"
-                        value={cartForm.phone}
-                        onChange={e => setCartForm(f => ({ ...f, phone: e.target.value }))}
-                      />
-                    </div>
-                    <Button
-                      className="w-full h-11 font-display tracking-wide"
-                      disabled={cartOrderSending || !cartForm.name || !cartForm.phone}
-                      onClick={handleCartOrder}
-                    >
-                      <Icon name="Send" size={16} className="mr-2" />
-                      {cartOrderSending ? 'ОТПРАВЛЯЕМ...' : 'ОФОРМИТЬ ЗАКАЗ'}
-                    </Button>
-                    <Button variant="outline" className="w-full" onClick={() => setCart({})}>Очистить корзину</Button>
-                  </>
-                )}
+                </div>
+                <Button variant="outline" className="w-full" onClick={() => setCart({})}>Очистить корзину</Button>
               </div>
             )}
           </div>
