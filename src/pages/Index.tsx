@@ -110,6 +110,9 @@ export default function Index() {
   const [form, setForm] = useState({ name: '', phone: '', email: '', message: '' });
   const [formSent, setFormSent] = useState(false);
   const [formSending, setFormSending] = useState(false);
+  const [cartForm, setCartForm] = useState({ name: '', phone: '' });
+  const [cartOrderSent, setCartOrderSent] = useState(false);
+  const [cartOrderSending, setCartOrderSending] = useState(false);
 
   const handleFormSubmit = async () => {
     if (!form.name || !form.phone) return;
@@ -150,6 +153,19 @@ export default function Index() {
     const el = document.querySelector(href);
     el?.scrollIntoView({ behavior: "smooth" });
     setMobileMenu(false);
+  };
+
+  const handleCartOrder = async () => {
+    if (!cartForm.name || !cartForm.phone) return;
+    setCartOrderSending(true);
+    const items = cartItems.map(p => `${p.name} x${cart[p.id]} (${p.price * cart[p.id]} ₽)`).join(', ');
+    const message = `Заказ из корзины: ${items}. Итого: ${cartTotal} ₽`;
+    await fetch("https://functions.poehali.dev/010513ea-3143-4cc6-9e47-d5722ea1790b", {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: cartForm.name, phone: cartForm.phone, message })
+    });
+    setCartOrderSent(true);
+    setCartOrderSending(false);
   };
 
   const QR_URL = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/bucket/23de37a0-6e3e-470a-aad2-4570b0f3757c.png";
@@ -195,16 +211,51 @@ export default function Index() {
                   <span className="font-display text-lg font-bold">Итого:</span>
                   <span className="font-display text-2xl font-bold text-primary">{cartTotal} ₽</span>
                 </div>
-                <div className="bg-[#FFD100] rounded-2xl p-4 flex items-center gap-4">
-                  <img src={QR_URL} alt="QR СБП" className="w-20 h-20 rounded-xl bg-white p-1 shrink-0" />
-                  <div>
-                    <p className="font-display text-base font-bold text-black">Оплатить {cartTotal} ₽</p>
-                    <p className="text-xs text-black/70 mt-0.5">СБП · Т-Банк</p>
-                    <p className="text-xs text-black/60 mt-2 leading-snug">Сканируйте QR в приложении банка</p>
-                    <p className="text-[10px] text-black/50 mt-1 leading-snug">⚠️ Только после подтверждения наличия</p>
+
+                {cartOrderSent ? (
+                  <div className="text-center py-4">
+                    <Icon name="CheckCircle" size={44} className="text-green-500 mx-auto mb-2" />
+                    <p className="font-semibold">Заявка отправлена!</p>
+                    <p className="text-sm text-muted-foreground mt-1">Мы свяжемся с вами для подтверждения</p>
+                    <div className="bg-[#FFD100] rounded-2xl p-4 flex items-center gap-4 mt-4">
+                      <img src={QR_URL} alt="QR СБП" className="w-20 h-20 rounded-xl bg-white p-1 shrink-0" />
+                      <div>
+                        <p className="font-display text-base font-bold text-black">Оплатить {cartTotal} ₽</p>
+                        <p className="text-xs text-black/70 mt-0.5">СБП · Т-Банк</p>
+                        <p className="text-xs text-black/60 mt-2 leading-snug">Сканируйте QR в приложении банка</p>
+                        <p className="text-[10px] text-black/50 mt-1 leading-snug">⚠️ Только после подтверждения наличия</p>
+                      </div>
+                    </div>
+                    <Button variant="outline" className="w-full mt-3" onClick={() => { setCart({}); setCartOrderSent(false); setCartForm({ name: '', phone: '' }); setCartOpen(false); }}>
+                      Закрыть
+                    </Button>
                   </div>
-                </div>
-                <Button variant="outline" className="w-full" onClick={() => setCart({})}>Очистить корзину</Button>
+                ) : (
+                  <>
+                    <div className="space-y-2">
+                      <p className="text-sm font-semibold">Ваши контакты для связи</p>
+                      <Input
+                        placeholder="Ваше имя *"
+                        value={cartForm.name}
+                        onChange={e => setCartForm(f => ({ ...f, name: e.target.value }))}
+                      />
+                      <Input
+                        placeholder="Телефон *"
+                        value={cartForm.phone}
+                        onChange={e => setCartForm(f => ({ ...f, phone: e.target.value }))}
+                      />
+                    </div>
+                    <Button
+                      className="w-full h-11 font-display tracking-wide"
+                      disabled={cartOrderSending || !cartForm.name || !cartForm.phone}
+                      onClick={handleCartOrder}
+                    >
+                      <Icon name="Send" size={16} className="mr-2" />
+                      {cartOrderSending ? 'ОТПРАВЛЯЕМ...' : 'ОФОРМИТЬ ЗАКАЗ'}
+                    </Button>
+                    <Button variant="outline" className="w-full" onClick={() => setCart({})}>Очистить корзину</Button>
+                  </>
+                )}
               </div>
             )}
           </div>
