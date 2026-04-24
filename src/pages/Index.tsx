@@ -20,10 +20,11 @@ const IMG_VARENIKI_5 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412
 const IMG_VARENIKI_6 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/fa439453-fc9a-4b5f-8916-44c86b8d86b9.jpg";
 const IMG_KHINKALI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/ba9aec9a-4fab-4aae-99fb-36c264a5a725.jpg";
 const IMG_KOTLETY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/1fea3f73-338e-459e-93f5-f7216edce7b9.jpg";
-const IMG_GOLUBTSY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/05f335b3-e5c7-4a07-b1b6-5faf959d116b.jpg";
+const IMG_GOLUBTSY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/1c06267d-6c1a-4427-89a8-a6aa1e032211.jpg";
+const IMG_LENIVYE = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/d992961d-72bd-4c8e-b9e2-93e3577a4a61.jpg";
 const IMG_TEFTELI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/42f29f76-e963-4e42-8c25-a1007b61356f.jpg";
 const IMG_FRIKADELKI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/eb0e4dda-aa0f-4523-862f-dac3620ab6da.jpg";
-const IMG_ZRAZY_KARTOF = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/cf92c5f0-6725-4178-8b98-c9ac7e96e45d.jpg";
+const IMG_ZRAZY_KARTOF = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/8f70a6ac-4da7-41a5-9b21-8eed6c295357.jpg";
 const IMG_ZRAZY_MYASNYE = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/21f07a72-771f-4d2d-9fd5-f7619c25695a.jpg";
 const IMG_CHEBUREKI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/69f9e64c-2a35-4696-82a3-0b1819c83d9d.jpg";
 const IMG_CHEBUREKI2 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/593f7284-8272-49c1-8be2-09926801e902.jpg";
@@ -64,7 +65,7 @@ const products = [
   // Голубцы
   { id: 20, name: "Голубцы", category: "Голубцы", desc: "Свинина + говядина + рис + лук + морковь + специи + капуста", price: 600, priceUnit: "за кг", badge: null, img: IMG_GOLUBTSY },
   { id: 21, name: "Голубцы в листе пекинской капусты", category: "Голубцы", desc: "Свинина + говядина + рис + лук + специи", price: 650, priceUnit: "за кг", badge: null, img: IMG_GOLUBTSY },
-  { id: 22, name: "Ленивые голубцы", category: "Голубцы", desc: "Свинина + говядина + рис + лук + морковь + капуста + специи", price: 610, priceUnit: "за кг", badge: null, img: IMG_GOLUBTSY },
+  { id: 22, name: "Ленивые голубцы", category: "Голубцы", desc: "Свинина + говядина + рис + лук + морковь + капуста + специи", price: 610, priceUnit: "за кг", badge: null, img: IMG_LENIVYE },
   // Чебуреки
   { id: 23, name: "Чебуреки", category: "Чебуреки", desc: "6–7 шт в упаковке", price: 470, priceUnit: "за кг", badge: null, img: IMG_CHEBUREKI },
   { id: 24, name: "Чебуреки с мясом", category: "Чебуреки", desc: "Баранина + лук + специи, 6–7 шт", price: 580, priceUnit: "за кг", badge: null, img: IMG_CHEBUREKI2 },
