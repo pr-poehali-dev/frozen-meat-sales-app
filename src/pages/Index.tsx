@@ -6,7 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 const HERO_IMAGE = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/2ae814dc-027e-4ce5-868f-8b2909498366.jpg";
-const IMG_PELMENI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/055242f4-ded4-4353-ba74-63d68131e4f3.jpg";
+const IMG_PELMENI_1 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/d3c25850-4b97-4ddc-850a-3e3381baea01.jpg";
+const IMG_PELMENI_2 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/ebd9f2f1-71d6-459e-9ea8-42ae6de288f9.jpg";
+const IMG_PELMENI_3 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/41e0020d-bbe1-44cf-aef3-78e713f709b1.jpg";
+const IMG_PELMENI_4 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/29ec1a3c-e7d1-4de2-ac02-8d6b2acae78f.jpg";
+const IMG_PELMENI_5 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/74c96869-7867-4909-bdc2-534ef67ba68e.jpg";
+const IMG_PELMENI_6 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/107ea2b1-70b7-4513-b920-f083db46aac8.jpg";
 const IMG_VARENIKI_1 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/0adc4cce-0410-4992-abc5-0092a2c1e88f.jpg";
 const IMG_VARENIKI_2 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/4fe8c83c-1486-4439-a299-1eb87eab5a99.jpg";
 const IMG_VARENIKI_3 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/4ef9b762-dc32-4b88-9d00-189872bf7ed6.jpg";
@@ -31,12 +36,12 @@ const IMG_KOTLETY_RYBNY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8
 const products = [
   // Пельмени
   // Пельмени
-  { id: 1,  name: "Пельмени Домашние", category: "Пельмени", desc: "Свинина + говядина + лук + специи", price: 650, priceUnit: "за кг", badge: "Хит продаж", img: IMG_PELMENI },
-  { id: 2,  name: "Мини Пельмини", category: "Пельмени", desc: "Свинина + говядина + лук + специи", price: 600, priceUnit: "за кг", badge: null, img: IMG_PELMENI },
-  { id: 3,  name: "Пельмени Оригинальные", category: "Пельмени", desc: "Говядина + курица", price: 490, priceUnit: "за кг", badge: null, img: IMG_PELMENI },
-  { id: 4,  name: "Пельмени из говядины", category: "Пельмени", desc: "Говядина + лук + специи", price: 510, priceUnit: "за кг", badge: null, img: IMG_PELMENI },
-  { id: 5,  name: "Пельмени куриные", category: "Пельмени", desc: "Курица + лук + специи", price: 470, priceUnit: "за кг", badge: null, img: IMG_PELMENI },
-  { id: 6,  name: "Пельмени из горбуши", category: "Пельмени", desc: "Горбуша + лук + специи", price: 510, priceUnit: "за кг", badge: null, img: IMG_PELMENI },
+  { id: 1,  name: "Пельмени Домашние", category: "Пельмени", desc: "Свинина + говядина + лук + специи", price: 650, priceUnit: "за кг", badge: "Хит продаж", img: IMG_PELMENI_1 },
+  { id: 2,  name: "Мини Пельмини", category: "Пельмени", desc: "Свинина + говядина + лук + специи", price: 600, priceUnit: "за кг", badge: null, img: IMG_PELMENI_2 },
+  { id: 3,  name: "Пельмени Оригинальные", category: "Пельмени", desc: "Говядина + курица", price: 490, priceUnit: "за кг", badge: null, img: IMG_PELMENI_3 },
+  { id: 4,  name: "Пельмени из говядины", category: "Пельмени", desc: "Говядина + лук + специи", price: 510, priceUnit: "за кг", badge: null, img: IMG_PELMENI_4 },
+  { id: 5,  name: "Пельмени куриные", category: "Пельмени", desc: "Курица + лук + специи", price: 470, priceUnit: "за кг", badge: null, img: IMG_PELMENI_5 },
+  { id: 6,  name: "Пельмени из горбуши", category: "Пельмени", desc: "Горбуша + лук + специи", price: 510, priceUnit: "за кг", badge: null, img: IMG_PELMENI_6 },
   // Вареники
   { id: 7,  name: "Вареники с картофелем", category: "Вареники", desc: "Картофельное пюре на молоке + обжаренный лук + специи", price: 250, priceUnit: "за кг", badge: null, img: IMG_VARENIKI_1 },
   { id: 8,  name: "Вареники с картофелем и грибами", category: "Вареники", desc: "Картофельное пюре + обжаренный лук + грибы + специи", price: 350, priceUnit: "за кг", badge: null, img: IMG_VARENIKI_2 },
