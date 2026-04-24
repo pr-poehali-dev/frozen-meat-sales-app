@@ -1,0 +1,1 @@
+UPDATE t_p10284751_frozen_meat_sales_ap.admin_users SET password_hash = md5('admin2024') WHERE login = 'admin';
