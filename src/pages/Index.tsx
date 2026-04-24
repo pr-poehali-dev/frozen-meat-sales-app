@@ -146,11 +146,11 @@ export default function Index() {
           </div>
 
           <a
-            href="tel:88004441419"
+            href="tel:+79086574449"
             className="hidden md:flex items-center gap-2 font-body text-sm font-semibold text-foreground hover:text-primary transition-colors duration-200"
           >
             <Icon name="Phone" size={16} className="text-primary" />
-            8 800 444-14-19
+            +7 908 657-44-49
           </a>
 
           <div className="flex items-center gap-3">
@@ -430,9 +430,8 @@ export default function Index() {
             <div>
               <div className="space-y-6 mb-8">
                 {[
-                  { icon: "Phone", label: "Телефон", value: "8 800 444-14-19", sub: "Ежедневно с 8:00 до 22:00" },
+                  { icon: "Phone", label: "Телефон", value: "+7 908 657-44-49", sub: "Ежедневно с 8:00 до 22:00" },
                   { icon: "MapPin", label: "Город доставки", value: "Иркутск", sub: "Доставляем по всему городу" },
-                  { icon: "MessageCircle", label: "WhatsApp / Telegram", value: "8 800 444-14-19", sub: "Удобный мессенджер" },
                 ].map(c => (
                   <div key={c.label} className="flex items-start gap-4">
                     <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center shrink-0">
@@ -447,21 +446,13 @@ export default function Index() {
                 ))}
               </div>
 
-              <div className="flex gap-3 flex-wrap">
-                {[
-                  { icon: "Send", label: "Telegram" },
-                  { icon: "MessageCircle", label: "WhatsApp" },
-                  { icon: "Share2", label: "Instagram" },
-                ].map(s => (
-                  <button
-                    key={s.label}
-                    className="flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-primary/20 border border-border rounded-lg font-body text-sm text-foreground transition-colors duration-200"
-                  >
-                    <Icon name={s.icon as Parameters<typeof Icon>[0]["name"]} size={16} className="text-primary" />
-                    {s.label}
-                  </button>
-                ))}
-              </div>
+              <a
+                href="tel:+79086574449"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg font-display text-sm tracking-wide transition-colors duration-200"
+              >
+                <Icon name="Phone" size={16} />
+                +7 908 657-44-49
+              </a>
             </div>
 
             <div className="bg-background border border-border rounded-2xl p-6">
