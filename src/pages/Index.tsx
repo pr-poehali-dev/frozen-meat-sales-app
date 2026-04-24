@@ -24,15 +24,16 @@ const IMG_GOLUBTSY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-5
 const IMG_LENIVYE = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/d992961d-72bd-4c8e-b9e2-93e3577a4a61.jpg";
 const IMG_TEFTELI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/42f29f76-e963-4e42-8c25-a1007b61356f.jpg";
 const IMG_FRIKADELKI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/eb0e4dda-aa0f-4523-862f-dac3620ab6da.jpg";
-const IMG_ZRAZY_KARTOF = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/8f70a6ac-4da7-41a5-9b21-8eed6c295357.jpg";
+const IMG_ZRAZY_KARTOF = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/eccd7704-a634-4276-8c33-5c8024a0796c.jpg";
 const IMG_ZRAZY_MYASNYE = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/21f07a72-771f-4d2d-9fd5-f7619c25695a.jpg";
-const IMG_CHEBUREKI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/69f9e64c-2a35-4696-82a3-0b1819c83d9d.jpg";
-const IMG_CHEBUREKI2 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/593f7284-8272-49c1-8be2-09926801e902.jpg";
+const IMG_CHEBUREKI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/8da14907-6fd9-4714-afcc-6eca70832345.jpg";
+const IMG_CHEBUREKI2 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/4407bb40-03a7-4f59-baa8-dfff78d7a6ef.jpg";
 const IMG_BLINY_1 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/73774669-14ec-48c0-8446-a61f78a50040.jpg";
 const IMG_BLINY_2 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/3a263e8c-d4cc-4a4f-bc47-72b56aff703e.jpg";
 const IMG_BLINY_3 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/cd01c0cc-261c-4db5-8263-b10f5b0ffa95.jpg";
 const IMG_BLINY_4 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/bce8c2bf-5bb7-48e2-9daa-2ee8b8fcd8d8.jpg";
-const IMG_DOLMA = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/f4566f61-f18c-4f2e-966d-9d8c16ba3946.jpg";
+const IMG_DOLMA = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/f59dc4eb-d8f6-4e4b-bb09-dd0eb7d35688.jpg";
+const IMG_GOLUBTSY_PEKIN = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/1c80a60e-903b-47f5-8279-a9fb361419d9.jpg";
 const IMG_FARSH = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/e1de159e-fb85-459f-86d3-99edf890500f.jpg";
 const IMG_PERCY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/99b04e1e-808f-4cd7-9158-ddaae3a9f1f4.jpg";
 const IMG_POZY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/5182b19b-f02d-4424-8e0a-da4189f36ce2.jpg";
@@ -67,7 +68,7 @@ const products = [
   { id: 19, name: "Фрикадельки", category: "Тефтели / Фрикадельки", desc: "Свинина + говядина + лук + морковь + специи", price: 590, priceUnit: "за кг", badge: null, img: IMG_FRIKADELKI },
   // Голубцы
   { id: 20, name: "Голубцы", category: "Голубцы", desc: "Свинина + говядина + рис + лук + морковь + специи + капуста", price: 600, priceUnit: "за кг", badge: null, img: IMG_GOLUBTSY },
-  { id: 21, name: "Голубцы в листе пекинской капусты", category: "Голубцы", desc: "Свинина + говядина + рис + лук + специи", price: 650, priceUnit: "за кг", badge: null, img: IMG_GOLUBTSY },
+  { id: 21, name: "Голубцы в листе пекинской капусты", category: "Голубцы", desc: "Свинина + говядина + рис + лук + специи", price: 650, priceUnit: "за кг", badge: null, img: IMG_GOLUBTSY_PEKIN },
   { id: 22, name: "Ленивые голубцы", category: "Голубцы", desc: "Свинина + говядина + рис + лук + морковь + капуста + специи", price: 610, priceUnit: "за кг", badge: null, img: IMG_LENIVYE },
   // Чебуреки
   { id: 23, name: "Чебуреки", category: "Чебуреки", desc: "6–7 шт в упаковке", price: 470, priceUnit: "за кг", badge: null, img: IMG_CHEBUREKI },
@@ -258,7 +259,7 @@ export default function Index() {
       <section className="py-4 bg-primary overflow-hidden">
         <div className="flex gap-12 whitespace-nowrap" style={{ animation: "marquee 20s linear infinite", width: "max-content" }}>
           {[...Array(4)].flatMap(() =>
-            ["Свежие котлеты", "Сибирские пельмени", "Мраморная говядина", "Куриный фарш", "Свиные стейки", "Домашние вареники"].map(t => (
+            ["Домашние пельмени", "Вареники с картофелем", "Голубцы", "Котлеты деревенские", "Чебуреки", "Долма", "Тефтели", "Блины с начинкой", "Позы", "Хинкали", "Фрикадельки", "Зразы"].map(t => (
               <span key={Math.random()} className="font-display text-sm font-bold text-white tracking-[0.2em] uppercase px-6">
                 ✦ {t}
               </span>
