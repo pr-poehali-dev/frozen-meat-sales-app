@@ -440,6 +440,7 @@ export default function Index() {
               <div className="space-y-6 mb-8">
                 {[
                   { icon: "Phone", label: "Телефон", value: "8 800 444-14-19", sub: "Ежедневно с 8:00 до 22:00" },
+                  { icon: "Mail", label: "Электронная почта", value: "yupomosh@yandex.ru", sub: "" },
                   { icon: "MapPin", label: "Город доставки", value: "Иркутск", sub: "Доставляем по всему городу" },
                 ].map(c => (
                   <div key={c.label} className="flex items-start gap-4">
