@@ -21,7 +21,8 @@ const IMG_VARENIKI_6 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412
 const IMG_KHINKALI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/ba9aec9a-4fab-4aae-99fb-36c264a5a725.jpg";
 const IMG_KOTLETY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/1fea3f73-338e-459e-93f5-f7216edce7b9.jpg";
 const IMG_GOLUBTSY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/05f335b3-e5c7-4a07-b1b6-5faf959d116b.jpg";
-const IMG_TEFTELI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/e5c789b6-a6fa-45f4-a045-25af809ea127.jpg";
+const IMG_TEFTELI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/42f29f76-e963-4e42-8c25-a1007b61356f.jpg";
+const IMG_FRIKADELKI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/eb0e4dda-aa0f-4523-862f-dac3620ab6da.jpg";
 const IMG_CHEBUREKI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/69f9e64c-2a35-4696-82a3-0b1819c83d9d.jpg";
 const IMG_CHEBUREKI2 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/593f7284-8272-49c1-8be2-09926801e902.jpg";
 const IMG_BLINY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/ff22d957-5a58-42ec-bd2a-8830c23443dd.jpg";
@@ -57,7 +58,7 @@ const products = [
   { id: 17, name: "Котлеты рыбные", category: "Котлеты", desc: "Рыбный фарш + специи", price: 510, priceUnit: "за кг", badge: null, img: IMG_KOTLETY_RYBNY },
   // Тефтели и фрикадельки
   { id: 18, name: "Тефтели", category: "Тефтели / Фрикадельки", desc: "Свинина + говядина + рис + лук + морковь + специи", price: 590, priceUnit: "за кг", badge: null, img: IMG_TEFTELI },
-  { id: 19, name: "Фрикадельки", category: "Тефтели / Фрикадельки", desc: "Свинина + говядина + лук + морковь + специи", price: 590, priceUnit: "за кг", badge: null, img: IMG_TEFTELI },
+  { id: 19, name: "Фрикадельки", category: "Тефтели / Фрикадельки", desc: "Свинина + говядина + лук + морковь + специи", price: 590, priceUnit: "за кг", badge: null, img: IMG_FRIKADELKI },
   // Голубцы
   { id: 20, name: "Голубцы", category: "Голубцы", desc: "Свинина + говядина + рис + лук + морковь + специи + капуста", price: 600, priceUnit: "за кг", badge: null, img: IMG_GOLUBTSY },
   { id: 21, name: "Голубцы в листе пекинской капусты", category: "Голубцы", desc: "Свинина + говядина + рис + лук + специи", price: 650, priceUnit: "за кг", badge: null, img: IMG_GOLUBTSY },
