@@ -1,0 +1,1 @@
+UPDATE t_p10284751_frozen_meat_sales_ap.admin_users SET password_hash = '827ccb0eea8a706c4c34a16891f84e7b' WHERE login = 'admin';
