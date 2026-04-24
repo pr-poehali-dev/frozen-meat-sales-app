@@ -22,7 +22,7 @@ export default function Navbar({ cartCount, mobileMenu, setMobileMenu, scrollTo 
           <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center animate-pulse-red">
             <span className="text-white text-sm font-bold">🥩</span>
           </div>
-          <span className="font-display text-xl font-bold tracking-wide text-foreground">ВКУСНО<span className="text-primary"> КАК ДОМА</span></span>
+          <span className="font-display text-xl font-bold tracking-wide text-foreground">ФАБРИКАНТ<span className="text-primary"> ЮРКО</span></span>
         </div>
 
         <div className="hidden md:flex items-center gap-8">
