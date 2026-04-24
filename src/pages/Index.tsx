@@ -268,7 +268,7 @@ export default function Index() {
       <section className="py-4 bg-primary overflow-hidden">
         <div className="flex gap-12 whitespace-nowrap" style={{ animation: "marquee 20s linear infinite", width: "max-content" }}>
           {[...Array(4)].flatMap(() =>
-            ["Домашние пельмени", "Вареники с картофелем", "Голубцы", "Котлеты деревенские", "Чебуреки", "Долма", "Тефтели", "Блины с начинкой", "Позы", "Хинкали", "Фрикадельки", "Зразы"].map(t => (
+            ["Приглашаем к сотрудничеству", "Кафе", "Рестораны", "Магазины"].map(t => (
               <span key={Math.random()} className="font-display text-sm font-bold text-white tracking-[0.2em] uppercase px-6">
                 ✦ {t}
               </span>
