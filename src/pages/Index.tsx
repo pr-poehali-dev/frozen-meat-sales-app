@@ -69,7 +69,7 @@ const products = [
   // Долма, перцы, зразы
   { id: 25, name: "Долма", category: "Разное", desc: "Мясо + рис + специи в виноградном листе", price: 550, priceUnit: "за кг", badge: null, img: IMG_DOLMA },
   { id: 26, name: "Перцы фаршированные", category: "Разное", desc: "Свинина + говядина + рис + лук + специи", price: 650, priceUnit: "за кг", badge: null, img: IMG_PERCY },
-  { id: 27, name: "Зразы картофельные с грибами", category: "Разное", desc: "Картофель + грибы + специи", price: 570, priceUnit: "за кг", badge: null, img: IMG_VARENIKI },
+  { id: 27, name: "Зразы картофельные с грибами", category: "Разное", desc: "Картофель + грибы + специи", price: 570, priceUnit: "за кг", badge: null, img: IMG_VARENIKI_1 },
   { id: 28, name: "Зразы мясные с яйцом", category: "Разное", desc: "Мясной фарш + яйцо + специи", price: 610, priceUnit: "за кг", badge: null, img: IMG_KOTLETY },
   // Блины
   { id: 29, name: "Блины с творогом", category: "Блины", desc: "0.5 кг в упаковке", price: 250, priceUnit: "за 0.5 кг", badge: null, img: IMG_BLINY },
