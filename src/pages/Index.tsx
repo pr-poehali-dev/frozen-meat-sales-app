@@ -177,9 +177,9 @@ export default function Index() {
                   <p className="text-sm text-muted-foreground mt-1">Добавьте товары из каталога</p>
                 </div>
               ) : cartItems.map(p => (
-                <div key={p.id} className="bg-card border rounded-xl p-4">
+                <div key={p.id} className="bg-card border rounded-2xl p-6">
                   <div className="flex items-center gap-4">
-                    <img src={p.img} alt={p.name} className="w-28 h-28 rounded-xl object-cover shrink-0" />
+                    <img src={p.img} alt={p.name} className="w-14 h-14 rounded-lg object-cover shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-base leading-tight">{p.name}</p>
                       <p className="text-sm text-muted-foreground mt-1">{p.price} ₽ {p.priceUnit}</p>
