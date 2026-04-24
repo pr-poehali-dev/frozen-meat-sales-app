@@ -146,11 +146,11 @@ export default function Index() {
           </div>
 
           <a
-            href="tel:+79086574449"
+            href="tel:88004441419"
             className="hidden md:flex items-center gap-2 font-body text-sm font-semibold text-foreground hover:text-primary transition-colors duration-200"
           >
             <Icon name="Phone" size={16} className="text-primary" />
-            +7 908 657-44-49
+            8 800 444-14-19
           </a>
 
           <div className="flex items-center gap-3">
@@ -430,7 +430,7 @@ export default function Index() {
             <div>
               <div className="space-y-6 mb-8">
                 {[
-                  { icon: "Phone", label: "Телефон", value: "+7 908 657-44-49", sub: "Ежедневно с 8:00 до 22:00" },
+                  { icon: "Phone", label: "Телефон", value: "8 800 444-14-19", sub: "Ежедневно с 8:00 до 22:00" },
                   { icon: "MapPin", label: "Город доставки", value: "Иркутск", sub: "Доставляем по всему городу" },
                 ].map(c => (
                   <div key={c.label} className="flex items-start gap-4">
@@ -447,12 +447,29 @@ export default function Index() {
               </div>
 
               <a
-                href="tel:+79086574449"
+                href="tel:88004441419"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg font-display text-sm tracking-wide transition-colors duration-200"
               >
                 <Icon name="Phone" size={16} />
-                +7 908 657-44-49
+                8 800 444-14-19
               </a>
+
+              <div className="mt-6 bg-[#FFD100] rounded-2xl p-5 max-w-[220px]">
+                <p className="font-display text-xl font-bold text-black leading-tight mb-1">Сканируй<br />и плати</p>
+                <p className="font-body text-xs text-black/70 mb-4">В приложении своего банка</p>
+                <div className="bg-white rounded-xl p-3">
+                  <img
+                    src="https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/bucket/23de37a0-6e3e-470a-aad2-4570b0f3757c.png"
+                    alt="QR-код для оплаты СБП"
+                    className="w-full"
+                  />
+                </div>
+                <div className="flex items-center gap-2 mt-3">
+                  <span className="font-display text-xs font-bold text-black">Т‑БАНК</span>
+                  <span className="text-black/40">|</span>
+                  <span className="font-display text-xs font-bold text-black">СБП</span>
+                </div>
+              </div>
             </div>
 
             <div className="bg-background border border-border rounded-2xl p-6">
