@@ -206,9 +206,9 @@ export default function Index() {
                   <span className="font-display text-2xl font-bold text-primary">{cartTotal} ₽</span>
                 </div>
 
-                <div className="flex flex-col items-center bg-black rounded-2xl p-4 gap-3">
-                  <img src={QR_URL} alt="QR СБП" className="w-64 h-64 rounded-xl" />
-                  <p className="text-xs text-yellow-400 text-center leading-snug">⚠️ Оплачивайте только после подтверждения наличия товара</p>
+                <div className="flex flex-col items-center gap-2">
+                  <img src="https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/bucket/c37202ab-de78-44b5-b1b4-0ba0490e56a3.png" alt="QR СБП" className="w-full rounded-2xl" />
+                  <p className="text-xs text-muted-foreground text-center leading-snug">⚠️ Оплачивайте только после подтверждения наличия товара</p>
                 </div>
                 <Button variant="outline" className="w-full" onClick={() => setCart({})}>Очистить корзину</Button>
               </div>
