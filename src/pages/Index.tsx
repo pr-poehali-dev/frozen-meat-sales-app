@@ -110,7 +110,7 @@ export default function Index() {
               <span className="text-white text-sm font-bold">🥩</span>
             </div>
             <div>
-              <span className="font-display text-xl font-bold tracking-wide text-foreground">ЛЕНИВЫЙ<span className="text-primary"> МЯСНИК</span></span>
+              <span className="font-display text-xl font-bold tracking-wide text-foreground">ВКУСНО<span className="text-primary"> КАК ДОМА</span></span>
               <p className="font-body text-xs text-muted-foreground leading-none mt-0.5">Вкус, знакомый с детства</p>
             </div>
           </div>
@@ -489,7 +489,7 @@ export default function Index() {
               <div className="w-7 h-7 bg-primary rounded-sm flex items-center justify-center">
                 <span className="text-white text-xs">🥩</span>
               </div>
-              <span className="font-display text-lg font-bold">ЛЕНИВЫЙ<span className="text-primary"> МЯСНИК</span></span>
+              <span className="font-display text-lg font-bold">ВКУСНО<span className="text-primary"> КАК ДОМА</span></span>
             </div>
 
             <div className="flex gap-6">
@@ -505,7 +505,7 @@ export default function Index() {
             </div>
 
             <p className="font-body text-xs text-muted-foreground">
-              © 2025 Ленивый мясник. Все права защищены.
+              © 2025 Вкусно как дома. Все права защищены.
             </p>
           </div>
         </div>
