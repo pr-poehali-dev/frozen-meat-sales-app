@@ -71,6 +71,7 @@ export default function Index() {
   const [cartForm, setCartForm] = useState({ name: '', phone: '' });
   const [cartOrderSent, setCartOrderSent] = useState(false);
   const [cartOrderSending, setCartOrderSending] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
 
   const handleFormSubmit = async () => {
     if (!form.name || !form.phone) return;
@@ -199,18 +200,32 @@ export default function Index() {
                 </div>
               ))}
             </div>
-            {cartItems.length > 0 && (
+            {cartItems.length > 0 && !showPayment && (
               <div className="border-t px-5 py-5 space-y-4">
-                <div className="flex items-center justify-between">
+                <button
+                  onClick={() => setShowPayment(true)}
+                  className="w-full flex items-center justify-between bg-primary hover:bg-primary/90 text-white rounded-2xl px-5 py-4 transition-colors"
+                >
                   <span className="font-display text-lg font-bold">Итого:</span>
-                  <span className="font-display text-2xl font-bold text-primary">{cartTotal} ₽</span>
-                </div>
-
-                <div className="flex flex-col items-center gap-2">
-                  <img src="https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/bucket/c37202ab-de78-44b5-b1b4-0ba0490e56a3.png" alt="QR СБП" className="w-1/4 rounded-2xl" />
-                  <p className="text-xs text-muted-foreground text-center leading-snug">⚠️ Оплачивайте только после подтверждения наличия товара</p>
-                </div>
+                  <span className="font-display text-2xl font-bold">{cartTotal} ₽ →</span>
+                </button>
                 <Button variant="outline" className="w-full" onClick={() => setCart({})}>Очистить корзину</Button>
+              </div>
+            )}
+
+            {cartItems.length > 0 && showPayment && (
+              <div className="border-t px-5 py-6 flex flex-col items-center gap-4">
+                <button onClick={() => setShowPayment(false)} className="self-start flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <Icon name="ChevronLeft" size={16} /> Назад
+                </button>
+                <p className="font-display text-xl font-bold">Оплата {cartTotal} ₽</p>
+                <p className="text-sm text-muted-foreground text-center">Отсканируйте QR-код в приложении банка</p>
+                <img
+                  src="https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/bucket/c37202ab-de78-44b5-b1b4-0ba0490e56a3.png"
+                  alt="QR СБП"
+                  className="w-64 rounded-2xl"
+                />
+                <p className="text-xs text-muted-foreground text-center leading-snug">⚠️ Оплачивайте только после подтверждения наличия товара</p>
               </div>
             )}
           </div>
