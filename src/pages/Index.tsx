@@ -28,7 +28,7 @@ const IMG_TEFTELI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-55
 const IMG_FRIKADELKI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/eb0e4dda-aa0f-4523-862f-dac3620ab6da.jpg";
 const IMG_ZRAZY_KARTOF = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/eccd7704-a634-4276-8c33-5c8024a0796c.jpg";
 const IMG_ZRAZY_MYASNYE = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/21f07a72-771f-4d2d-9fd5-f7619c25695a.jpg";
-const IMG_CHEBUREKI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/4bfd8579-a3a2-4d6f-8273-2d0e61caa37a.jpg";
+const IMG_CHEBUREKI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/ac5c471e-211a-4f7d-b9e0-c2a9b0860650.jpg";
 const IMG_CHEBUREKI2 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/4407bb40-03a7-4f59-baa8-dfff78d7a6ef.jpg";
 const IMG_BLINY_1 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/73774669-14ec-48c0-8446-a61f78a50040.jpg";
 const IMG_BLINY_2 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/3a263e8c-d4cc-4a4f-bc47-72b56aff703e.jpg";
@@ -106,6 +106,21 @@ export default function Index() {
   const [cookieAccepted, setCookieAccepted] = useState(() => {
     return localStorage.getItem("cookie_accepted") === "true";
   });
+  const [form, setForm] = useState({ name: '', phone: '', email: '', message: '' });
+  const [formSent, setFormSent] = useState(false);
+  const [formSending, setFormSending] = useState(false);
+
+  const handleFormSubmit = async () => {
+    if (!form.name || !form.phone) return;
+    setFormSending(true);
+    await fetch("https://functions.poehali.dev/010513ea-3143-4cc6-9e47-d5722ea1790b", {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form)
+    });
+    setFormSent(true);
+    setFormSending(false);
+    setForm({ name: '', phone: '', email: '', message: '' });
+  };
 
   const acceptCookie = () => {
     localStorage.setItem("cookie_accepted", "true");
@@ -505,34 +520,39 @@ export default function Index() {
 
             <div className="bg-background border border-border rounded-2xl p-6">
               <h3 className="font-display text-xl font-bold mb-6">Обратная связь</h3>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="font-body text-xs text-muted-foreground mb-1.5 block">Ваше имя</label>
-                    <Input placeholder="Иван Иванов" className="bg-secondary border-border font-body text-sm" />
+              {formSent ? (
+                <div className="text-center py-8">
+                  <Icon name="CheckCircle" size={48} className="text-green-500 mx-auto mb-3" />
+                  <p className="font-semibold text-lg">Заявка отправлена!</p>
+                  <p className="text-sm text-muted-foreground mt-1">Мы свяжемся с вами в ближайшее время</p>
+                  <Button variant="outline" className="mt-4" onClick={() => setFormSent(false)}>Отправить ещё</Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="font-body text-xs text-muted-foreground mb-1.5 block">Ваше имя *</label>
+                      <Input placeholder="Иван Иванов" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} className="bg-secondary border-border font-body text-sm" />
+                    </div>
+                    <div>
+                      <label className="font-body text-xs text-muted-foreground mb-1.5 block">Телефон *</label>
+                      <Input placeholder="+7 (___) ___-__-__" value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))} className="bg-secondary border-border font-body text-sm" />
+                    </div>
                   </div>
                   <div>
-                    <label className="font-body text-xs text-muted-foreground mb-1.5 block">Телефон</label>
-                    <Input placeholder="+7 (___) ___-__-__" className="bg-secondary border-border font-body text-sm" />
+                    <label className="font-body text-xs text-muted-foreground mb-1.5 block">Email</label>
+                    <Input placeholder="your@email.ru" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} className="bg-secondary border-border font-body text-sm" />
                   </div>
+                  <div>
+                    <label className="font-body text-xs text-muted-foreground mb-1.5 block">Сообщение</label>
+                    <Textarea placeholder="Ваш вопрос или пожелание..." rows={4} value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} className="bg-secondary border-border font-body text-sm resize-none" />
+                  </div>
+                  <Button onClick={handleFormSubmit} disabled={formSending || !form.name || !form.phone} className="w-full bg-primary hover:bg-primary/90 text-white font-display tracking-wide h-11">
+                    <Icon name="Send" size={16} className="mr-2" />
+                    {formSending ? 'ОТПРАВЛЯЕМ...' : 'ОТПРАВИТЬ СООБЩЕНИЕ'}
+                  </Button>
                 </div>
-                <div>
-                  <label className="font-body text-xs text-muted-foreground mb-1.5 block">Email</label>
-                  <Input placeholder="your@email.ru" className="bg-secondary border-border font-body text-sm" />
-                </div>
-                <div>
-                  <label className="font-body text-xs text-muted-foreground mb-1.5 block">Сообщение</label>
-                  <Textarea
-                    placeholder="Ваш вопрос или пожелание..."
-                    rows={4}
-                    className="bg-secondary border-border font-body text-sm resize-none"
-                  />
-                </div>
-                <Button className="w-full bg-primary hover:bg-primary/90 text-white font-display tracking-wide h-11">
-                  <Icon name="Send" size={16} className="mr-2" />
-                  ОТПРАВИТЬ СООБЩЕНИЕ
-                </Button>
-              </div>
+              )}
             </div>
           </div>
         </div>
