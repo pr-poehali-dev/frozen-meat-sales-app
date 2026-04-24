@@ -154,13 +154,22 @@ export default function Index() {
             ))}
           </div>
 
-          <a
-            href="tel:88004441419"
-            className="hidden md:flex items-center gap-2 font-body text-sm font-semibold text-foreground hover:text-primary transition-colors duration-200"
-          >
-            <Icon name="Phone" size={16} className="text-primary" />
-            8 800 444-14-19
-          </a>
+          <div className="hidden md:flex items-center gap-4">
+            <a
+              href="tel:88004441419"
+              className="flex items-center gap-2 font-body text-sm font-semibold text-foreground hover:text-primary transition-colors duration-200"
+            >
+              <Icon name="Phone" size={16} className="text-primary" />
+              8 800 444-14-19
+            </a>
+            <a
+              href="mailto:yupomosh@yandex.ru"
+              className="flex items-center gap-2 font-body text-sm font-semibold text-foreground hover:text-primary transition-colors duration-200"
+            >
+              <Icon name="Mail" size={16} className="text-primary" />
+              yupomosh@yandex.ru
+            </a>
+          </div>
 
           <div className="flex items-center gap-3">
             <button className="relative p-2 text-muted-foreground hover:text-foreground transition-colors">
@@ -456,13 +465,22 @@ export default function Index() {
                 ))}
               </div>
 
-              <a
-                href="tel:88004441419"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg font-display text-sm tracking-wide transition-colors duration-200"
-              >
-                <Icon name="Phone" size={16} />
-                8 800 444-14-19
-              </a>
+              <div className="flex flex-wrap gap-3">
+                <a
+                  href="tel:88004441419"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg font-display text-sm tracking-wide transition-colors duration-200"
+                >
+                  <Icon name="Phone" size={16} />
+                  8 800 444-14-19
+                </a>
+                <a
+                  href="mailto:yupomosh@yandex.ru"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg font-display text-sm tracking-wide transition-colors duration-200"
+                >
+                  <Icon name="Mail" size={16} />
+                  yupomosh@yandex.ru
+                </a>
+              </div>
 
               <div className="mt-6 bg-[#FFD100] rounded-2xl p-5 max-w-[220px]">
                 <p className="font-display text-xl font-bold text-black leading-tight mb-1">Сканируй<br />и плати</p>
