@@ -164,7 +164,7 @@ export default function Index() {
       {cartOpen && (
         <div className="fixed inset-0 z-[100] flex">
           <div className="flex-1 bg-black/50" onClick={() => setCartOpen(false)} />
-          <div className="w-full max-w-md bg-background flex flex-col h-full shadow-2xl">
+          <div className="w-full max-w-xl bg-background flex flex-col h-full shadow-2xl">
             <div className="flex items-center justify-between px-5 py-4 border-b">
               <h2 className="font-display text-xl font-bold">Корзина</h2>
               <button onClick={() => setCartOpen(false)} className="p-1 hover:text-primary"><Icon name="X" size={22} /></button>
@@ -179,7 +179,7 @@ export default function Index() {
               ) : cartItems.map(p => (
                 <div key={p.id} className="bg-card border rounded-xl p-3">
                   <div className="flex items-center gap-3">
-                    <img src={p.img} alt={p.name} className="w-14 h-14 rounded-lg object-cover shrink-0" />
+                    <img src={p.img} alt={p.name} className="w-20 h-20 rounded-lg object-cover shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-sm leading-tight">{p.name}</p>
                       <p className="text-xs text-muted-foreground">{p.price} ₽ {p.priceUnit}</p>
