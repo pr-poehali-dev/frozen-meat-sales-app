@@ -214,7 +214,7 @@ export default function Index() {
             )}
 
             {cartItems.length > 0 && showPayment && (
-              <div className="border-t px-5 py-6 flex flex-col items-center gap-4">
+              <div className="border-t px-5 py-6 flex flex-col items-center gap-4 overflow-y-auto flex-1">
                 <button onClick={() => setShowPayment(false)} className="self-start flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
                   <Icon name="ChevronLeft" size={16} /> Назад
                 </button>
