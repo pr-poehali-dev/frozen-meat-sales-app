@@ -28,7 +28,10 @@ const IMG_ZRAZY_KARTOF = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-84
 const IMG_ZRAZY_MYASNYE = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/21f07a72-771f-4d2d-9fd5-f7619c25695a.jpg";
 const IMG_CHEBUREKI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/69f9e64c-2a35-4696-82a3-0b1819c83d9d.jpg";
 const IMG_CHEBUREKI2 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/593f7284-8272-49c1-8be2-09926801e902.jpg";
-const IMG_BLINY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/ff22d957-5a58-42ec-bd2a-8830c23443dd.jpg";
+const IMG_BLINY_1 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/73774669-14ec-48c0-8446-a61f78a50040.jpg";
+const IMG_BLINY_2 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/3a263e8c-d4cc-4a4f-bc47-72b56aff703e.jpg";
+const IMG_BLINY_3 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/cd01c0cc-261c-4db5-8263-b10f5b0ffa95.jpg";
+const IMG_BLINY_4 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/bce8c2bf-5bb7-48e2-9daa-2ee8b8fcd8d8.jpg";
 const IMG_DOLMA = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/f4566f61-f18c-4f2e-966d-9d8c16ba3946.jpg";
 const IMG_FARSH = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/e1de159e-fb85-459f-86d3-99edf890500f.jpg";
 const IMG_PERCY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/99b04e1e-808f-4cd7-9158-ddaae3a9f1f4.jpg";
@@ -75,11 +78,11 @@ const products = [
   { id: 27, name: "Зразы картофельные с грибами", category: "Разное", desc: "Картофель + грибы + специи", price: 570, priceUnit: "за кг", badge: null, img: IMG_ZRAZY_KARTOF },
   { id: 28, name: "Зразы мясные с яйцом", category: "Разное", desc: "Мясной фарш + яйцо + специи", price: 610, priceUnit: "за кг", badge: null, img: IMG_ZRAZY_MYASNYE },
   // Блины
-  { id: 29, name: "Блины с творогом", category: "Блины", desc: "0.5 кг в упаковке", price: 250, priceUnit: "за 0.5 кг", badge: null, img: IMG_BLINY },
-  { id: 30, name: "Блины с ветчиной и сыром", category: "Блины", desc: "0.5 кг в упаковке", price: 300, priceUnit: "за 0.5 кг", badge: null, img: IMG_BLINY },
-  { id: 31, name: "Блины с рисом и куриной печенью", category: "Блины", desc: "0.5 кг в упаковке", price: 325, priceUnit: "за 0.5 кг", badge: null, img: IMG_BLINY },
-  { id: 32, name: "Блины с рисом и свиной печенью", category: "Блины", desc: "0.5 кг в упаковке", price: 280, priceUnit: "за 0.5 кг", badge: null, img: IMG_BLINY },
-  { id: 33, name: "Блины с рисом и курицей", category: "Блины", desc: "Куриное бедро, 0.5 кг в упаковке", price: 300, priceUnit: "за 0.5 кг", badge: null, img: IMG_BLINY },
+  { id: 29, name: "Блины с творогом", category: "Блины", desc: "0.5 кг в упаковке", price: 250, priceUnit: "за 0.5 кг", badge: null, img: IMG_BLINY_1 },
+  { id: 30, name: "Блины с ветчиной и сыром", category: "Блины", desc: "0.5 кг в упаковке", price: 300, priceUnit: "за 0.5 кг", badge: null, img: IMG_BLINY_2 },
+  { id: 31, name: "Блины с рисом и куриной печенью", category: "Блины", desc: "0.5 кг в упаковке", price: 325, priceUnit: "за 0.5 кг", badge: null, img: IMG_BLINY_3 },
+  { id: 32, name: "Блины с рисом и свиной печенью", category: "Блины", desc: "0.5 кг в упаковке", price: 280, priceUnit: "за 0.5 кг", badge: null, img: IMG_BLINY_4 },
+  { id: 33, name: "Блины с рисом и курицей", category: "Блины", desc: "Куриное бедро, 0.5 кг в упаковке", price: 300, priceUnit: "за 0.5 кг", badge: null, img: IMG_BLINY_3 },
   // Фарш
   { id: 34, name: "Фарш свино-говяжий", category: "Фарш", desc: "Свинина + говядина, без добавок", price: 700, priceUnit: "за кг", badge: null, img: IMG_FARSH },
 ];
