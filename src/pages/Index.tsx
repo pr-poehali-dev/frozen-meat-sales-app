@@ -73,6 +73,15 @@ export default function Index() {
   const [cartOrderSending, setCartOrderSending] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
 
+  useEffect(() => {
+    if (cartOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [cartOpen]);
+
   const handleFormSubmit = async () => {
     if (!form.name || !form.phone) return;
     setFormSending(true);
