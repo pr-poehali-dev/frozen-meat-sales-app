@@ -101,7 +101,8 @@ const navLinks = [
 
 export default function Index() {
   const [activeCategory, setActiveCategory] = useState("Все");
-  const [cart, setCart] = useState<number[]>([]);
+  const [cart, setCart] = useState<Record<number, number>>({});
+  const [cartOpen, setCartOpen] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
   const [cookieAccepted, setCookieAccepted] = useState(() => {
     return localStorage.getItem("cookie_accepted") === "true";
@@ -132,8 +133,18 @@ export default function Index() {
     : products.filter(p => p.category === activeCategory);
 
   const addToCart = (id: number) => {
-    setCart(prev => [...prev, id]);
+    setCart(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
   };
+  const removeFromCart = (id: number) => {
+    setCart(prev => {
+      const qty = (prev[id] || 0) - 1;
+      if (qty <= 0) { const next = { ...prev }; delete next[id]; return next; }
+      return { ...prev, [id]: qty };
+    });
+  };
+  const cartItems = products.filter(p => cart[p.id] > 0);
+  const cartCount = Object.values(cart).reduce((a, b) => a + b, 0);
+  const cartTotal = cartItems.reduce((sum, p) => sum + p.price * cart[p.id], 0);
 
   const scrollTo = (href: string) => {
     const el = document.querySelector(href);
@@ -141,8 +152,64 @@ export default function Index() {
     setMobileMenu(false);
   };
 
+  const QR_URL = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/bucket/23de37a0-6e3e-470a-aad2-4570b0f3757c.png";
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+
+      {/* КОРЗИНА */}
+      {cartOpen && (
+        <div className="fixed inset-0 z-[100] flex">
+          <div className="flex-1 bg-black/50" onClick={() => setCartOpen(false)} />
+          <div className="w-full max-w-md bg-background flex flex-col h-full shadow-2xl">
+            <div className="flex items-center justify-between px-5 py-4 border-b">
+              <h2 className="font-display text-xl font-bold">Корзина</h2>
+              <button onClick={() => setCartOpen(false)} className="p-1 hover:text-primary"><Icon name="X" size={22} /></button>
+            </div>
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
+              {cartItems.length === 0 ? (
+                <div className="text-center py-16">
+                  <Icon name="ShoppingCart" size={48} className="mx-auto text-muted-foreground mb-3" />
+                  <p className="text-muted-foreground">Корзина пуста</p>
+                  <p className="text-sm text-muted-foreground mt-1">Добавьте товары из каталога</p>
+                </div>
+              ) : cartItems.map(p => (
+                <div key={p.id} className="flex items-center gap-3 bg-card border rounded-xl p-3">
+                  <img src={p.img} alt={p.name} className="w-14 h-14 rounded-lg object-cover shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm leading-tight">{p.name}</p>
+                    <p className="text-xs text-muted-foreground">{p.price} ₽ {p.priceUnit}</p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button onClick={() => removeFromCart(p.id)} className="w-7 h-7 rounded-full border flex items-center justify-center hover:bg-secondary"><Icon name="Minus" size={12} /></button>
+                    <span className="font-bold text-sm w-5 text-center">{cart[p.id]}</span>
+                    <button onClick={() => addToCart(p.id)} className="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary/80"><Icon name="Plus" size={12} /></button>
+                  </div>
+                  <p className="font-bold text-sm shrink-0 w-16 text-right">{p.price * cart[p.id]} ₽</p>
+                </div>
+              ))}
+            </div>
+            {cartItems.length > 0 && (
+              <div className="border-t px-5 py-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="font-display text-lg font-bold">Итого:</span>
+                  <span className="font-display text-2xl font-bold text-primary">{cartTotal} ₽</span>
+                </div>
+                <div className="bg-[#FFD100] rounded-2xl p-4 flex items-center gap-4">
+                  <img src={QR_URL} alt="QR СБП" className="w-20 h-20 rounded-xl bg-white p-1 shrink-0" />
+                  <div>
+                    <p className="font-display text-base font-bold text-black">Оплатить {cartTotal} ₽</p>
+                    <p className="text-xs text-black/70 mt-0.5">СБП · Т-Банк</p>
+                    <p className="text-xs text-black/60 mt-2 leading-snug">Сканируйте QR в приложении банка</p>
+                    <p className="text-[10px] text-black/50 mt-1 leading-snug">⚠️ Только после подтверждения наличия</p>
+                  </div>
+                </div>
+                <Button variant="outline" className="w-full" onClick={() => setCart({})}>Очистить корзину</Button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* NAVBAR */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
@@ -187,11 +254,11 @@ export default function Index() {
           </div>
 
           <div className="flex items-center gap-3">
-            <button className="relative p-2 text-muted-foreground hover:text-foreground transition-colors">
+            <button onClick={() => setCartOpen(true)} className="relative p-2 text-muted-foreground hover:text-foreground transition-colors">
               <Icon name="ShoppingCart" size={20} />
-              {cart.length > 0 && (
+              {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full text-[10px] text-white font-bold flex items-center justify-center">
-                  {cart.length}
+                  {cartCount}
                 </span>
               )}
             </button>
