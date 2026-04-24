@@ -17,6 +17,7 @@ const IMG_BLINY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a
 const IMG_DOLMA = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/f4566f61-f18c-4f2e-966d-9d8c16ba3946.jpg";
 const IMG_FARSH = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/e1de159e-fb85-459f-86d3-99edf890500f.jpg";
 const IMG_PERCY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/99b04e1e-808f-4cd7-9158-ddaae3a9f1f4.jpg";
+const IMG_POZY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/5182b19b-f02d-4424-8e0a-da4189f36ce2.jpg";
 
 const products = [
   // Пельмени
@@ -35,7 +36,7 @@ const products = [
   { id: 11, name: "Вареники с капустой и мясом", category: "Вареники", desc: "Капуста + мясо + специи", price: 380, priceUnit: "за кг", badge: null, img: IMG_VARENIKI },
   { id: 12, name: "Вареники с творогом", category: "Вареники", desc: "Творог + специи", price: 350, priceUnit: "за кг", badge: null, img: IMG_VARENIKI },
   // Позы и Хинкали
-  { id: 13, name: "Позы", category: "Позы / Хинкали", desc: "Свинина + говядина + лук + специи", price: 75, priceUnit: "за шт", badge: null, img: IMG_KHINKALI },
+  { id: 13, name: "Позы", category: "Позы / Хинкали", desc: "Свинина + говядина + лук + специи", price: 75, priceUnit: "за шт", badge: null, img: IMG_POZY },
   { id: 14, name: "Хинкали", category: "Позы / Хинкали", desc: "Говядина + баранина + специи", price: 75, priceUnit: "за шт", badge: null, img: IMG_KHINKALI },
   // Котлеты
   { id: 15, name: "Котлеты Деревенские", category: "Котлеты", desc: "Свинина + говядина + лук + специи", price: 650, priceUnit: "за кг", badge: "Хит продаж", img: IMG_KOTLETY },
