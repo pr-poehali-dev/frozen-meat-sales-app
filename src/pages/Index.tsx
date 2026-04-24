@@ -206,13 +206,8 @@ export default function Index() {
                   <span className="font-display text-2xl font-bold text-primary">{cartTotal} ₽</span>
                 </div>
 
-                <div className="text-center">
-                  <p className="font-display text-base font-semibold mb-1">Оплатить {cartTotal} ₽ через СБП</p>
-                  <p className="text-xs text-muted-foreground mb-3">Сканируйте камерой телефона · Т-Банк</p>
-                  <div className="inline-block border-2 border-border rounded-2xl p-3">
-                    <img src={QR_URL} alt="QR СБП" className="w-52 h-52" />
-                  </div>
-                  <p className="text-[11px] text-muted-foreground mt-3 leading-snug">⚠️ Оплачивайте только после подтверждения наличия товара</p>
+                <div className="flex justify-center">
+                  <img src={QR_URL} alt="QR СБП" className="w-72 h-72 rounded-2xl" />
                 </div>
                 <Button variant="outline" className="w-full" onClick={() => setCart({})}>Очистить корзину</Button>
               </div>
