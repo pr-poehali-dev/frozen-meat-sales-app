@@ -102,6 +102,7 @@ const navLinks = [
 export default function Index() {
   const [activeCategory, setActiveCategory] = useState("Все");
   const [cart, setCart] = useState<Record<number, number>>({});
+  const [cartQty, setCartQty] = useState<Record<number, number>>({}); // граммы или штуки
   const [cartOpen, setCartOpen] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
   const [cookieAccepted, setCookieAccepted] = useState(() => {
@@ -135,19 +136,40 @@ export default function Index() {
     ? products
     : products.filter(p => p.category === activeCategory);
 
+  const isByPiece = (p: { priceUnit: string }) => p.priceUnit.includes('шт');
+  const getDefaultQty = (p: { priceUnit: string }) => isByPiece(p) ? 1 : 500;
+  const getQtyStep = (p: { priceUnit: string }) => isByPiece(p) ? 1 : 100;
+
   const addToCart = (id: number) => {
-    setCart(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+    const p = products.find(x => x.id === id)!;
+    setCart(prev => ({ ...prev, [id]: 1 }));
+    setCartQty(prev => ({ ...prev, [id]: prev[id] || getDefaultQty(p) }));
   };
   const removeFromCart = (id: number) => {
-    setCart(prev => {
-      const qty = (prev[id] || 0) - 1;
-      if (qty <= 0) { const next = { ...prev }; delete next[id]; return next; }
-      return { ...prev, [id]: qty };
-    });
+    setCart(prev => { const next = { ...prev }; delete next[id]; return next; });
+    setCartQty(prev => { const next = { ...prev }; delete next[id]; return next; });
   };
-  const cartItems = products.filter(p => cart[p.id] > 0);
-  const cartCount = Object.values(cart).reduce((a, b) => a + b, 0);
-  const cartTotal = cartItems.reduce((sum, p) => sum + p.price * cart[p.id], 0);
+  const updateQty = (id: number, delta: number) => {
+    const p = products.find(x => x.id === id)!;
+    const step = getQtyStep(p);
+    const min = step;
+    setCartQty(prev => ({ ...prev, [id]: Math.max(min, (prev[id] || getDefaultQty(p)) + delta) }));
+  };
+  const getItemPrice = (p: typeof products[0]) => {
+    const qty = cartQty[p.id] || getDefaultQty(p);
+    if (isByPiece(p)) return p.price * qty;
+    if (p.priceUnit.includes('0.5 кг')) return Math.round(p.price * qty / 500);
+    return Math.round(p.price * qty / 1000);
+  };
+  const getQtyLabel = (p: typeof products[0]) => {
+    const qty = cartQty[p.id] || getDefaultQty(p);
+    if (isByPiece(p)) return `${qty} шт`;
+    return qty >= 1000 ? `${qty / 1000} кг` : `${qty} г`;
+  };
+
+  const cartItems = products.filter(p => cart[p.id]);
+  const cartCount = cartItems.length;
+  const cartTotal = cartItems.reduce((sum, p) => sum + getItemPrice(p), 0);
 
   const scrollTo = (href: string) => {
     const el = document.querySelector(href);
@@ -190,18 +212,25 @@ export default function Index() {
                   <p className="text-sm text-muted-foreground mt-1">Добавьте товары из каталога</p>
                 </div>
               ) : cartItems.map(p => (
-                <div key={p.id} className="flex items-center gap-3 bg-card border rounded-xl p-3">
-                  <img src={p.img} alt={p.name} className="w-14 h-14 rounded-lg object-cover shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm leading-tight">{p.name}</p>
-                    <p className="text-xs text-muted-foreground">{p.price} ₽ {p.priceUnit}</p>
+                <div key={p.id} className="bg-card border rounded-xl p-3">
+                  <div className="flex items-center gap-3">
+                    <img src={p.img} alt={p.name} className="w-14 h-14 rounded-lg object-cover shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm leading-tight">{p.name}</p>
+                      <p className="text-xs text-muted-foreground">{p.price} ₽ {p.priceUnit}</p>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button onClick={() => removeFromCart(p.id)} className="w-7 h-7 rounded-full border flex items-center justify-center hover:bg-red-50 text-red-500"><Icon name="Trash2" size={12} /></button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <button onClick={() => removeFromCart(p.id)} className="w-7 h-7 rounded-full border flex items-center justify-center hover:bg-secondary"><Icon name="Minus" size={12} /></button>
-                    <span className="font-bold text-sm w-5 text-center">{cart[p.id]}</span>
-                    <button onClick={() => addToCart(p.id)} className="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary/80"><Icon name="Plus" size={12} /></button>
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t">
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => updateQty(p.id, -getQtyStep(p))} className="w-7 h-7 rounded-full border flex items-center justify-center hover:bg-secondary"><Icon name="Minus" size={12} /></button>
+                      <span className="font-semibold text-sm w-14 text-center">{getQtyLabel(p)}</span>
+                      <button onClick={() => updateQty(p.id, getQtyStep(p))} className="w-7 h-7 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary/80"><Icon name="Plus" size={12} /></button>
+                    </div>
+                    <p className="font-bold text-sm text-primary">{getItemPrice(p)} ₽</p>
                   </div>
-                  <p className="font-bold text-sm shrink-0 w-16 text-right">{p.price * cart[p.id]} ₽</p>
                 </div>
               ))}
             </div>
@@ -212,13 +241,13 @@ export default function Index() {
                   <span className="font-display text-2xl font-bold text-primary">{cartTotal} ₽</span>
                 </div>
 
-                <div className="bg-[#FFD100] rounded-2xl p-4 text-center">
-                  <p className="font-display text-lg font-bold text-black mb-1">Оплатить {cartTotal} ₽</p>
-                  <p className="text-xs text-black/70 mb-3">СБП · Т-Банк · Сканируйте камерой телефона</p>
-                  <div className="bg-white rounded-2xl p-3 inline-block">
+                <div className="text-center">
+                  <p className="font-display text-base font-semibold mb-1">Оплатить {cartTotal} ₽ через СБП</p>
+                  <p className="text-xs text-muted-foreground mb-3">Сканируйте камерой телефона · Т-Банк</p>
+                  <div className="inline-block border-2 border-border rounded-2xl p-3">
                     <img src={QR_URL} alt="QR СБП" className="w-52 h-52" />
                   </div>
-                  <p className="text-[11px] text-black/60 mt-3 leading-snug">⚠️ Оплачивайте только после подтверждения наличия товара</p>
+                  <p className="text-[11px] text-muted-foreground mt-3 leading-snug">⚠️ Оплачивайте только после подтверждения наличия товара</p>
                 </div>
                 <Button variant="outline" className="w-full" onClick={() => setCart({})}>Очистить корзину</Button>
               </div>
