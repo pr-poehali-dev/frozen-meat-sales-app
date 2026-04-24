@@ -72,6 +72,22 @@ export default function Index() {
   const [cartOrderSent, setCartOrderSent] = useState(false);
   const [cartOrderSending, setCartOrderSending] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
+  const [showDelivery, setShowDelivery] = useState(false);
+  const [deliveryForm, setDeliveryForm] = useState({ name: '', phone: '', street: '', house: '', entrance: '', apartment: '', floor: '', intercom: '', comment: '' });
+  const [deliverySent, setDeliverySent] = useState(false);
+  const [deliverySending, setDeliverySending] = useState(false);
+
+  const handleDeliverySubmit = async () => {
+    if (!deliveryForm.name || !deliveryForm.phone || !deliveryForm.street || !deliveryForm.house) return;
+    setDeliverySending(true);
+    const items = cartItems.map(p => ({ name: p.name, qty: cartQty[p.id] || 1, price: p.price, sum: getItemPrice(p) }));
+    await fetch("https://functions.poehali.dev/36d594d4-0de1-47a0-8704-a93dc25f659a", {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...deliveryForm, items, total: cartTotal })
+    });
+    setDeliverySending(false);
+    setDeliverySent(true);
+  };
 
   useEffect(() => {
     if (cartOpen) {
@@ -222,7 +238,7 @@ export default function Index() {
               </div>
             )}
 
-            {cartItems.length > 0 && showPayment && (
+            {cartItems.length > 0 && showPayment && !showDelivery && (
               <div className="border-t px-5 py-6 flex flex-col items-center gap-4 overflow-y-auto flex-1">
                 <button onClick={() => setShowPayment(false)} className="self-start flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
                   <Icon name="ChevronLeft" size={16} /> Назад
@@ -235,6 +251,83 @@ export default function Index() {
                   className="w-64 rounded-2xl"
                 />
                 <p className="text-xs text-muted-foreground text-center leading-snug">⚠️ Оплачивайте только после подтверждения наличия товара</p>
+                <button
+                  onClick={() => setShowDelivery(true)}
+                  className="w-full bg-primary hover:bg-primary/90 text-white font-display font-bold rounded-2xl py-4 text-base tracking-wide transition-colors"
+                >
+                  Оплатил — указать адрес доставки →
+                </button>
+              </div>
+            )}
+
+            {showDelivery && (
+              <div className="border-t px-5 py-6 flex flex-col gap-4 overflow-y-auto flex-1">
+                {!deliverySent ? (
+                  <>
+                    <button onClick={() => setShowDelivery(false)} className="self-start flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                      <Icon name="ChevronLeft" size={16} /> Назад
+                    </button>
+                    <p className="font-display text-xl font-bold">Адрес доставки</p>
+
+                    <div>
+                      <label className="font-body text-xs text-muted-foreground mb-1 block">Ваше имя *</label>
+                      <Input placeholder="Иван Иванов" value={deliveryForm.name} onChange={e => setDeliveryForm(f => ({ ...f, name: e.target.value }))} className="bg-secondary border-border font-body text-sm" />
+                    </div>
+                    <div>
+                      <label className="font-body text-xs text-muted-foreground mb-1 block">Телефон *</label>
+                      <Input placeholder="+7 (___) ___-__-__" value={deliveryForm.phone} onChange={e => setDeliveryForm(f => ({ ...f, phone: e.target.value }))} className="bg-secondary border-border font-body text-sm" />
+                    </div>
+                    <div>
+                      <label className="font-body text-xs text-muted-foreground mb-1 block">Улица *</label>
+                      <Input placeholder="Ленина" value={deliveryForm.street} onChange={e => setDeliveryForm(f => ({ ...f, street: e.target.value }))} className="bg-secondary border-border font-body text-sm" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="font-body text-xs text-muted-foreground mb-1 block">Дом *</label>
+                        <Input placeholder="42" value={deliveryForm.house} onChange={e => setDeliveryForm(f => ({ ...f, house: e.target.value }))} className="bg-secondary border-border font-body text-sm" />
+                      </div>
+                      <div>
+                        <label className="font-body text-xs text-muted-foreground mb-1 block">Подъезд</label>
+                        <Input placeholder="3" value={deliveryForm.entrance} onChange={e => setDeliveryForm(f => ({ ...f, entrance: e.target.value }))} className="bg-secondary border-border font-body text-sm" />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div>
+                        <label className="font-body text-xs text-muted-foreground mb-1 block">Квартира</label>
+                        <Input placeholder="15" value={deliveryForm.apartment} onChange={e => setDeliveryForm(f => ({ ...f, apartment: e.target.value }))} className="bg-secondary border-border font-body text-sm" />
+                      </div>
+                      <div>
+                        <label className="font-body text-xs text-muted-foreground mb-1 block">Этаж</label>
+                        <Input placeholder="5" value={deliveryForm.floor} onChange={e => setDeliveryForm(f => ({ ...f, floor: e.target.value }))} className="bg-secondary border-border font-body text-sm" />
+                      </div>
+                      <div>
+                        <label className="font-body text-xs text-muted-foreground mb-1 block">Домофон</label>
+                        <Input placeholder="15К" value={deliveryForm.intercom} onChange={e => setDeliveryForm(f => ({ ...f, intercom: e.target.value }))} className="bg-secondary border-border font-body text-sm" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="font-body text-xs text-muted-foreground mb-1 block">Комментарий курьеру</label>
+                      <Textarea placeholder="Позвоните за 10 минут..." rows={3} value={deliveryForm.comment} onChange={e => setDeliveryForm(f => ({ ...f, comment: e.target.value }))} className="bg-secondary border-border font-body text-sm resize-none" />
+                    </div>
+                    <Button
+                      onClick={handleDeliverySubmit}
+                      disabled={deliverySending || !deliveryForm.name || !deliveryForm.phone || !deliveryForm.street || !deliveryForm.house}
+                      className="w-full bg-primary hover:bg-primary/90 text-white font-display tracking-wide h-12"
+                    >
+                      <Icon name="Send" size={16} className="mr-2" />
+                      {deliverySending ? 'ОТПРАВЛЯЕМ...' : 'ОТПРАВИТЬ ЗАКАЗ'}
+                    </Button>
+                  </>
+                ) : (
+                  <div className="flex flex-col items-center justify-center flex-1 text-center gap-4 py-10">
+                    <Icon name="CheckCircle" size={56} className="text-green-500" />
+                    <p className="font-display text-2xl font-bold">Заказ принят!</p>
+                    <p className="text-sm text-muted-foreground">Мы получили ваш заказ и адрес доставки. Скоро свяжемся с вами.</p>
+                    <Button className="bg-primary text-white mt-4" onClick={() => { setCartOpen(false); setCart({}); setShowPayment(false); setShowDelivery(false); setDeliverySent(false); }}>
+                      Закрыть
+                    </Button>
+                  </div>
+                )}
               </div>
             )}
           </div>
