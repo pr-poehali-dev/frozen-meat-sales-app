@@ -170,7 +170,7 @@ export default function Index() {
               <h2 className="font-display text-xl font-bold">Корзина</h2>
               <button onClick={() => setCartOpen(false)} className="p-1 hover:text-primary"><Icon name="X" size={22} /></button>
             </div>
-            <div className={`px-5 py-4 space-y-3 ${cartItems.length > 6 ? 'overflow-y-auto flex-1' : 'overflow-visible'}`}>
+            <div className={`px-5 py-4 space-y-3 ${cartItems.length > 6 ? 'overflow-y-auto flex-1' : 'overflow-visible'} ${showPayment ? 'hidden' : ''}`}>
               {cartItems.length === 0 ? (
                 <div className="text-center py-16">
                   <Icon name="ShoppingCart" size={48} className="mx-auto text-muted-foreground mb-3" />
