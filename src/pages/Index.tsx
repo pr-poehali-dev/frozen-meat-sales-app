@@ -599,25 +599,7 @@ export default function Index() {
                 </div>
               </div>
 
-              <div className="mt-6 bg-[#FFD100] rounded-2xl p-5 max-w-[220px]">
-                <p className="font-display text-xl font-bold text-black leading-tight mb-1">Сканируй<br />и плати</p>
-                <p className="font-body text-xs text-black/70 mb-4">В приложении своего банка</p>
-                <div className="bg-white rounded-xl p-3">
-                  <img
-                    src="https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/bucket/23de37a0-6e3e-470a-aad2-4570b0f3757c.png"
-                    alt="QR-код для оплаты СБП"
-                    className="w-full"
-                  />
-                </div>
-                <div className="flex items-center gap-2 mt-3">
-                  <span className="font-display text-xs font-bold text-black">Т‑БАНК</span>
-                  <span className="text-black/40">|</span>
-                  <span className="font-display text-xs font-bold text-black">СБП</span>
-                </div>
-                <p className="font-body text-xs text-black/70 mt-3 leading-snug">
-                  ⚠️ Оплату производить только после получения подтверждения о наличии продукции
-                </p>
-              </div>
+
             </div>
 
             <div className="bg-background border border-border rounded-2xl p-6">
