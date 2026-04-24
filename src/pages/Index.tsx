@@ -29,8 +29,8 @@ const IMG_TEFTELI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-55
 const IMG_FRIKADELKI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/eb0e4dda-aa0f-4523-862f-dac3620ab6da.jpg";
 const IMG_ZRAZY_KARTOF = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/eccd7704-a634-4276-8c33-5c8024a0796c.jpg";
 const IMG_ZRAZY_MYASNYE = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/21f07a72-771f-4d2d-9fd5-f7619c25695a.jpg";
-const IMG_CHEBUREKI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/92e1f28a-cae6-46d0-8c62-822e181414f3.jpg";
-const IMG_CHEBUREKI2 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/92e1f28a-cae6-46d0-8c62-822e181414f3.jpg";
+const IMG_CHEBUREKI = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/718a9264-7f91-4728-bfc1-e802c623cf1d.jpg";
+const IMG_CHEBUREKI2 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/718a9264-7f91-4728-bfc1-e802c623cf1d.jpg";
 const IMG_BLINY_1 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/73774669-14ec-48c0-8446-a61f78a50040.jpg";
 const IMG_BLINY_2 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/3a263e8c-d4cc-4a4f-bc47-72b56aff703e.jpg";
 const IMG_BLINY_3 = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/cd01c0cc-261c-4db5-8263-b10f5b0ffa95.jpg";
@@ -206,8 +206,9 @@ export default function Index() {
                   <span className="font-display text-2xl font-bold text-primary">{cartTotal} ₽</span>
                 </div>
 
-                <div className="flex justify-center">
-                  <img src={QR_URL} alt="QR СБП" className="w-72 h-72 rounded-2xl" />
+                <div className="flex flex-col items-center bg-black rounded-2xl p-4 gap-3">
+                  <img src={QR_URL} alt="QR СБП" className="w-64 h-64 rounded-xl" />
+                  <p className="text-xs text-yellow-400 text-center leading-snug">⚠️ Оплачивайте только после подтверждения наличия товара</p>
                 </div>
                 <Button variant="outline" className="w-full" onClick={() => setCart({})}>Очистить корзину</Button>
               </div>
