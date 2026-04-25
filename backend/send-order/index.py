@@ -89,8 +89,9 @@ def handler(event: dict, context) -> dict:
         with smtplib.SMTP_SSL('smtp.yandex.ru', 465) as server:
             server.login(sender, smtp_password)
             server.sendmail(sender, recipient, msg.as_string())
-    except Exception:
-        pass
+        print("Email OK")
+    except Exception as e:
+        print(f"Email ERROR: {e}")
 
     return {
         'statusCode': 200,
