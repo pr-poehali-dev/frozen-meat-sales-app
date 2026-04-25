@@ -24,7 +24,7 @@ interface Product {
 }
 interface Order {
   id: number; name: string; phone: string; email: string;
-  message: string; status: string; created_at: string;
+  message: string; status: string; created_at: string; delivery_date?: string;
 }
 
 const emptyProduct = (): Omit<Product, 'id'> => ({
@@ -307,6 +307,14 @@ export default function Admin() {
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-base">{order.name}</p>
                     <p className="text-sm text-muted-foreground">{order.phone} {order.email && `• ${order.email}`}</p>
+                    {order.delivery_date && (
+                      <div className="inline-flex items-center gap-1.5 mt-2 px-3 py-1.5 bg-orange-100 border border-orange-300 rounded-lg">
+                        <Icon name="CalendarClock" size={14} className="text-orange-600 shrink-0" />
+                        <span className="text-sm font-bold text-orange-700">
+                          Доставить: {new Date(order.delivery_date).toLocaleDateString('ru', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        </span>
+                      </div>
+                    )}
                     {order.message && <p className="text-sm mt-2 text-foreground whitespace-pre-line">{order.message}</p>}
                     <p className="text-xs text-muted-foreground mt-1">{new Date(order.created_at).toLocaleString('ru')}</p>
                   </div>
@@ -339,6 +347,14 @@ export default function Admin() {
                 <div className="flex items-start justify-between gap-4 flex-wrap">
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-sm">{order.name} • {order.phone}</p>
+                    {order.delivery_date && (
+                      <div className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 bg-orange-100 border border-orange-300 rounded-lg">
+                        <Icon name="CalendarClock" size={12} className="text-orange-600 shrink-0" />
+                        <span className="text-xs font-bold text-orange-700">
+                          {new Date(order.delivery_date).toLocaleDateString('ru', { day: 'numeric', month: 'long' })}
+                        </span>
+                      </div>
+                    )}
                     {order.message && <p className="text-xs mt-1 text-muted-foreground whitespace-pre-line line-clamp-3">{order.message}</p>}
                     <p className="text-xs text-muted-foreground mt-1">{new Date(order.created_at).toLocaleString('ru')}</p>
                   </div>
