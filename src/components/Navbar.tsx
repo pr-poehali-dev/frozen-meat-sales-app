@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Icon from "@/components/ui/icon";
 
 const navLinks = [
@@ -18,20 +18,14 @@ interface NavbarProps {
 const API_AUTH = "https://functions.poehali.dev/6687360d-0946-46fb-9ce9-015965c5b980";
 
 export default function Navbar({ cartCount, mobileMenu, setMobileMenu, scrollTo }: NavbarProps) {
-  const [userName, setUserName] = useState<string | null>(null);
-
-  useEffect(() => {
-    const session = localStorage.getItem("user_session");
-    if (!session) return;
-    fetch(`${API_AUTH}?role=user&action=check`, { headers: { "X-User-Session": session } })
-      .then(r => r.json())
-      .then(d => { if (d.ok) setUserName(d.name.split(" ")[0]); });
-  }, []);
+  const storedName = localStorage.getItem("user_name");
+  const [userName, setUserName] = useState<string | null>(storedName ? storedName.split(" ")[0] : null);
 
   const handleLogout = async () => {
     const session = localStorage.getItem("user_session") || "";
     await fetch(`${API_AUTH}?role=user&action=logout`, { method: "DELETE", headers: { "X-User-Session": session } });
     localStorage.removeItem("user_session");
+    localStorage.removeItem("user_name");
     setUserName(null);
     window.location.reload();
   };
@@ -64,8 +58,8 @@ export default function Navbar({ cartCount, mobileMenu, setMobileMenu, scrollTo 
               <a href="/account" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-secondary text-foreground rounded-lg text-sm font-semibold hover:bg-secondary/80 transition-colors">
                 <Icon name="User" size={15} /> {userName}
               </a>
-              <button onClick={handleLogout} className="inline-flex items-center gap-1 px-2 py-1.5 text-muted-foreground hover:text-foreground text-sm transition-colors" title="Выйти">
-                <Icon name="LogOut" size={15} />
+              <button onClick={handleLogout} className="inline-flex items-center gap-1 px-2 py-1.5 text-muted-foreground hover:text-red-500 text-sm transition-colors" title="Выйти">
+                <Icon name="LogOut" size={16} />
               </button>
             </div>
           ) : (
@@ -105,9 +99,14 @@ export default function Navbar({ cartCount, mobileMenu, setMobileMenu, scrollTo 
             </button>
           ))}
           {userName ? (
-            <button onClick={handleLogout} className="text-left font-body text-red-500 py-2">
-              Выйти ({userName})
-            </button>
+            <>
+              <a href="/account" className="text-left font-body text-foreground py-2 border-b border-border">
+                Кабинет ({userName})
+              </a>
+              <button onClick={handleLogout} className="text-left font-body text-red-500 py-2">
+                Выйти
+              </button>
+            </>
           ) : (
             <a href="/account" className="text-left font-body text-primary py-2">Войти / Зарегистрироваться</a>
           )}

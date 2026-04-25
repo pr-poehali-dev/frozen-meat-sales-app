@@ -87,6 +87,7 @@ export default function Account() {
     setLoading(false);
     if (res.ok) {
       localStorage.setItem("user_session", res.session_id);
+      localStorage.setItem("user_name", res.name);
       setUser({ name: res.name, phone: res.phone });
       loadOrders(res.session_id);
     } else {
@@ -101,6 +102,7 @@ export default function Account() {
       headers: { "X-User-Session": session },
     });
     localStorage.removeItem("user_session");
+    localStorage.removeItem("user_name");
     setUser(null);
     setOrders([]);
   };
