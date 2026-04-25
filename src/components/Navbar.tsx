@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Icon from "@/components/ui/icon";
 
 const navLinks = [
@@ -14,7 +15,27 @@ interface NavbarProps {
   scrollTo: (href: string) => void;
 }
 
+const API_AUTH = "https://functions.poehali.dev/6687360d-0946-46fb-9ce9-015965c5b980";
+
 export default function Navbar({ cartCount, mobileMenu, setMobileMenu, scrollTo }: NavbarProps) {
+  const [userName, setUserName] = useState<string | null>(null);
+
+  useEffect(() => {
+    const session = localStorage.getItem("user_session");
+    if (!session) return;
+    fetch(`${API_AUTH}?role=user&action=check`, { headers: { "X-User-Session": session } })
+      .then(r => r.json())
+      .then(d => { if (d.ok) setUserName(d.name.split(" ")[0]); });
+  }, []);
+
+  const handleLogout = async () => {
+    const session = localStorage.getItem("user_session") || "";
+    await fetch(`${API_AUTH}?role=user&action=logout`, { method: "DELETE", headers: { "X-User-Session": session } });
+    localStorage.removeItem("user_session");
+    setUserName(null);
+    window.location.reload();
+  };
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -38,10 +59,21 @@ export default function Navbar({ cartCount, mobileMenu, setMobileMenu, scrollTo 
         </div>
 
         <div className="flex items-center gap-3">
-          <a href="/account" className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors" title="Личный кабинет">
-            <Icon name="User" size={15} /> Войти
-          </a>
-          <a href="/account" className="md:hidden p-2 text-primary" title="Личный кабинет">
+          {userName ? (
+            <div className="hidden md:flex items-center gap-2">
+              <a href="/account" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-secondary text-foreground rounded-lg text-sm font-semibold hover:bg-secondary/80 transition-colors">
+                <Icon name="User" size={15} /> {userName}
+              </a>
+              <button onClick={handleLogout} className="inline-flex items-center gap-1 px-2 py-1.5 text-muted-foreground hover:text-foreground text-sm transition-colors" title="Выйти">
+                <Icon name="LogOut" size={15} />
+              </button>
+            </div>
+          ) : (
+            <a href="/account" className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors">
+              <Icon name="User" size={15} /> Войти
+            </a>
+          )}
+          <a href="/account" className="md:hidden p-2 text-primary">
             <Icon name="User" size={20} />
           </a>
           <button className="relative p-2 text-muted-foreground hover:text-foreground transition-colors">
@@ -72,6 +104,13 @@ export default function Navbar({ cartCount, mobileMenu, setMobileMenu, scrollTo 
               {l.label}
             </button>
           ))}
+          {userName ? (
+            <button onClick={handleLogout} className="text-left font-body text-red-500 py-2">
+              Выйти ({userName})
+            </button>
+          ) : (
+            <a href="/account" className="text-left font-body text-primary py-2">Войти / Зарегистрироваться</a>
+          )}
         </div>
       )}
     </nav>
