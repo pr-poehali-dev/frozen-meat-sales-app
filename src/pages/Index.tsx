@@ -77,6 +77,10 @@ export default function Index() {
   const [deliveryForm, setDeliveryForm] = useState({ name: '', phone: '', street: '', house: '', entrance: '', apartment: '', floor: '', intercom: '', comment: '', district: '' });
   const [deliverySent, setDeliverySent] = useState(false);
   const [deliverySending, setDeliverySending] = useState(false);
+  const [cancelSeconds, setCancelSeconds] = useState(0);
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [cancelled, setCancelled] = useState(false);
+  const [lastOrderId, setLastOrderId] = useState<number>(0);
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState('');
 
@@ -109,7 +113,7 @@ export default function Index() {
     setDeliverySending(true);
     const items = cartItems.map(p => ({ name: p.name, qty: cartQty[p.id] || 1, price: p.price, sum: getItemPrice(p), inStock: p.inStock, availableDate: p.availableDate }));
     const info = getDeliveryInfo();
-    await fetch("https://functions.poehali.dev/36d594d4-0de1-47a0-8704-a93dc25f659a", {
+    const res = await fetch("https://functions.poehali.dev/36d594d4-0de1-47a0-8704-a93dc25f659a", {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         ...deliveryForm,
@@ -121,9 +125,15 @@ export default function Index() {
         arrival_time: info?.arrivalStr ?? '',
         is_evening: info?.isEvening ?? false,
       })
-    });
+    }).then(r => r.json()).catch(() => ({}));
+    if (res.order_id) setLastOrderId(res.order_id);
     setDeliverySending(false);
     setDeliverySent(true);
+    setCancelled(false);
+    setCancelSeconds(600);
+    const interval = setInterval(() => {
+      setCancelSeconds(s => { if (s <= 1) { clearInterval(interval); return 0; } return s - 1; });
+    }, 1000);
   };
 
   useEffect(() => {
@@ -487,17 +497,49 @@ export default function Index() {
                     </Button>
                   </>
                 ) : (
-                  <div className="flex flex-col items-center justify-center flex-1 text-center gap-4 py-10">
-                    <Icon name="CheckCircle" size={56} className="text-green-500" />
-                    <p className="font-display text-2xl font-bold">Заказ принят!</p>
-                    {deliveryInfo && (
-                      <div className="bg-green-50 border border-green-200 rounded-xl px-5 py-3">
-                        <p className="font-body text-base font-semibold text-green-800">Ваш заказ приедет через {deliveryInfo.deliveryMinutes} мин</p>
-                        <p className="font-body text-sm text-green-700">Ориентировочно к {deliveryInfo.arrivalStr}</p>
-                      </div>
+                  <div className="flex flex-col items-center justify-center flex-1 text-center gap-4 py-10 px-2">
+                    {cancelled ? (
+                      <>
+                        <Icon name="XCircle" size={56} className="text-red-500" />
+                        <p className="font-display text-2xl font-bold">Заказ отменён</p>
+                        <p className="text-sm text-muted-foreground">Ваш заказ был успешно отменён.</p>
+                      </>
+                    ) : (
+                      <>
+                        <Icon name="CheckCircle" size={56} className="text-green-500" />
+                        <p className="font-display text-2xl font-bold">Заказ принят!</p>
+                        {deliveryInfo && (
+                          <div className="bg-green-50 border border-green-200 rounded-xl px-5 py-3">
+                            <p className="font-body text-base font-semibold text-green-800">Ваш заказ приедет через {deliveryInfo.deliveryMinutes} мин</p>
+                            <p className="font-body text-sm text-green-700">Ориентировочно к {deliveryInfo.arrivalStr}</p>
+                          </div>
+                        )}
+                        <p className="text-sm text-muted-foreground">Курьер свяжется с вами перед приездом.</p>
+                        {cancelSeconds > 0 && (
+                          <div className="w-full border border-red-200 bg-red-50 rounded-xl px-4 py-3 flex flex-col gap-2">
+                            <p className="text-xs text-red-600">Отменить можно в течение {Math.floor(cancelSeconds / 60)}:{String(cancelSeconds % 60).padStart(2, '0')}</p>
+                            <Button
+                              variant="outline"
+                              className="border-red-400 text-red-600 hover:bg-red-100 w-full"
+                              disabled={cancelLoading}
+                              onClick={async () => {
+                                setCancelLoading(true);
+                                await fetch("https://functions.poehali.dev/010513ea-3143-4cc6-9e47-d5722ea1790b", {
+                                  method: 'PUT', headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ id: lastOrderId, status: 'cancelled' })
+                                });
+                                setCancelLoading(false);
+                                setCancelled(true);
+                                setCancelSeconds(0);
+                              }}
+                            >
+                              {cancelLoading ? 'Отменяем...' : 'Отменить заказ'}
+                            </Button>
+                          </div>
+                        )}
+                      </>
                     )}
-                    <p className="text-sm text-muted-foreground">Курьер свяжется с вами перед приездом.</p>
-                    <Button className="bg-primary text-white mt-4" onClick={() => { setCartOpen(false); setCart({}); setShowPayment(false); setShowDelivery(false); setDeliverySent(false); }}>
+                    <Button className="bg-primary text-white mt-2" onClick={() => { setCartOpen(false); setCart({}); setShowPayment(false); setShowDelivery(false); setDeliverySent(false); setCancelled(false); setCancelSeconds(0); }}>
                       Закрыть
                     </Button>
                   </div>
