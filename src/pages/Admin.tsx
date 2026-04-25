@@ -11,8 +11,10 @@ const API_ORDERS = "https://functions.poehali.dev/010513ea-3143-4cc6-9e47-d5722e
 
 const CATEGORIES = ["Пельмени", "Вареники", "Позы / Хинкали", "Котлеты", "Голубцы", "Тефтели / Фрикадельки", "Чебуреки", "Блины", "Разное", "Фарш"];
 
-const STATUS_LABELS: Record<string, string> = { new: "Новая", in_progress: "В работе", done: "Выполнена", cancelled: "Отменена" };
-const STATUS_COLORS: Record<string, string> = { new: "bg-blue-100 text-blue-700", in_progress: "bg-yellow-100 text-yellow-700", done: "bg-green-100 text-green-700", cancelled: "bg-gray-100 text-gray-500" };
+const STATUS_LABELS: Record<string, string> = { new: "Новая", in_progress: "В работе", done: "Выполнена", cancelled: "Отменена", archived: "Архив" };
+const STATUS_COLORS: Record<string, string> = { new: "bg-blue-100 text-blue-700", in_progress: "bg-yellow-100 text-yellow-700", done: "bg-green-100 text-green-700", cancelled: "bg-gray-100 text-gray-500", archived: "bg-gray-100 text-gray-400" };
+
+interface Stats { count: number; revenue: number; top_items: { name: string; qty: number; sum: number }[] }
 
 interface Product {
   id: number; name: string; category: string; description: string;
@@ -37,9 +39,13 @@ export default function Admin() {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
-  const [tab, setTab] = useState<'products' | 'orders'>('orders');
+  const [tab, setTab] = useState<'orders' | 'archive' | 'stats' | 'products'>('orders');
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [archive, setArchive] = useState<Order[]>([]);
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [statsPeriod, setStatsPeriod] = useState<'today' | 'week' | 'month'>('month');
+  const [statsLoading, setStatsLoading] = useState(false);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
   const [newProduct, setNewProduct] = useState(emptyProduct());
   const [showAddForm, setShowAddForm] = useState(false);
@@ -66,6 +72,17 @@ export default function Admin() {
   const loadOrders = () =>
     fetch(API_ORDERS, { headers: { 'X-Session-Id': sessionId } })
       .then(r => r.json()).then(d => d.ok && setOrders(d.orders));
+
+  const loadArchive = () =>
+    fetch(`${API_ORDERS}?type=archive`, { headers: { 'X-Session-Id': sessionId } })
+      .then(r => r.json()).then(d => d.ok && setArchive(d.orders));
+
+  const loadStats = (period: string) => {
+    setStatsLoading(true);
+    fetch(`${API_ORDERS}?type=stats&period=${period}`, { headers: { 'X-Session-Id': sessionId } })
+      .then(r => r.json()).then(d => { if (d.ok) setStats(d); })
+      .finally(() => setStatsLoading(false));
+  };
 
   const handleLogin = async () => {
     setLoginError('');

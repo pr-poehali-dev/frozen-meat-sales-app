@@ -6,26 +6,32 @@ SCHEMA = "t_p10284751_frozen_meat_sales_ap"
 
 CORS = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, X-Session-Id',
     'Content-Type': 'application/json'
 }
 
 def handler(event: dict, context) -> dict:
-    """Управление заявками: получение и сохранение"""
+    """Управление заявками: получение, сохранение, архив, статистика"""
     if event.get('httpMethod') == 'OPTIONS':
         return {'statusCode': 200, 'headers': CORS, 'body': ''}
 
     method = event.get('httpMethod')
     body = json.loads(event.get('body') or '{}')
+    params = event.get('queryStringParameters') or {}
 
     conn = psycopg2.connect(os.environ['DATABASE_URL'])
     cur = conn.cursor()
 
     try:
-        # Получить все заявки (для админки)
-        if method == 'GET':
-            cur.execute(f"SELECT id, name, phone, email, message, status, created_at FROM {SCHEMA}.orders ORDER BY created_at DESC")
+        # Получить активные заявки (не в архиве)
+        if method == 'GET' and params.get('type') != 'archive' and params.get('type') != 'stats':
+            cur.execute(f"""
+                SELECT id, name, phone, email, message, status, created_at
+                FROM {SCHEMA}.orders
+                WHERE status != 'archived'
+                ORDER BY created_at DESC
+            """)
             rows = cur.fetchall()
             orders = [
                 {'id': r[0], 'name': r[1], 'phone': r[2], 'email': r[3],
@@ -33,6 +39,60 @@ def handler(event: dict, context) -> dict:
                 for r in rows
             ]
             return {'statusCode': 200, 'headers': CORS, 'body': json.dumps({'ok': True, 'orders': orders})}
+
+        # Получить архив
+        if method == 'GET' and params.get('type') == 'archive':
+            cur.execute(f"""
+                SELECT id, name, phone, email, message, status, created_at
+                FROM {SCHEMA}.orders
+                WHERE status = 'archived'
+                ORDER BY created_at DESC
+                LIMIT 100
+            """)
+            rows = cur.fetchall()
+            orders = [
+                {'id': r[0], 'name': r[1], 'phone': r[2], 'email': r[3],
+                 'message': r[4], 'status': r[5], 'created_at': r[6].isoformat()}
+                for r in rows
+            ]
+            return {'statusCode': 200, 'headers': CORS, 'body': json.dumps({'ok': True, 'orders': orders})}
+
+        # Статистика бухгалтерии
+        if method == 'GET' and params.get('type') == 'stats':
+            period = params.get('period', 'month')
+            if period == 'today':
+                date_filter = "created_at >= CURRENT_DATE"
+            elif period == 'week':
+                date_filter = "created_at >= CURRENT_DATE - INTERVAL '7 days'"
+            else:
+                date_filter = "created_at >= DATE_TRUNC('month', CURRENT_DATE)"
+
+            cur.execute(f"""
+                SELECT COUNT(*), COALESCE(SUM(total), 0)
+                FROM {SCHEMA}.orders
+                WHERE status = 'done' AND {date_filter}
+            """)
+            row = cur.fetchone()
+            count, revenue = row[0], int(row[1])
+
+            # Топ товаров из items jsonb
+            cur.execute(f"""
+                SELECT item->>'name' as name,
+                       SUM((item->>'qty')::numeric) as total_qty,
+                       SUM((item->>'sum')::numeric) as total_sum
+                FROM {SCHEMA}.orders,
+                     jsonb_array_elements(items) as item
+                WHERE status = 'done' AND {date_filter} AND items IS NOT NULL
+                GROUP BY item->>'name'
+                ORDER BY total_sum DESC
+                LIMIT 10
+            """)
+            items_rows = cur.fetchall()
+            top_items = [{'name': r[0], 'qty': float(r[1]), 'sum': int(r[2])} for r in items_rows]
+
+            return {'statusCode': 200, 'headers': CORS, 'body': json.dumps({
+                'ok': True, 'count': count, 'revenue': revenue, 'top_items': top_items
+            })}
 
         # Создать новую заявку (с сайта)
         if method == 'POST':
@@ -50,6 +110,13 @@ def handler(event: dict, context) -> dict:
                 f"UPDATE {SCHEMA}.orders SET status=%s WHERE id=%s",
                 (body.get('status'), body.get('id'))
             )
+            conn.commit()
+            return {'statusCode': 200, 'headers': CORS, 'body': json.dumps({'ok': True})}
+
+        # Удалить заявку совсем
+        if method == 'DELETE':
+            oid = params.get('id') or body.get('id')
+            cur.execute(f"DELETE FROM {SCHEMA}.orders WHERE id=%s", (oid,))
             conn.commit()
             return {'statusCode': 200, 'headers': CORS, 'body': json.dumps({'ok': True})}
 
