@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import Icon from "@/components/ui/icon";
+import * as XLSX from "xlsx";
 
 const API_AUTH = "https://functions.poehali.dev/6687360d-0946-46fb-9ce9-015965c5b980";
 const API_PRODUCTS = "https://functions.poehali.dev/31a8d02a-8a3f-4009-b070-959140d11490";
@@ -150,6 +151,24 @@ export default function Admin() {
     if (!confirm('Удалить заказ навсегда?')) return;
     await fetch(`${API_ORDERS}?id=${id}`, { method: 'DELETE', headers: { 'X-Session-Id': sessionId } });
     loadArchive();
+  };
+
+  const exportToExcel = () => {
+    if (!stats) return;
+    const periodLabel = statsPeriod === 'today' ? 'Сегодня' : statsPeriod === 'week' ? 'Неделя' : 'Месяц';
+    const summaryData = [
+      ['Период', periodLabel],
+      ['Выполнено заказов', stats.count],
+      ['Выручка (₽)', stats.revenue],
+      [],
+      ['Товар', 'Кол-во (г/шт)', 'Сумма (₽)'],
+      ...stats.top_items.map(i => [i.name, i.qty, i.sum]),
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(summaryData);
+    ws['!cols'] = [{ wch: 40 }, { wch: 15 }, { wch: 15 }];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Бухгалтерия');
+    XLSX.writeFile(wb, `Бухгалтерия_${periodLabel}_${new Date().toLocaleDateString('ru')}.xlsx`);
   };
 
   if (checking) return <div className="min-h-screen flex items-center justify-center"><p className="text-muted-foreground">Загрузка...</p></div>;
@@ -303,13 +322,20 @@ export default function Admin() {
         {/* БУХГАЛТЕРИЯ */}
         {tab === 'stats' && (
           <div>
-            <div className="flex gap-2 mb-6">
-              {(['today', 'week', 'month'] as const).map(p => (
-                <Button key={p} size="sm" variant={statsPeriod === p ? 'default' : 'outline'}
-                  onClick={() => { setStatsPeriod(p); loadStats(p); }}>
-                  {p === 'today' ? 'Сегодня' : p === 'week' ? 'Неделя' : 'Месяц'}
+            <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
+              <div className="flex gap-2">
+                {(['today', 'week', 'month'] as const).map(p => (
+                  <Button key={p} size="sm" variant={statsPeriod === p ? 'default' : 'outline'}
+                    onClick={() => { setStatsPeriod(p); loadStats(p); }}>
+                    {p === 'today' ? 'Сегодня' : p === 'week' ? 'Неделя' : 'Месяц'}
+                  </Button>
+                ))}
+              </div>
+              {stats && !statsLoading && (
+                <Button size="sm" variant="outline" onClick={exportToExcel}>
+                  <Icon name="Download" size={14} className="mr-1" /> Скачать Excel
                 </Button>
-              ))}
+              )}
             </div>
             {statsLoading && <p className="text-muted-foreground text-center py-12">Загрузка...</p>}
             {!statsLoading && stats && (
