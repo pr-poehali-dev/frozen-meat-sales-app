@@ -60,6 +60,8 @@ export default function Admin() {
   const [newPassword2, setNewPassword2] = useState('');
   const [changePasswordError, setChangePasswordError] = useState('');
   const [changePasswordOk, setChangePasswordOk] = useState(false);
+  const [resetUsers, setResetUsers] = useState(false);
+  const [resetStats, setResetStats] = useState(false);
 
   useEffect(() => {
     setChecking(false);
@@ -426,19 +428,39 @@ export default function Admin() {
         {tab === 'stats' && (
           <div>
             {userStats && (
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="border rounded-xl p-4 bg-card text-center">
-                  <p className="text-xs text-muted-foreground mb-1">Всего покупателей</p>
-                  <p className="font-display text-3xl font-bold text-primary">{userStats.total}</p>
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-semibold text-muted-foreground">Покупатели</p>
+                  {!resetUsers
+                    ? <Button size="sm" variant="outline" onClick={() => setResetUsers(true)}><Icon name="RotateCcw" size={13} className="mr-1" />Сбросить</Button>
+                    : <span className="text-xs text-muted-foreground">Сброшено (данные в базе сохранены)</span>
+                  }
                 </div>
-                <div className="border rounded-xl p-4 bg-card text-center">
-                  <p className="text-xs text-muted-foreground mb-1">Сегодня</p>
-                  <p className="font-display text-3xl font-bold text-blue-600">+{userStats.today}</p>
-                </div>
-                <div className="border rounded-xl p-4 bg-card text-center">
-                  <p className="text-xs text-muted-foreground mb-1">За неделю</p>
-                  <p className="font-display text-3xl font-bold text-green-600">+{userStats.week}</p>
-                </div>
+                {!resetUsers ? (
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="border rounded-xl p-4 bg-card text-center">
+                      <p className="text-xs text-muted-foreground mb-1">Всего покупателей</p>
+                      <p className="font-display text-3xl font-bold text-primary">{userStats.total}</p>
+                    </div>
+                    <div className="border rounded-xl p-4 bg-card text-center">
+                      <p className="text-xs text-muted-foreground mb-1">Сегодня</p>
+                      <p className="font-display text-3xl font-bold text-blue-600">+{userStats.today}</p>
+                    </div>
+                    <div className="border rounded-xl p-4 bg-card text-center">
+                      <p className="text-xs text-muted-foreground mb-1">За неделю</p>
+                      <p className="font-display text-3xl font-bold text-green-600">+{userStats.week}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-3 gap-4">
+                    {['Всего покупателей', 'Сегодня', 'За неделю'].map(label => (
+                      <div key={label} className="border rounded-xl p-4 bg-card text-center">
+                        <p className="text-xs text-muted-foreground mb-1">{label}</p>
+                        <p className="font-display text-3xl font-bold text-muted-foreground">0</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
             <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
@@ -459,14 +481,23 @@ export default function Admin() {
             {statsLoading && <p className="text-muted-foreground text-center py-12">Загрузка...</p>}
             {!statsLoading && stats && (
               <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="border rounded-xl p-5 bg-card text-center">
-                    <p className="text-xs text-muted-foreground mb-1">Выполнено заказов</p>
-                    <p className="font-display text-4xl font-bold text-primary">{stats.count}</p>
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-sm font-semibold text-muted-foreground">Продажи</p>
+                    {!resetStats
+                      ? <Button size="sm" variant="outline" onClick={() => setResetStats(true)}><Icon name="RotateCcw" size={13} className="mr-1" />Сбросить</Button>
+                      : <span className="text-xs text-muted-foreground">Сброшено (данные в базе сохранены)</span>
+                    }
                   </div>
-                  <div className="border rounded-xl p-5 bg-card text-center">
-                    <p className="text-xs text-muted-foreground mb-1">Выручка</p>
-                    <p className="font-display text-4xl font-bold text-green-600">{stats.revenue.toLocaleString('ru')} ₽</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="border rounded-xl p-5 bg-card text-center">
+                      <p className="text-xs text-muted-foreground mb-1">Выполнено заказов</p>
+                      <p className="font-display text-4xl font-bold text-primary">{resetStats ? 0 : stats.count}</p>
+                    </div>
+                    <div className="border rounded-xl p-5 bg-card text-center">
+                      <p className="text-xs text-muted-foreground mb-1">Выручка</p>
+                      <p className="font-display text-4xl font-bold text-green-600">{resetStats ? '0' : stats.revenue.toLocaleString('ru')} ₽</p>
+                    </div>
                   </div>
                 </div>
                 {stats.top_items.length > 0 && (
