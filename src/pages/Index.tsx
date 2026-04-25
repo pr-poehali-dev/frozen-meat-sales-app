@@ -502,7 +502,7 @@ export default function Index() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-2xl">
             <Badge className="mb-6 bg-primary/20 text-primary border-primary/30 font-body text-xs animate-fade-in-up">
-              🔥 Если есть в наличии — доставка от 2 часов · Принимаем заказы за 2–3 дня
+              🔥 Доставка от 15 минут · Принимаем заказы за 2–3 дня
             </Badge>
 
             <h1 className="font-display text-5xl md:text-7xl font-bold leading-none mb-6 animate-fade-in-up delay-100">
@@ -538,7 +538,7 @@ export default function Index() {
               {[
                 { value: "500+", label: "Постоянных клиентов" },
                 { value: "24ч", label: "Срок свежести" },
-                { value: "2ч", label: "Скорость доставки" },
+                { value: "15мин", label: "Скорость доставки" },
               ].map(s => (
                 <div key={s.label}>
                   <div className="font-display text-2xl font-bold text-primary">{s.value}</div>
@@ -660,8 +660,7 @@ export default function Index() {
             <h3 className="font-display text-2xl font-bold mb-4">Доставка</h3>
             <ul className="space-y-3">
               {[
-                { icon: "Clock", text: "Доставка от 2 до 4 часов после оформления заказа" },
-                { icon: "MapPin", text: "По всему городу и пригороду в радиусе 30 км" },
+                { icon: "Clock", text: "Доставка от 15 минут после оформления заказа" },
                 { icon: "Package", text: "Бесплатная доставка при заказе от 2000 ₽" },
                 { icon: "Snowflake", text: "Изотермические сумки — продукты сохраняют свежесть" },
               ].map(item => (
