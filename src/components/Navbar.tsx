@@ -38,7 +38,10 @@ export default function Navbar({ cartCount, mobileMenu, setMobileMenu, scrollTo 
         </div>
 
         <div className="flex items-center gap-3">
-          <a href="/account" className="p-2 text-muted-foreground hover:text-foreground transition-colors" title="Личный кабинет">
+          <a href="/account" className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors" title="Личный кабинет">
+            <Icon name="User" size={15} /> Войти
+          </a>
+          <a href="/account" className="md:hidden p-2 text-primary" title="Личный кабинет">
             <Icon name="User" size={20} />
           </a>
           <button className="relative p-2 text-muted-foreground hover:text-foreground transition-colors">

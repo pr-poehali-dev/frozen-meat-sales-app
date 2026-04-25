@@ -111,6 +111,8 @@ export default function Index() {
   const [loyaltyChecked, setLoyaltyChecked] = useState('');
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState('');
+  const [showAuthPopup, setShowAuthPopup] = useState(false);
+  const isLoggedIn = () => !!localStorage.getItem('user_session');
 
   const handleGeolocate = () => {
     if (!navigator.geolocation) { setGeoError('Геолокация не поддерживается браузером'); return; }
@@ -247,6 +249,7 @@ export default function Index() {
   const getQtyStep = (p: { priceUnit: string }) => isByPiece(p) ? 1 : 100;
 
   const addToCart = (id: number) => {
+    if (!isLoggedIn()) { setShowAuthPopup(true); return; }
     const p = products.find(x => x.id === id)!;
     setCart(prev => ({ ...prev, [id]: 1 }));
     setCartQty(prev => ({ ...prev, [id]: prev[id] || getDefaultQty(p) }));
@@ -358,6 +361,25 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+
+      {/* ПОПАП АВТОРИЗАЦИИ */}
+      {showAuthPopup && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60" onClick={() => setShowAuthPopup(false)}>
+          <div className="bg-card border border-border rounded-2xl p-7 w-full max-w-sm shadow-2xl text-center" onClick={e => e.stopPropagation()}>
+            <div className="text-4xl mb-3">🔐</div>
+            <h2 className="font-display text-xl font-bold mb-2">Войдите или зарегистрируйтесь</h2>
+            <p className="text-muted-foreground text-sm mb-6">Чтобы добавлять товары и оформлять заказы, нужен личный кабинет</p>
+            <div className="flex flex-col gap-3">
+              <a href="/account" className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-primary text-white rounded-xl font-display font-bold hover:bg-primary/90 transition-colors">
+                <Icon name="User" size={18} /> Войти / Зарегистрироваться
+              </a>
+              <button onClick={() => setShowAuthPopup(false)} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Продолжить просмотр
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* КОРЗИНА */}
       {cartOpen && (
