@@ -54,22 +54,19 @@ export default function Navbar({ cartCount, mobileMenu, setMobileMenu, scrollTo 
 
         <div className="flex items-center gap-3">
           {userName ? (
-            <div className="hidden md:flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <a href="/account" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-secondary text-foreground rounded-lg text-sm font-semibold hover:bg-secondary/80 transition-colors">
-                <Icon name="User" size={15} /> {userName}
+                <Icon name="User" size={15} /> <span className="hidden sm:inline">{userName}</span>
               </a>
               <button onClick={handleLogout} className="inline-flex items-center gap-1 px-2 py-1.5 text-muted-foreground hover:text-red-500 text-sm transition-colors" title="Выйти">
                 <Icon name="LogOut" size={16} />
               </button>
             </div>
           ) : (
-            <a href="/account" className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors">
+            <a href="/account" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors">
               <Icon name="User" size={15} /> Войти
             </a>
           )}
-          <a href="/account" className="md:hidden p-2 text-primary">
-            <Icon name="User" size={20} />
-          </a>
           <button className="relative p-2 text-muted-foreground hover:text-foreground transition-colors">
             <Icon name="ShoppingCart" size={20} />
             {cartCount > 0 && (
