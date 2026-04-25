@@ -73,6 +73,7 @@ export default function Index() {
   const [cartOrderSending, setCartOrderSending] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
   const [showDelivery, setShowDelivery] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'sbp' | 'cash' | 'terminal' | ''>('');
   const [deliveryForm, setDeliveryForm] = useState({ name: '', phone: '', street: '', house: '', entrance: '', apartment: '', floor: '', intercom: '', comment: '' });
   const [deliverySent, setDeliverySent] = useState(false);
   const [deliverySending, setDeliverySending] = useState(false);
@@ -83,7 +84,7 @@ export default function Index() {
     const items = cartItems.map(p => ({ name: p.name, qty: cartQty[p.id] || 1, price: p.price, sum: getItemPrice(p) }));
     await fetch("https://functions.poehali.dev/36d594d4-0de1-47a0-8704-a93dc25f659a", {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...deliveryForm, items, total: cartTotal })
+      body: JSON.stringify({ ...deliveryForm, items, total: cartTotal + DELIVERY_COST, delivery_cost: DELIVERY_COST, payment_method: PAYMENT_LABELS[paymentMethod as string] || paymentMethod })
     });
     setDeliverySending(false);
     setDeliverySent(true);
@@ -161,6 +162,8 @@ export default function Index() {
   const cartItems = products.filter(p => cart[p.id]);
   const cartCount = cartItems.length;
   const cartTotal = cartItems.reduce((sum, p) => sum + getItemPrice(p), 0);
+  const DELIVERY_COST = cartTotal >= 2000 ? 0 : 250;
+  const PAYMENT_LABELS: Record<string, string> = { sbp: 'СБП', cash: 'Наличные курьеру', terminal: 'Терминал (карта курьеру)' };
 
   const scrollTo = (href: string) => {
     const el = document.querySelector(href);
@@ -239,23 +242,85 @@ export default function Index() {
             )}
 
             {cartItems.length > 0 && showPayment && !showDelivery && (
-              <div className="border-t px-5 py-6 flex flex-col items-center gap-4 overflow-y-auto flex-1">
+              <div className="border-t px-5 py-6 flex flex-col gap-4 overflow-y-auto flex-1">
                 <button onClick={() => setShowPayment(false)} className="self-start flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
                   <Icon name="ChevronLeft" size={16} /> Назад
                 </button>
-                <p className="font-display text-xl font-bold">Оплата {cartTotal} ₽</p>
-                <p className="text-sm text-muted-foreground text-center">Отсканируйте QR-код в приложении банка</p>
-                <img
-                  src="https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/bucket/c37202ab-de78-44b5-b1b4-0ba0490e56a3.png"
-                  alt="QR СБП"
-                  className="w-64 rounded-2xl"
-                />
-                <p className="text-xs text-muted-foreground text-center leading-snug">⚠️ Оплачивайте только после подтверждения наличия товара</p>
+                <p className="font-display text-xl font-bold text-center">Оформление заказа</p>
+
+                {/* Итог с доставкой */}
+                <div className="bg-secondary rounded-2xl p-4 space-y-2">
+                  <div className="flex justify-between font-body text-sm">
+                    <span className="text-muted-foreground">Товары</span>
+                    <span className="font-semibold">{cartTotal} ₽</span>
+                  </div>
+                  <div className="flex justify-between font-body text-sm">
+                    <span className="text-muted-foreground">Доставка</span>
+                    {cartTotal >= 2000
+                      ? <span className="font-semibold text-primary">Бесплатно</span>
+                      : <span className="font-semibold">250 ₽</span>
+                    }
+                  </div>
+                  {cartTotal < 2000 && (
+                    <p className="text-xs text-muted-foreground">Добавьте ещё на {2000 - cartTotal} ₽ для бесплатной доставки</p>
+                  )}
+                  <div className="border-t border-border pt-2 flex justify-between font-body text-sm">
+                    <span className="font-bold">Итого</span>
+                    <span className="font-bold text-primary">{cartTotal >= 2000 ? cartTotal : cartTotal + 250} ₽</span>
+                  </div>
+                </div>
+
+                {/* Способ оплаты */}
+                <div>
+                  <p className="font-body text-sm font-semibold mb-3">Способ оплаты</p>
+                  <div className="space-y-2">
+                    {[
+                      { id: 'sbp' as const, icon: 'Smartphone', label: 'СБП (QR-код)', sub: 'Оплата через приложение банка' },
+                      { id: 'cash' as const, icon: 'Banknote', label: 'Наличными курьеру', sub: 'Оплата при получении' },
+                      { id: 'terminal' as const, icon: 'CreditCard', label: 'Картой через терминал', sub: 'Терминал у курьера при доставке' },
+                    ].map(m => (
+                      <button
+                        key={m.id}
+                        onClick={() => setPaymentMethod(m.id)}
+                        className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-colors text-left ${paymentMethod === m.id ? 'border-primary bg-primary/10' : 'border-border bg-secondary hover:border-primary/50'}`}
+                      >
+                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${paymentMethod === m.id ? 'bg-primary text-white' : 'bg-background text-muted-foreground'}`}>
+                          <Icon name={m.icon as Parameters<typeof Icon>[0]["name"]} size={18} />
+                        </div>
+                        <div>
+                          <p className="font-body text-sm font-semibold leading-tight">{m.label}</p>
+                          <p className="font-body text-xs text-muted-foreground">{m.sub}</p>
+                        </div>
+                        {paymentMethod === m.id && <Icon name="CheckCircle" size={18} className="text-primary ml-auto shrink-0" />}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* QR для СБП */}
+                {paymentMethod === 'sbp' && (
+                  <div className="flex flex-col items-center gap-3">
+                    <img
+                      src="https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/bucket/c37202ab-de78-44b5-b1b4-0ba0490e56a3.png"
+                      alt="QR СБП"
+                      className="w-56 rounded-2xl"
+                    />
+                    <p className="text-xs text-muted-foreground text-center">⚠️ Оплачивайте только после подтверждения наличия товара</p>
+                  </div>
+                )}
+
+                {(paymentMethod === 'cash' || paymentMethod === 'terminal') && (
+                  <div className="bg-primary/10 border border-primary/30 rounded-xl p-3 text-sm text-primary font-body">
+                    {paymentMethod === 'cash' ? '💵 Оплата наличными курьеру при доставке' : '💳 Курьер привезёт терминал для оплаты картой'}
+                  </div>
+                )}
+
                 <button
-                  onClick={() => setShowDelivery(true)}
-                  className="w-full bg-primary hover:bg-primary/90 text-white font-display font-bold rounded-2xl py-4 text-base tracking-wide transition-colors"
+                  onClick={() => { if (paymentMethod) setShowDelivery(true); }}
+                  disabled={!paymentMethod}
+                  className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-display font-bold rounded-2xl py-4 text-base tracking-wide transition-colors"
                 >
-                  Оплатил — указать адрес доставки →
+                  {paymentMethod === 'sbp' ? 'Оплатил — указать адрес →' : paymentMethod ? 'Указать адрес доставки →' : 'Выберите способ оплаты'}
                 </button>
               </div>
             )}
