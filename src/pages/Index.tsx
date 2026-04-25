@@ -74,7 +74,7 @@ export default function Index() {
   const [showPayment, setShowPayment] = useState(false);
   const [showDelivery, setShowDelivery] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'sbp' | 'cash' | 'terminal' | ''>('');
-  const [deliveryForm, setDeliveryForm] = useState({ name: '', phone: '', street: '', house: '', entrance: '', apartment: '', floor: '', intercom: '', comment: '', district: '' });
+  const [deliveryForm, setDeliveryForm] = useState({ name: '', phone: '', street: '', house: '', entrance: '', apartment: '', floor: '', intercom: '', comment: '', district: '', locality: '', distance_km: '' });
   const [deliverySent, setDeliverySent] = useState(false);
   const [deliverySending, setDeliverySending] = useState(false);
   const [cancelSeconds, setCancelSeconds] = useState(0);
@@ -210,24 +210,28 @@ export default function Index() {
   const cartTotal = cartItems.reduce((sum, p) => sum + getItemPrice(p), 0);
   const PAYMENT_LABELS: Record<string, string> = { sbp: 'СБП', cash: 'Наличные курьеру', terminal: 'Терминал (карта курьеру)' };
 
-  const DISTRICTS = ['Октябрьский', 'Правобережный', 'Свердловский', 'Ленинский'];
+  const DISTRICTS = ['Октябрьский', 'Правобережный', 'Свердловский', 'Ленинский', 'За пределы города'];
+  const isOutOfCity = deliveryForm.district === 'За пределы города';
+  const distanceKm = parseInt(deliveryForm.distance_km) || 0;
+  const outOfCityCost = isOutOfCity && distanceKm > 0 ? Math.ceil(distanceKm / 10) * 150 : 0;
 
   const getDeliveryInfo = () => {
     const now = new Date();
     const hour = now.getHours();
-    const isEvening = hour >= 18 || hour < 0; // 18:00 - 00:00
+    const isEvening = hour >= 18 || hour < 0;
     const isDay = hour >= 10 && hour < 18;
-    if (!isDay && !isEvening) return null; // недоступно
+    if (!isDay && !isEvening) return null;
     const basePrice = cartTotal >= 2000 ? 0 : 250;
-    const deliveryCost = isEvening ? basePrice * 2 : basePrice;
+    const cityDeliveryCost = isEvening ? basePrice * 2 : basePrice;
+    const deliveryCost = cityDeliveryCost + outOfCityCost;
     const deliveryMinutes = isEvening ? 60 : 45;
     const arrivalTime = new Date(now.getTime() + deliveryMinutes * 60 * 1000);
     const arrivalStr = arrivalTime.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-    return { deliveryCost, deliveryMinutes, arrivalStr, isEvening };
+    return { deliveryCost, deliveryMinutes, arrivalStr, isEvening, outOfCityCost };
   };
 
   const deliveryInfo = getDeliveryInfo();
-  const DELIVERY_COST = deliveryInfo?.deliveryCost ?? (cartTotal >= 2000 ? 0 : 250);
+  const DELIVERY_COST = deliveryInfo?.deliveryCost ?? ((cartTotal >= 2000 ? 0 : 250) + outOfCityCost);
 
   const scrollTo = (href: string) => {
     const el = document.querySelector(href);
@@ -407,8 +411,13 @@ export default function Index() {
                       <div className={`rounded-xl p-3 flex items-center gap-3 ${deliveryInfo.isEvening ? 'bg-orange-50 border border-orange-200' : 'bg-green-50 border border-green-200'}`}>
                         <Icon name="Clock" size={20} className={deliveryInfo.isEvening ? 'text-orange-500' : 'text-green-600'} />
                         <div>
-                          <p className="font-body text-sm font-semibold">Доставим через {deliveryInfo.deliveryMinutes} мин — к {deliveryInfo.arrivalStr}</p>
-                          <p className="font-body text-xs text-muted-foreground">{deliveryInfo.isEvening ? 'Вечерний тариф — доставка дороже' : 'Дневной тариф'} · Доставка: {DELIVERY_COST === 0 ? 'Бесплатно' : `${DELIVERY_COST} ₽`}</p>
+                          {!isOutOfCity && <p className="font-body text-sm font-semibold">Доставим через {deliveryInfo.deliveryMinutes} мин — к {deliveryInfo.arrivalStr}</p>}
+                          {isOutOfCity && <p className="font-body text-sm font-semibold">Доставка за пределы города — по согласованию</p>}
+                          <p className="font-body text-xs text-muted-foreground">
+                            {deliveryInfo.isEvening ? 'Вечерний тариф' : 'Дневной тариф'}
+                            {' · '}Доставка: {DELIVERY_COST === 0 ? 'Бесплатно' : `${DELIVERY_COST} ₽`}
+                            {isOutOfCity && distanceKm > 0 && ` (${distanceKm} км × 15 ₽)`}
+                          </p>
                         </div>
                       </div>
                     ) : (
