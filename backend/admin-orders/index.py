@@ -90,8 +90,19 @@ def handler(event: dict, context) -> dict:
             items_rows = cur.fetchall()
             top_items = [{'name': r[0], 'qty': float(r[1]), 'sum': int(r[2])} for r in items_rows]
 
+            # Заказы по дням
+            cur.execute(f"""
+                SELECT DATE(created_at) as day, COUNT(*), COALESCE(SUM(total), 0)
+                FROM {SCHEMA}.orders
+                WHERE status = 'done' AND {date_filter}
+                GROUP BY DATE(created_at)
+                ORDER BY day DESC
+            """)
+            days_rows = cur.fetchall()
+            by_day = [{'day': r[0].strftime('%d.%m.%Y'), 'count': r[1], 'revenue': int(r[2])} for r in days_rows]
+
             return {'statusCode': 200, 'headers': CORS, 'body': json.dumps({
-                'ok': True, 'count': count, 'revenue': revenue, 'top_items': top_items
+                'ok': True, 'count': count, 'revenue': revenue, 'top_items': top_items, 'by_day': by_day
             })}
 
         # Создать новую заявку (с сайта)

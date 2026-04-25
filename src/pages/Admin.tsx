@@ -15,7 +15,7 @@ const CATEGORIES = ["Пельмени", "Вареники", "Позы / Хинк
 const STATUS_LABELS: Record<string, string> = { new: "Новая", in_progress: "В работе", done: "Выполнена", cancelled: "Отменена", archived: "Архив" };
 const STATUS_COLORS: Record<string, string> = { new: "bg-blue-100 text-blue-700", in_progress: "bg-yellow-100 text-yellow-700", done: "bg-green-100 text-green-700", cancelled: "bg-gray-100 text-gray-500", archived: "bg-gray-100 text-gray-400" };
 
-interface Stats { count: number; revenue: number; top_items: { name: string; qty: number; sum: number }[] }
+interface Stats { count: number; revenue: number; top_items: { name: string; qty: number; sum: number }[]; by_day: { day: string; count: number; revenue: number }[] }
 
 interface Product {
   id: number; name: string; category: string; description: string;
@@ -156,6 +156,7 @@ export default function Admin() {
   const exportToExcel = () => {
     if (!stats) return;
     const periodLabel = statsPeriod === 'today' ? 'Сегодня' : statsPeriod === 'week' ? 'Неделя' : 'Месяц';
+
     const summaryData = [
       ['Период', periodLabel],
       ['Выполнено заказов', stats.count],
@@ -164,10 +165,19 @@ export default function Admin() {
       ['Товар', 'Кол-во (г/шт)', 'Сумма (₽)'],
       ...stats.top_items.map(i => [i.name, i.qty, i.sum]),
     ];
-    const ws = XLSX.utils.aoa_to_sheet(summaryData);
-    ws['!cols'] = [{ wch: 40 }, { wch: 15 }, { wch: 15 }];
+    const ws1 = XLSX.utils.aoa_to_sheet(summaryData);
+    ws1['!cols'] = [{ wch: 40 }, { wch: 15 }, { wch: 15 }];
+
+    const byDayData = [
+      ['Дата', 'Заказов', 'Выручка (₽)'],
+      ...stats.by_day.map(d => [d.day, d.count, d.revenue]),
+    ];
+    const ws2 = XLSX.utils.aoa_to_sheet(byDayData);
+    ws2['!cols'] = [{ wch: 15 }, { wch: 10 }, { wch: 15 }];
+
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Бухгалтерия');
+    XLSX.utils.book_append_sheet(wb, ws1, 'Сводка');
+    XLSX.utils.book_append_sheet(wb, ws2, 'По дням');
     XLSX.writeFile(wb, `Бухгалтерия_${periodLabel}_${new Date().toLocaleDateString('ru')}.xlsx`);
   };
 
@@ -368,6 +378,23 @@ export default function Admin() {
                 )}
                 {stats.top_items.length === 0 && (
                   <p className="text-muted-foreground text-center py-8">Нет выполненных заказов за этот период</p>
+                )}
+
+                {stats.by_day.length > 0 && (
+                  <div className="border rounded-xl bg-card overflow-hidden">
+                    <div className="px-5 py-3 border-b bg-secondary/40">
+                      <p className="font-semibold text-sm">Заказы по дням</p>
+                    </div>
+                    <div className="divide-y">
+                      {stats.by_day.map((d, i) => (
+                        <div key={i} className="flex items-center justify-between px-5 py-3 gap-4">
+                          <p className="text-sm font-medium w-28">{d.day}</p>
+                          <p className="text-xs text-muted-foreground flex-1">{d.count} заказ{d.count === 1 ? '' : d.count < 5 ? 'а' : 'ов'}</p>
+                          <p className="text-sm font-bold text-green-600 w-24 text-right">{d.revenue.toLocaleString('ru')} ₽</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
               </div>
             )}
