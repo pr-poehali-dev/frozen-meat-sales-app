@@ -963,6 +963,7 @@ export default function Index() {
               {[
                 { icon: "Smartphone", text: "Онлайн картой Visa, Mastercard, МИР" },
                 { icon: "Wallet", text: "СБП — перевод по номеру телефона" },
+                { icon: "QrCode", text: "Оплата по QR-коду через приложение банка" },
                 { icon: "Banknote", text: "Наличными курьеру при получении" },
                 { icon: "Shield", text: "Безопасная оплата — шифрование данных" },
               ].map(item => (
@@ -974,7 +975,7 @@ export default function Index() {
             </ul>
             <div className="mt-6 pt-6 border-t border-border">
               <div className="flex gap-3">
-                {["💳 Карта", "📱 СБП", "💵 Наличные"].map(m => (
+                {["💳 Карта", "📱 СБП", "📲 QR-код", "💵 Наличные"].map(m => (
                   <span key={m} className="px-3 py-1.5 bg-secondary rounded-lg font-body text-xs text-foreground">
                     {m}
                   </span>
