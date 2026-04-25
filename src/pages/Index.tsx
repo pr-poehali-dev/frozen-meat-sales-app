@@ -524,9 +524,9 @@ export default function Index() {
                               disabled={cancelLoading}
                               onClick={async () => {
                                 setCancelLoading(true);
-                                await fetch("https://functions.poehali.dev/010513ea-3143-4cc6-9e47-d5722ea1790b", {
+                                await fetch("https://functions.poehali.dev/36d594d4-0de1-47a0-8704-a93dc25f659a", {
                                   method: 'PUT', headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ id: lastOrderId, status: 'cancelled' })
+                                  body: JSON.stringify({ order_id: lastOrderId, name: deliveryForm.name, phone: deliveryForm.phone })
                                 });
                                 setCancelLoading(false);
                                 setCancelled(true);

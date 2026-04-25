@@ -4,8 +4,10 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
 import urllib.request
+import psycopg2
 from datetime import datetime
 
+SCHEMA = "t_p10284751_frozen_meat_sales_ap"
 ADMIN_ORDERS_URL = "https://functions.poehali.dev/010513ea-3143-4cc6-9e47-d5722ea1790b"
 
 def send_telegram(token: str, chat_id: str, text: str):
@@ -15,12 +17,59 @@ def send_telegram(token: str, chat_id: str, text: str):
     with urllib.request.urlopen(req, timeout=5) as resp:
         return json.loads(resp.read())
 
+def send_email(subject: str, text: str, smtp_password: str):
+    sender = 'yupomosh@yandex.ru'
+    msg = MIMEMultipart()
+    msg['From'] = sender
+    msg['To'] = sender
+    msg['Subject'] = subject
+    msg.attach(MIMEText(text, 'plain', 'utf-8'))
+    with smtplib.SMTP_SSL('smtp.yandex.ru', 465) as server:
+        server.login(sender, smtp_password)
+        server.sendmail(sender, sender, msg.as_string())
+
 def handler(event: dict, context) -> dict:
-    """Сохранение заказа в БД, отправка письма и уведомления в Telegram владельцу"""
+    """Сохранение заказа, отмена заказа с уведомлениями, Telegram и почта"""
     if event.get('httpMethod') == 'OPTIONS':
-        return {'statusCode': 200, 'headers': {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Max-Age': '86400'}, 'body': ''}
+        return {'statusCode': 200, 'headers': {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, PUT, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Max-Age': '86400'}, 'body': ''}
 
     body = json.loads(event.get('body') or '{}')
+
+    # Отмена заказа покупателем
+    if event.get('httpMethod') == 'PUT':
+        order_id = body.get('order_id', 0)
+        name = body.get('name', '')
+        phone = body.get('phone', '')
+        now = datetime.now().strftime('%d.%m.%Y %H:%M')
+
+        conn = psycopg2.connect(os.environ['DATABASE_URL'])
+        cur = conn.cursor()
+        cur.execute(f"UPDATE {SCHEMA}.orders SET status='cancelled' WHERE id=%s", (order_id,))
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        tg_text = f"❌ <b>ОТМЕНА ЗАКАЗА #{order_id}</b>\n🕐 {now}\n👤 {name}\n📞 {phone}"
+        tg_token = os.environ.get('TELEGRAM_BOT_TOKEN', '')
+        tg_chat_id = os.environ.get('TELEGRAM_CHAT_ID', '')
+        if tg_token and tg_chat_id:
+            try:
+                send_telegram(tg_token, tg_chat_id, tg_text)
+            except Exception as e:
+                print(f"Telegram ERROR: {e}")
+
+        smtp_password = os.environ.get('YANDEX_SMTP_PASSWORD', '')
+        if smtp_password:
+            try:
+                send_email(
+                    f'❌ Отмена заказа #{order_id} — {name} {phone}',
+                    f"Заказ #{order_id} отменён покупателем.\nИмя: {name}\nТелефон: {phone}\nВремя: {now}",
+                    smtp_password
+                )
+            except Exception as e:
+                print(f"Email ERROR: {e}")
+
+        return {'statusCode': 200, 'headers': {'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'ok': True})}
 
     name = body.get('name', '')
     phone = body.get('phone', '')
