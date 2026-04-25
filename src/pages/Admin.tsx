@@ -138,6 +138,20 @@ export default function Admin() {
     loadOrders();
   };
 
+  const handleArchiveOrder = async (id: number) => {
+    await fetch(API_ORDERS, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Session-Id': sessionId },
+      body: JSON.stringify({ id, status: 'archived' })
+    });
+    loadOrders();
+  };
+
+  const handleDeleteOrder = async (id: number) => {
+    if (!confirm('Удалить заказ навсегда?')) return;
+    await fetch(`${API_ORDERS}?id=${id}`, { method: 'DELETE', headers: { 'X-Session-Id': sessionId } });
+    loadArchive();
+  };
+
   if (checking) return <div className="min-h-screen flex items-center justify-center"><p className="text-muted-foreground">Загрузка...</p></div>;
 
   if (!authed) return (
@@ -216,42 +230,121 @@ export default function Admin() {
       </header>
 
       <div className="max-w-6xl mx-auto p-6">
-        <div className="flex gap-2 mb-6">
+        <div className="flex flex-wrap gap-2 mb-6">
           <Button variant={tab === 'orders' ? 'default' : 'outline'} onClick={() => setTab('orders')}>
             <Icon name="ClipboardList" size={16} className="mr-2" />
-            Заявки ({orders.filter(o => o.status === 'new').length} новых)
+            Заявки {orders.filter(o => o.status === 'new').length > 0 && <span className="ml-1 bg-white text-primary rounded-full px-1.5 text-xs font-bold">{orders.filter(o => o.status === 'new').length}</span>}
+          </Button>
+          <Button variant={tab === 'archive' ? 'default' : 'outline'} onClick={() => { setTab('archive'); loadArchive(); }}>
+            <Icon name="Archive" size={16} className="mr-2" /> Архив
+          </Button>
+          <Button variant={tab === 'stats' ? 'default' : 'outline'} onClick={() => { setTab('stats'); loadStats(statsPeriod); }}>
+            <Icon name="BarChart2" size={16} className="mr-2" /> Бухгалтерия
           </Button>
           <Button variant={tab === 'products' ? 'default' : 'outline'} onClick={() => setTab('products')}>
-            <Icon name="Package" size={16} className="mr-2" />
-            Товары ({products.length})
+            <Icon name="Package" size={16} className="mr-2" /> Товары ({products.length})
           </Button>
         </div>
 
         {/* ЗАЯВКИ */}
         {tab === 'orders' && (
           <div className="space-y-4">
-            {orders.length === 0 && <p className="text-muted-foreground text-center py-12">Заявок пока нет</p>}
+            {orders.length === 0 && <p className="text-muted-foreground text-center py-12">Активных заявок нет</p>}
             {orders.map(order => (
-              <div key={order.id} className="border rounded-xl p-5 bg-card">
+              <div key={order.id} className={`border rounded-xl p-5 bg-card ${order.status === 'new' ? 'border-primary/40' : ''}`}>
                 <div className="flex items-start justify-between gap-4 flex-wrap">
-                  <div>
+                  <div className="flex-1 min-w-0">
                     <p className="font-semibold text-base">{order.name}</p>
                     <p className="text-sm text-muted-foreground">{order.phone} {order.email && `• ${order.email}`}</p>
-                    {order.message && <p className="text-sm mt-2 text-foreground">{order.message}</p>}
+                    {order.message && <p className="text-sm mt-2 text-foreground whitespace-pre-line">{order.message}</p>}
                     <p className="text-xs text-muted-foreground mt-1">{new Date(order.created_at).toLocaleString('ru')}</p>
                   </div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_COLORS[order.status]}`}>
-                      {STATUS_LABELS[order.status]}
-                    </span>
-                    <select className="border rounded px-2 py-1 text-xs bg-background"
-                      value={order.status} onChange={e => handleOrderStatus(order.id, e.target.value)}>
-                      {Object.entries(STATUS_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-                    </select>
+                  <div className="flex flex-col gap-2 shrink-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className={`text-xs font-medium px-2 py-1 rounded-full ${STATUS_COLORS[order.status] || ''}`}>
+                        {STATUS_LABELS[order.status] || order.status}
+                      </span>
+                      <select className="border rounded px-2 py-1 text-xs bg-background"
+                        value={order.status} onChange={e => handleOrderStatus(order.id, e.target.value)}>
+                        {Object.entries(STATUS_LABELS).filter(([v]) => v !== 'archived').map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                      </select>
+                    </div>
+                    <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white text-xs" onClick={() => handleArchiveOrder(order.id)}>
+                      <Icon name="CheckCheck" size={13} className="mr-1" /> В архив
+                    </Button>
                   </div>
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* АРХИВ */}
+        {tab === 'archive' && (
+          <div className="space-y-4">
+            {archive.length === 0 && <p className="text-muted-foreground text-center py-12">Архив пуст</p>}
+            {archive.map(order => (
+              <div key={order.id} className="border rounded-xl p-5 bg-card opacity-70">
+                <div className="flex items-start justify-between gap-4 flex-wrap">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm">{order.name} • {order.phone}</p>
+                    {order.message && <p className="text-xs mt-1 text-muted-foreground whitespace-pre-line line-clamp-3">{order.message}</p>}
+                    <p className="text-xs text-muted-foreground mt-1">{new Date(order.created_at).toLocaleString('ru')}</p>
+                  </div>
+                  <Button size="sm" variant="outline" onClick={() => handleDeleteOrder(order.id)}>
+                    <Icon name="Trash2" size={13} className="mr-1" /> Удалить
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* БУХГАЛТЕРИЯ */}
+        {tab === 'stats' && (
+          <div>
+            <div className="flex gap-2 mb-6">
+              {(['today', 'week', 'month'] as const).map(p => (
+                <Button key={p} size="sm" variant={statsPeriod === p ? 'default' : 'outline'}
+                  onClick={() => { setStatsPeriod(p); loadStats(p); }}>
+                  {p === 'today' ? 'Сегодня' : p === 'week' ? 'Неделя' : 'Месяц'}
+                </Button>
+              ))}
+            </div>
+            {statsLoading && <p className="text-muted-foreground text-center py-12">Загрузка...</p>}
+            {!statsLoading && stats && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="border rounded-xl p-5 bg-card text-center">
+                    <p className="text-xs text-muted-foreground mb-1">Выполнено заказов</p>
+                    <p className="font-display text-4xl font-bold text-primary">{stats.count}</p>
+                  </div>
+                  <div className="border rounded-xl p-5 bg-card text-center">
+                    <p className="text-xs text-muted-foreground mb-1">Выручка</p>
+                    <p className="font-display text-4xl font-bold text-green-600">{stats.revenue.toLocaleString('ru')} ₽</p>
+                  </div>
+                </div>
+                {stats.top_items.length > 0 && (
+                  <div className="border rounded-xl bg-card overflow-hidden">
+                    <div className="px-5 py-3 border-b bg-secondary/40">
+                      <p className="font-semibold text-sm">Продано по товарам</p>
+                    </div>
+                    <div className="divide-y">
+                      {stats.top_items.map((item, i) => (
+                        <div key={i} className="flex items-center justify-between px-5 py-3 gap-4">
+                          <p className="text-sm font-medium flex-1">{item.name}</p>
+                          <p className="text-xs text-muted-foreground">{item.qty % 1 === 0 ? item.qty : item.qty.toFixed(0)} г/шт</p>
+                          <p className="text-sm font-bold text-green-600 w-24 text-right">{item.sum.toLocaleString('ru')} ₽</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {stats.top_items.length === 0 && (
+                  <p className="text-muted-foreground text-center py-8">Нет выполненных заказов за этот период</p>
+                )}
+              </div>
+            )}
           </div>
         )}
 
