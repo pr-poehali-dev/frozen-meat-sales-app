@@ -752,7 +752,7 @@ export default function Index() {
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-2xl">
             <Badge className="mb-6 bg-primary/20 text-primary border-primary/30 font-body text-xs animate-fade-in-up">
-              🔥 Доставка от 15 минут · Принимаем заказы за 2–3 дня
+              🔥 Доставка от 15 минут · Под заказ 1–2 дня · На вашу дату
             </Badge>
 
             <h1 className="font-display text-5xl md:text-7xl font-bold leading-none mb-6 animate-fade-in-up delay-100">
