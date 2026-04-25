@@ -199,6 +199,26 @@ export default function Admin() {
     loadArchive();
   };
 
+  const [selectedArchive, setSelectedArchive] = useState<Set<number>>(new Set());
+
+  const toggleSelectArchive = (id: number) => {
+    setSelectedArchive(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) { next.delete(id); } else { next.add(id); }
+      return next;
+    });
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedArchive.size === 0) return;
+    if (!confirm(`Удалить ${selectedArchive.size} заказ(ов) навсегда?`)) return;
+    await Promise.all([...selectedArchive].map(id =>
+      fetch(`${API_ORDERS}?id=${id}`, { method: 'DELETE', headers: { 'X-Session-Id': sessionId } })
+    ));
+    setSelectedArchive(new Set());
+    loadArchive();
+  };
+
   const exportToExcel = () => {
     if (!stats) return;
     const periodLabel = statsPeriod === 'today' ? 'Сегодня' : statsPeriod === 'week' ? 'Неделя' : 'Месяц';
@@ -398,24 +418,34 @@ export default function Admin() {
         {/* АРХИВ */}
         {tab === 'archive' && (
           <div className="space-y-4">
+            {archive.length > 0 && (
+              <div className="flex items-center gap-3 flex-wrap">
+                <Button size="sm" variant="outline" onClick={() => setSelectedArchive(selectedArchive.size === archive.length ? new Set() : new Set(archive.map(o => o.id)))}>
+                  <Icon name={selectedArchive.size === archive.length ? "SquareCheck" : "Square"} size={14} className="mr-1" />
+                  {selectedArchive.size === archive.length ? 'Снять всё' : 'Выбрать все'}
+                </Button>
+                {selectedArchive.size > 0 && (
+                  <Button size="sm" variant="destructive" onClick={handleDeleteSelected}>
+                    <Icon name="Trash2" size={14} className="mr-1" /> Удалить выбранные ({selectedArchive.size})
+                  </Button>
+                )}
+              </div>
+            )}
             {archive.length === 0 && <p className="text-muted-foreground text-center py-12">Архив пуст</p>}
             {archive.map(order => (
-              <div key={order.id} className="border rounded-xl p-5 bg-card opacity-70">
+              <div key={order.id} className={`border rounded-xl p-5 bg-card opacity-70 cursor-pointer transition-colors ${selectedArchive.has(order.id) ? 'border-primary bg-primary/5' : ''}`} onClick={() => toggleSelectArchive(order.id)}>
                 <div className="flex items-start justify-between gap-4 flex-wrap">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm">{order.name} • {order.phone}</p>
-                    {order.delivery_date && (
-                      <div className="inline-flex items-center gap-1 mt-1 px-2 py-0.5 bg-orange-100 border border-orange-300 rounded-lg">
-                        <Icon name="CalendarClock" size={12} className="text-orange-600 shrink-0" />
-                        <span className="text-xs font-bold text-orange-700">
-                          {new Date(order.delivery_date).toLocaleDateString('ru', { day: 'numeric', month: 'long' })}
-                        </span>
-                      </div>
-                    )}
-                    {order.message && <p className="text-xs mt-1 text-muted-foreground whitespace-pre-line line-clamp-3">{order.message}</p>}
-                    <p className="text-xs text-muted-foreground mt-1">{new Date(order.created_at).toLocaleString('ru')}</p>
+                  <div className="flex items-start gap-3 flex-1 min-w-0">
+                    <div className={`mt-0.5 w-4 h-4 rounded border-2 flex-shrink-0 flex items-center justify-center ${selectedArchive.has(order.id) ? 'bg-primary border-primary' : 'border-muted-foreground'}`}>
+                      {selectedArchive.has(order.id) && <Icon name="Check" size={10} className="text-white" />}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm">{order.name} • {order.phone}</p>
+                      {order.message && <p className="text-xs mt-1 text-muted-foreground whitespace-pre-line line-clamp-3">{order.message}</p>}
+                      <p className="text-xs text-muted-foreground mt-1">{new Date(order.created_at).toLocaleString('ru')}</p>
+                    </div>
                   </div>
-                  <Button size="sm" variant="outline" onClick={() => handleDeleteOrder(order.id)}>
+                  <Button size="sm" variant="outline" onClick={e => { e.stopPropagation(); handleDeleteOrder(order.id); }}>
                     <Icon name="Trash2" size={13} className="mr-1" /> Удалить
                   </Button>
                 </div>
