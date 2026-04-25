@@ -951,9 +951,12 @@ export default function Index() {
               ))}
             </div>
 
-            <p className="font-body text-xs text-muted-foreground">
-              © 2025 Фабрикант Юрко. Все права защищены.
-            </p>
+            <div className="flex items-center gap-4">
+              <p className="font-body text-xs text-muted-foreground">
+                © 2025 Фабрикант Юрко. Все права защищены.
+              </p>
+              <a href="/admin" className="font-body text-xs text-muted-foreground/30 hover:text-muted-foreground transition-colors">⚙</a>
+            </div>
           </div>
           <div className="border-t border-border mt-6 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
             <p className="font-body text-xs text-muted-foreground">
