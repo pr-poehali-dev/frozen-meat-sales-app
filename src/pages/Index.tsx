@@ -81,6 +81,7 @@ export default function Index() {
   const [cancelLoading, setCancelLoading] = useState(false);
   const [cancelled, setCancelled] = useState(false);
   const [lastOrderId, setLastOrderId] = useState<number>(0);
+  const [siteClosed, setSiteClosed] = useState(false);
   const [discount, setDiscount] = useState(0);
   const [orderCount, setOrderCount] = useState(0);
   const [showLoyaltyPopup, setShowLoyaltyPopup] = useState(false);
@@ -167,7 +168,12 @@ export default function Index() {
   useEffect(() => {
     fetch(API_PRODUCTS)
       .then(r => r.json())
-      .then(d => { if (d.ok) setProducts(d.products); })
+      .then(d => {
+        if (d.ok) {
+          setProducts(d.products);
+          if (d.site_closed) setSiteClosed(true);
+        }
+      })
       .finally(() => setProductsLoading(false));
   }, []);
 
@@ -279,6 +285,18 @@ export default function Index() {
   };
 
   const QR_URL = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/bucket/23de37a0-6e3e-470a-aad2-4570b0f3757c.png";
+
+  if (siteClosed) return (
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center text-center px-4">
+      <div className="text-7xl mb-6">🥩</div>
+      <h1 className="font-display text-4xl font-bold mb-4">ФАБРИКАНТ <span className="text-primary">ЮРКО</span></h1>
+      <p className="font-display text-2xl font-semibold mb-3">Сейчас не принимаем заказы</p>
+      <p className="font-body text-muted-foreground text-lg mb-8 max-w-md">Мы скоро вернёмся! Позвоните нам или напишите — мы уточним время работы.</p>
+      <a href="tel:88004441419" className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-xl font-display text-lg font-bold hover:bg-primary/90 transition-colors">
+        <Icon name="Phone" size={20} /> 8 800 444-14-19
+      </a>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -933,6 +951,30 @@ export default function Index() {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* ПРОГРАММА ЛОЯЛЬНОСТИ */}
+      <section className="py-20 container mx-auto px-4">
+        <div className="text-center mb-12">
+          <p className="font-body text-primary text-sm font-medium mb-2 uppercase tracking-widest">Для постоянных клиентов</p>
+          <h2 className="font-display text-4xl md:text-5xl font-bold">ПРОГРАММА ЛОЯЛЬНОСТИ</h2>
+          <p className="font-body text-muted-foreground mt-4 max-w-xl mx-auto">Чем больше заказываете — тем больше экономите. Скидка применяется автоматически при оформлении заказа.</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          {[
+            { orders: '3 заказа', discount: '5%', icon: '🥩', desc: 'Начало пути', color: 'border-amber-200 bg-amber-50', textColor: 'text-amber-700' },
+            { orders: '10 заказов', discount: '15%', icon: '🏆', desc: 'Постоянный клиент', color: 'border-primary/30 bg-primary/5', textColor: 'text-primary' },
+            { orders: '20 заказов', discount: '25%', icon: '👑', desc: 'VIP клиент', color: 'border-purple-200 bg-purple-50', textColor: 'text-purple-700' },
+          ].map((tier, i) => (
+            <div key={i} className={`border-2 ${tier.color} rounded-2xl p-8 text-center`}>
+              <div className="text-5xl mb-4">{tier.icon}</div>
+              <p className={`font-display text-5xl font-bold ${tier.textColor} mb-2`}>{tier.discount}</p>
+              <p className="font-display text-lg font-semibold mb-1">от {tier.orders}</p>
+              <p className="font-body text-sm text-muted-foreground">{tier.desc}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-center text-sm text-muted-foreground mt-8">Скидка определяется автоматически по номеру телефона при оформлении заказа</p>
       </section>
 
       {/* КОНТАКТЫ */}

@@ -41,6 +41,8 @@ export default function Admin() {
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [tab, setTab] = useState<'orders' | 'archive' | 'stats' | 'products'>('orders');
+  const [siteClosed, setSiteClosed] = useState(false);
+  const [siteClosedLoading, setSiteClosedLoading] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [archive, setArchive] = useState<Order[]>([]);
@@ -64,7 +66,19 @@ export default function Admin() {
     if (!authed) return;
     loadProducts();
     loadOrders();
+    fetch(`${API_ORDERS}?type=site_status`, { headers: { 'X-Session-Id': sessionId } })
+      .then(r => r.json()).then(d => { if (d.ok) setSiteClosed(d.site_closed); });
   }, [authed]);
+
+  const toggleSite = async () => {
+    setSiteClosedLoading(true);
+    const res = await fetch(API_ORDERS, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Session-Id': sessionId },
+      body: JSON.stringify({ action: 'toggle_site', site_closed: !siteClosed })
+    }).then(r => r.json());
+    if (res.ok) setSiteClosed(res.site_closed);
+    setSiteClosedLoading(false);
+  };
 
   const loadProducts = () =>
     fetch(API_PRODUCTS, { headers: { 'X-Session-Id': sessionId } })
@@ -250,7 +264,15 @@ export default function Admin() {
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card px-6 py-4 flex items-center justify-between">
         <h1 className="font-display text-xl font-bold">Личный кабинет</h1>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          <button
+            onClick={toggleSite}
+            disabled={siteClosedLoading}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-semibold border transition-colors ${siteClosed ? 'bg-red-500 text-white border-red-500 hover:bg-red-600' : 'bg-green-500 text-white border-green-500 hover:bg-green-600'}`}
+          >
+            <Icon name={siteClosed ? "MoonStar" : "Sun"} size={14} />
+            {siteClosed ? 'Не беспокоить' : 'Работаем'}
+          </button>
           <a href="/" target="_blank">
             <Button variant="outline" size="sm"><Icon name="ExternalLink" size={14} className="mr-1" />На сайт</Button>
           </a>

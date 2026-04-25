@@ -12,12 +12,23 @@ CORS = {
 }
 
 def handler(event: dict, context) -> dict:
-    """Публичный список активных товаров для каталога на сайте"""
+    """Публичный список товаров и статус сайта"""
     if event.get('httpMethod') == 'OPTIONS':
         return {'statusCode': 200, 'headers': CORS, 'body': ''}
 
     conn = psycopg2.connect(os.environ['DATABASE_URL'])
     cur = conn.cursor()
+
+    # Проверка статуса сайта
+    cur.execute(f"SELECT value FROM {SCHEMA}.settings WHERE key='site_closed'")
+    row = cur.fetchone()
+    site_closed = row and row[0] == 'true'
+
+    if site_closed:
+        cur.close()
+        conn.close()
+        return {'statusCode': 200, 'headers': CORS, 'body': json.dumps({'ok': True, 'site_closed': True, 'products': []}, ensure_ascii=False)}
+
     cur.execute(f"""
         SELECT id, name, category, description, price, price_unit, badge, img_url, in_stock, available_date
         FROM {SCHEMA}.products
@@ -36,4 +47,4 @@ def handler(event: dict, context) -> dict:
         }
         for r in rows
     ]
-    return {'statusCode': 200, 'headers': CORS, 'body': json.dumps({'ok': True, 'products': products}, ensure_ascii=False)}
+    return {'statusCode': 200, 'headers': CORS, 'body': json.dumps({'ok': True, 'site_closed': False, 'products': products}, ensure_ascii=False)}

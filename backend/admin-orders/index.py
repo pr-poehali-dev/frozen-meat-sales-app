@@ -124,6 +124,18 @@ def handler(event: dict, context) -> dict:
                 'ok': True, 'count': count, 'revenue': revenue, 'top_items': top_items, 'by_day': by_day
             })}
 
+        # Получить/переключить режим "Не беспокоить"
+        if method == 'GET' and params.get('type') == 'site_status':
+            cur.execute(f"SELECT value FROM {SCHEMA}.settings WHERE key='site_closed'")
+            row = cur.fetchone()
+            return {'statusCode': 200, 'headers': CORS, 'body': json.dumps({'ok': True, 'site_closed': row and row[0] == 'true'})}
+
+        if method == 'PUT' and body.get('action') == 'toggle_site':
+            closed = 'true' if body.get('site_closed') else 'false'
+            cur.execute(f"UPDATE {SCHEMA}.settings SET value=%s, updated_at=NOW() WHERE key='site_closed'", (closed,))
+            conn.commit()
+            return {'statusCode': 200, 'headers': CORS, 'body': json.dumps({'ok': True, 'site_closed': closed == 'true'})}
+
         # Создать новую заявку (с сайта)
         if method == 'POST':
             cur.execute(
