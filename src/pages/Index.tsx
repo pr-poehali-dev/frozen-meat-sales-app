@@ -718,6 +718,13 @@ export default function Index() {
                     {product.badge}
                   </Badge>
                 )}
+                {!product.inStock && (
+                  <div className="absolute inset-0 bg-black/40 flex items-end">
+                    <div className="w-full bg-orange-500 text-white text-center py-1.5 font-body text-xs font-semibold">
+                      Под заказ{product.availableDate ? ` — с ${product.availableDate}` : ''}
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="p-4">
                 <p className="font-body text-xs text-muted-foreground mb-1">{product.category}</p>
@@ -730,7 +737,7 @@ export default function Index() {
                   </div>
                   <button
                     onClick={() => addToCart(product.id)}
-                    className="w-9 h-9 bg-primary hover:bg-primary/80 text-white rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-110"
+                    className={`w-9 h-9 text-white rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-110 ${product.inStock !== false ? 'bg-primary hover:bg-primary/80' : 'bg-orange-500 hover:bg-orange-600'}`}
                   >
                     <Icon name="Plus" size={16} />
                   </button>

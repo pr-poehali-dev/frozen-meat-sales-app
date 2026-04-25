@@ -190,7 +190,12 @@ export default function Admin() {
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card px-6 py-4 flex items-center justify-between">
         <h1 className="font-display text-xl font-bold">Личный кабинет</h1>
-        <Button variant="outline" size="sm" onClick={handleLogout}>Выйти</Button>
+        <div className="flex gap-2">
+          <a href="/" target="_blank">
+            <Button variant="outline" size="sm"><Icon name="ExternalLink" size={14} className="mr-1" />На сайт</Button>
+          </a>
+          <Button variant="outline" size="sm" onClick={handleLogout}>Выйти</Button>
+        </div>
       </header>
 
       <div className="max-w-6xl mx-auto p-6">
