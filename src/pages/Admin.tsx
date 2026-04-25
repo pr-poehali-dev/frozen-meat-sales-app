@@ -155,19 +155,19 @@ export default function Admin() {
           <button
             type="button"
             onClick={() => { onChange('in_stock', true); onChange('available_date', null); }}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-colors ${data.in_stock ? 'bg-green-500 text-white border-green-500' : 'bg-background border-border text-muted-foreground'}`}
+            className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-colors ${data.in_stock !== false ? 'bg-green-500 text-white border-green-500' : 'bg-background border-border text-muted-foreground'}`}
           >
             В наличии
           </button>
           <button
             type="button"
             onClick={() => onChange('in_stock', false)}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-colors ${!data.in_stock ? 'bg-orange-500 text-white border-orange-500' : 'bg-background border-border text-muted-foreground'}`}
+            className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-colors ${data.in_stock === false ? 'bg-orange-500 text-white border-orange-500' : 'bg-background border-border text-muted-foreground'}`}
           >
             Под заказ
           </button>
         </div>
-        {!data.in_stock && (
+        {data.in_stock === false && (
           <div>
             <label className="text-xs text-muted-foreground mb-1 block">Ближайшая дата (когда будет готово)</label>
             <Input
