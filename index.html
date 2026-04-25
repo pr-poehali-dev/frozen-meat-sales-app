@@ -13,6 +13,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
     <meta name="author" content="Фабрикант Юрко"/>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#e63946">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Юрко">
+    <link rel="apple-touch-icon" href="https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/16bfdb7a-2eea-4ca2-83d8-04c4d03bd86a.jpg">
     <meta property="og:title" content="Фабрикант Юрко — домашние полуфабрикаты с доставкой по Иркутску">
     <meta property="og:description" content="Домашние полуфабрикаты с доставкой по Иркутску. Пельмени, вареники, котлеты, голубцы, чебуреки, долма, тефтели — без консервантов, из домашнего мяса. ">
     <meta property="og:type" content="website">
@@ -40,6 +47,13 @@
 <body>
 <div id="root"></div>
 <script type="module" src="/src/main.tsx"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js');
+    });
+  }
+</script>
 
 <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
