@@ -86,7 +86,16 @@ export default function Admin() {
 
   const loadOrders = () =>
     fetch(API_ORDERS, { headers: { 'X-Session-Id': sessionId } })
-      .then(r => r.json()).then(d => d.ok && setOrders(d.orders));
+      .then(r => r.json()).then(d => {
+        if (!d.ok) return;
+        const sorted = [...d.orders].sort((a: Order, b: Order) => {
+          if (a.delivery_date && b.delivery_date) return new Date(a.delivery_date).getTime() - new Date(b.delivery_date).getTime();
+          if (a.delivery_date) return -1;
+          if (b.delivery_date) return 1;
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        });
+        setOrders(sorted);
+      });
 
   const loadArchive = () =>
     fetch(`${API_ORDERS}?type=archive`, { headers: { 'X-Session-Id': sessionId } })
