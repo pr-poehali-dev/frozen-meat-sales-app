@@ -745,29 +745,24 @@ export default function Index() {
           </div>
 
           <div className="hidden md:flex items-center gap-4">
-            <a
-              href="tel:88004441419"
-              className="flex items-center gap-2 font-body text-sm font-semibold text-foreground hover:text-primary transition-colors duration-200"
-            >
+            <a href="tel:88004441419" className="flex items-center gap-2 font-body text-sm font-semibold text-foreground hover:text-primary transition-colors duration-200 whitespace-nowrap">
               <Icon name="Phone" size={16} className="text-primary" />
               8 800 444-14-19
             </a>
-            <a
-              href="mailto:yupomosh@yandex.ru"
-              className="flex items-center gap-2 font-body text-sm font-semibold text-foreground hover:text-primary transition-colors duration-200"
-            >
+            <a href="mailto:yupomosh@yandex.ru" className="flex items-center gap-2 font-body text-sm font-semibold text-foreground hover:text-primary transition-colors duration-200 whitespace-nowrap">
               <Icon name="Mail" size={16} className="text-primary" />
               yupomosh@yandex.ru
             </a>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {localStorage.getItem('user_name') ? (
-              <a href="/account" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-secondary text-foreground rounded-lg text-sm font-semibold hover:bg-secondary/80 transition-colors">
-                <Icon name="User" size={15} /> <span className="hidden sm:inline">{localStorage.getItem('user_name')!.split(' ')[0]}</span>
+              <a href="/account" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-secondary text-foreground rounded-lg text-sm font-semibold hover:bg-secondary/80 transition-colors whitespace-nowrap">
+                <Icon name="User" size={15} />
+                <span className="hidden sm:inline">{localStorage.getItem('user_name')!.split(' ')[0]}</span>
               </a>
             ) : (
-              <a href="/account" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors">
+              <a href="/account" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors whitespace-nowrap">
                 <Icon name="User" size={15} /> Войти
               </a>
             )}
