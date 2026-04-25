@@ -49,6 +49,7 @@ export default function Admin() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [statsPeriod, setStatsPeriod] = useState<'today' | 'week' | 'month'>('month');
   const [statsLoading, setStatsLoading] = useState(false);
+  const [userStats, setUserStats] = useState<{ total: number; today: number; week: number } | null>(null);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
   const [newProduct, setNewProduct] = useState(emptyProduct());
   const [showAddForm, setShowAddForm] = useState(false);
@@ -56,7 +57,7 @@ export default function Admin() {
 
   useEffect(() => {
     if (!sessionId) { setChecking(false); return; }
-    fetch(`${API_AUTH}/check`, { headers: { 'X-Session-Id': sessionId } })
+    fetch(`${API_AUTH}?role=admin&action=check`, { headers: { 'X-Session-Id': sessionId } })
       .then(r => r.json())
       .then(d => { if (d.ok) setAuthed(true); })
       .finally(() => setChecking(false));
@@ -68,6 +69,8 @@ export default function Admin() {
     loadOrders();
     fetch(`${API_ORDERS}?type=site_status`, { headers: { 'X-Session-Id': sessionId } })
       .then(r => r.json()).then(d => { if (d.ok) setSiteClosed(d.site_closed); });
+    fetch(`${API_AUTH}?role=admin&action=user_stats`, { headers: { 'X-Session-Id': sessionId } })
+      .then(r => r.json()).then(d => { if (d.ok) setUserStats({ total: d.total, today: d.today, week: d.week }); });
   }, [authed]);
 
   const toggleSite = async () => {
@@ -110,7 +113,7 @@ export default function Admin() {
 
   const handleLogin = async () => {
     setLoginError('');
-    const res = await fetch(API_AUTH, {
+    const res = await fetch(`${API_AUTH}?role=admin&action=login`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ login, password })
     }).then(r => r.json());
@@ -379,6 +382,22 @@ export default function Admin() {
         {/* БУХГАЛТЕРИЯ */}
         {tab === 'stats' && (
           <div>
+            {userStats && (
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="border rounded-xl p-4 bg-card text-center">
+                  <p className="text-xs text-muted-foreground mb-1">Всего покупателей</p>
+                  <p className="font-display text-3xl font-bold text-primary">{userStats.total}</p>
+                </div>
+                <div className="border rounded-xl p-4 bg-card text-center">
+                  <p className="text-xs text-muted-foreground mb-1">Сегодня</p>
+                  <p className="font-display text-3xl font-bold text-blue-600">+{userStats.today}</p>
+                </div>
+                <div className="border rounded-xl p-4 bg-card text-center">
+                  <p className="text-xs text-muted-foreground mb-1">За неделю</p>
+                  <p className="font-display text-3xl font-bold text-green-600">+{userStats.week}</p>
+                </div>
+              </div>
+            )}
             <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
               <div className="flex gap-2">
                 {(['today', 'week', 'month'] as const).map(p => (

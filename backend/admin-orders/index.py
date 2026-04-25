@@ -7,7 +7,7 @@ SCHEMA = "t_p10284751_frozen_meat_sales_ap"
 CORS = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, X-Session-Id',
+    'Access-Control-Allow-Headers': 'Content-Type, X-Session-Id, X-User-Session',
     'Content-Type': 'application/json'
 }
 
@@ -24,6 +24,30 @@ def handler(event: dict, context) -> dict:
     cur = conn.cursor()
 
     try:
+        # История заказов пользователя (по сессии)
+        if method == 'GET' and params.get('type') == 'my_orders':
+            user_session = event.get('headers', {}).get('X-User-Session', '')
+            cur.execute(f"SELECT user_id FROM {SCHEMA}.user_sessions WHERE session_id = %s", (user_session,))
+            row = cur.fetchone()
+            if not row:
+                return {'statusCode': 401, 'headers': CORS, 'body': json.dumps({'ok': False, 'error': 'Не авторизован'})}
+            user_id = row[0]
+            cur.execute(f"""
+                SELECT id, name, phone, message, status, created_at, total, items, delivery_cost
+                FROM {SCHEMA}.orders
+                WHERE user_id = %s
+                ORDER BY created_at DESC
+                LIMIT 50
+            """, (user_id,))
+            rows = cur.fetchall()
+            orders = [
+                {'id': r[0], 'name': r[1], 'phone': r[2], 'message': r[3],
+                 'status': r[4], 'created_at': r[5].isoformat(),
+                 'total': r[6], 'items': r[7], 'delivery_cost': r[8]}
+                for r in rows
+            ]
+            return {'statusCode': 200, 'headers': CORS, 'body': json.dumps({'ok': True, 'orders': orders})}
+
         # Проверка лояльности по телефону
         if method == 'GET' and params.get('type') == 'loyalty':
             phone = params.get('phone', '').strip()

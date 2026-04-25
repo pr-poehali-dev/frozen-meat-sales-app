@@ -150,15 +150,46 @@ def handler(event: dict, context) -> dict:
     address = f"ул. {street}, д. {house}" + (f", подъезд {entrance}" if entrance else '') + (f", кв. {apartment}" if apartment else '') + (f", этаж {floor}" if floor else '') + (f", домофон {intercom}" if intercom else '')
     message = f"Имя: {name}\nРайон: {district}\nАдрес: {address}\nСостав:\n{items_text}\nИтого: {total} ₽\nДоставка: {delivery_cost} ₽\nОплата: {payment_method}\nКомментарий: {comment or '—'}"
 
+    # Получаем user_id по сессии если пользователь авторизован
+    user_session = event.get('headers', {}).get('X-User-Session', '')
+    user_id = None
+    if user_session:
+        try:
+            conn_u = psycopg2.connect(os.environ['DATABASE_URL'])
+            cur_u = conn_u.cursor()
+            cur_u.execute(f"SELECT user_id FROM {SCHEMA}.user_sessions WHERE session_id = %s", (user_session,))
+            row_u = cur_u.fetchone()
+            if row_u:
+                user_id = row_u[0]
+            cur_u.close()
+            conn_u.close()
+        except Exception:
+            pass
+
     order_id = 0
     try:
-        save_data = json.dumps({'name': name, 'phone': phone, 'message': message}).encode('utf-8')
-        req = urllib.request.Request(ADMIN_ORDERS_URL, data=save_data, headers={'Content-Type': 'application/json'}, method='POST')
-        with urllib.request.urlopen(req, timeout=5) as resp:
-            result = json.loads(resp.read())
-            order_id = result.get('id', 0)
-    except Exception:
-        pass
+        conn_o = psycopg2.connect(os.environ['DATABASE_URL'])
+        cur_o = conn_o.cursor()
+        import json as _json
+        items_json = _json.dumps(items, ensure_ascii=False)
+        cur_o.execute(
+            f"INSERT INTO {SCHEMA}.orders (name, phone, message, items, total, delivery_cost, user_id) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id",
+            (name, phone, message, items_json, total, delivery_cost, user_id)
+        )
+        order_id = cur_o.fetchone()[0]
+        conn_o.commit()
+        cur_o.close()
+        conn_o.close()
+    except Exception as e:
+        print(f"DB save ERROR: {e}")
+        try:
+            save_data = json.dumps({'name': name, 'phone': phone, 'message': message}).encode('utf-8')
+            req = urllib.request.Request(ADMIN_ORDERS_URL, data=save_data, headers={'Content-Type': 'application/json'}, method='POST')
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                result = json.loads(resp.read())
+                order_id = result.get('id', 0)
+        except Exception:
+            pass
 
     preorder_warning = ''
     if preorder_items:

@@ -125,8 +125,9 @@ export default function Index() {
     setDeliverySending(true);
     const items = cartItems.map(p => ({ name: p.name, qty: cartQty[p.id] || 1, price: p.price, sum: getItemPrice(p), inStock: p.inStock, availableDate: p.availableDate }));
     const info = getDeliveryInfo();
+    const userSession = localStorage.getItem('user_session') || '';
     const res = await fetch("https://functions.poehali.dev/36d594d4-0de1-47a0-8704-a93dc25f659a", {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json', ...(userSession ? { 'X-User-Session': userSession } : {}) },
       body: JSON.stringify({
         ...deliveryForm,
         items,
@@ -324,9 +325,7 @@ export default function Index() {
       <a href="tel:88004441419" className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-xl font-display text-lg font-bold hover:bg-primary/90 transition-colors">
         <Icon name="Phone" size={20} /> 8 800 444-14-19
       </a>
-      <a href="/admin" className="mt-6 text-muted-foreground text-sm underline underline-offset-4 hover:text-foreground transition-colors">
-        Войти в панель управления
-      </a>
+
     </div>
   );
 

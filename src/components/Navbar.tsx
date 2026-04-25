@@ -38,6 +38,9 @@ export default function Navbar({ cartCount, mobileMenu, setMobileMenu, scrollTo 
         </div>
 
         <div className="flex items-center gap-3">
+          <a href="/account" className="p-2 text-muted-foreground hover:text-foreground transition-colors" title="Личный кабинет">
+            <Icon name="User" size={20} />
+          </a>
           <button className="relative p-2 text-muted-foreground hover:text-foreground transition-colors">
             <Icon name="ShoppingCart" size={20} />
             {cartCount > 0 && (

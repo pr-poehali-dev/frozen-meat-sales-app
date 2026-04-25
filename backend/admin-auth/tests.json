@@ -1,19 +1,46 @@
 {
   "tests": [
     {
-      "name": "Login with wrong credentials",
+      "name": "Admin login wrong",
       "method": "POST",
-      "path": "/",
+      "path": "/?role=admin&action=login",
       "body": {"login": "wrong", "password": "wrong"},
       "expectedStatus": 401,
       "expectedBody": {"ok": false},
       "bodyMatcher": "partial"
     },
     {
-      "name": "Login with correct credentials",
+      "name": "Admin login correct",
       "method": "POST",
-      "path": "/",
+      "path": "/?role=admin&action=login",
       "body": {"login": "admin", "password": "admin2024"},
+      "expectedStatus": 200,
+      "expectedBody": {"ok": true},
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "User register",
+      "method": "POST",
+      "path": "/?role=user&action=register",
+      "body": {"phone": "+79991110001", "name": "Тест", "password": "test1234"},
+      "expectedStatus": 200,
+      "expectedBody": {"ok": true},
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "User login wrong",
+      "method": "POST",
+      "path": "/?role=user&action=login",
+      "body": {"phone": "+79991110001", "password": "wrongpass"},
+      "expectedStatus": 401,
+      "expectedBody": {"ok": false},
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "User login correct",
+      "method": "POST",
+      "path": "/?role=user&action=login",
+      "body": {"phone": "+79991110001", "password": "test1234"},
       "expectedStatus": 200,
       "expectedBody": {"ok": true},
       "bodyMatcher": "partial"
