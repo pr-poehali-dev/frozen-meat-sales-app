@@ -388,7 +388,7 @@ export default function Index() {
           </div>
 
           <div className="flex items-center gap-3">
-            <button onClick={() => setCartOpen(true)} className="relative p-2 text-muted-foreground hover:text-foreground transition-colors">
+            <button onClick={() => setCartOpen(true)} className="relative p-2 text-muted-foreground hover:text-foreground transition-colors" style={{zIndex: 9999, position: 'relative'}}>
               <Icon name="ShoppingCart" size={20} />
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full text-[10px] text-white font-bold flex items-center justify-center">
