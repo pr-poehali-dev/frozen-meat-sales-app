@@ -221,7 +221,8 @@ export default function Index() {
     const isEvening = hour >= 18 || hour < 0;
     const isDay = hour >= 10 && hour < 18;
     if (!isDay && !isEvening) return null;
-    const basePrice = cartTotal >= 3000 ? 0 : 250;
+    const freeThreshold = isOutOfCity ? 3000 : 2000;
+    const basePrice = cartTotal >= freeThreshold ? 0 : 250;
     const cityDeliveryCost = isEvening ? basePrice * 2 : basePrice;
     const deliveryCost = cityDeliveryCost + outOfCityCost;
     const deliveryMinutes = isEvening ? 60 : 45;
@@ -231,7 +232,8 @@ export default function Index() {
   };
 
   const deliveryInfo = getDeliveryInfo();
-  const DELIVERY_COST = deliveryInfo?.deliveryCost ?? ((cartTotal >= 3000 ? 0 : 250) + outOfCityCost);
+  const freeThreshold = isOutOfCity ? 3000 : 2000;
+  const DELIVERY_COST = deliveryInfo?.deliveryCost ?? ((cartTotal >= freeThreshold ? 0 : 250) + outOfCityCost);
 
   const scrollTo = (href: string) => {
     const el = document.querySelector(href);
@@ -329,17 +331,17 @@ export default function Index() {
                   </div>
                   <div className="flex justify-between font-body text-sm">
                     <span className="text-muted-foreground">Доставка</span>
-                    {cartTotal >= 3000
+                    {cartTotal >= freeThreshold
                       ? <span className="font-semibold text-primary">Бесплатно</span>
                       : <span className="font-semibold">250 ₽</span>
                     }
                   </div>
-                  {cartTotal < 3000 && (
-                    <p className="text-xs text-muted-foreground">Добавьте ещё на {3000 - cartTotal} ₽ для бесплатной доставки</p>
+                  {cartTotal < freeThreshold && (
+                    <p className="text-xs text-muted-foreground">Добавьте ещё на {freeThreshold - cartTotal} ₽ для бесплатной доставки</p>
                   )}
                   <div className="border-t border-border pt-2 flex justify-between font-body text-sm">
                     <span className="font-bold">Итого</span>
-                    <span className="font-bold text-primary">{cartTotal >= 3000 ? cartTotal : cartTotal + 250} ₽</span>
+                    <span className="font-bold text-primary">{cartTotal >= freeThreshold ? cartTotal : cartTotal + 250} ₽</span>
                   </div>
                 </div>
 
