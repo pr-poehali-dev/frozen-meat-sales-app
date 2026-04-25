@@ -34,7 +34,7 @@ const emptyProduct = (): Omit<Product, 'id'> => ({
 });
 
 export default function Admin() {
-  const [sessionId, setSessionId] = useState(() => localStorage.getItem('admin_session') || '');
+  const [sessionId, setSessionId] = useState('');
   const [authed, setAuthed] = useState(false);
   const [checking, setChecking] = useState(true);
   const [login, setLogin] = useState('');
@@ -54,13 +54,15 @@ export default function Admin() {
   const [newProduct, setNewProduct] = useState(emptyProduct());
   const [showAddForm, setShowAddForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [newPassword2, setNewPassword2] = useState('');
+  const [changePasswordError, setChangePasswordError] = useState('');
+  const [changePasswordOk, setChangePasswordOk] = useState(false);
 
   useEffect(() => {
-    if (!sessionId) { setChecking(false); return; }
-    fetch(`${API_AUTH}?role=admin&action=check`, { headers: { 'X-Session-Id': sessionId } })
-      .then(r => r.json())
-      .then(d => { if (d.ok) setAuthed(true); })
-      .finally(() => setChecking(false));
+    setChecking(false);
   }, []);
 
   useEffect(() => {
@@ -118,7 +120,6 @@ export default function Admin() {
       body: JSON.stringify({ login, password })
     }).then(r => r.json());
     if (res.ok) {
-      localStorage.setItem('admin_session', res.session_id);
       setSessionId(res.session_id);
       setAuthed(true);
     } else {
@@ -127,8 +128,25 @@ export default function Admin() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('admin_session');
     setSessionId(''); setAuthed(false);
+  };
+
+  const handleChangePassword = async () => {
+    setChangePasswordError('');
+    if (!oldPassword || !newPassword || !newPassword2) { setChangePasswordError('Заполните все поля'); return; }
+    if (newPassword !== newPassword2) { setChangePasswordError('Новые пароли не совпадают'); return; }
+    if (newPassword.length < 6) { setChangePasswordError('Минимум 6 символов'); return; }
+    const res = await fetch(`${API_AUTH}?role=admin&action=change_password`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Session-Id': sessionId },
+      body: JSON.stringify({ old_password: oldPassword, new_password: newPassword })
+    }).then(r => r.json());
+    if (res.ok) {
+      setChangePasswordOk(true);
+      setOldPassword(''); setNewPassword(''); setNewPassword2('');
+      setTimeout(() => { setShowChangePassword(false); setChangePasswordOk(false); }, 2000);
+    } else {
+      setChangePasswordError(res.error || 'Ошибка');
+    }
   };
 
   const handleSaveProduct = async () => {
@@ -288,9 +306,34 @@ export default function Admin() {
           <a href="/" target="_blank">
             <Button variant="outline" size="sm"><Icon name="ExternalLink" size={14} className="mr-1" />На сайт</Button>
           </a>
+          <Button variant="outline" size="sm" onClick={() => setShowChangePassword(true)}>
+            <Icon name="KeyRound" size={14} className="mr-1" />Пароль
+          </Button>
           <Button variant="outline" size="sm" onClick={handleLogout}>Выйти</Button>
         </div>
       </header>
+
+      {showChangePassword && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-sm shadow-xl">
+            <h2 className="font-display text-lg font-bold mb-4">Смена пароля</h2>
+            {changePasswordOk ? (
+              <p className="text-green-600 font-semibold text-center py-4">✅ Пароль успешно изменён</p>
+            ) : (
+              <div className="space-y-3">
+                <Input type="password" placeholder="Текущий пароль" value={oldPassword} onChange={e => setOldPassword(e.target.value)} />
+                <Input type="password" placeholder="Новый пароль" value={newPassword} onChange={e => setNewPassword(e.target.value)} />
+                <Input type="password" placeholder="Повторите новый пароль" value={newPassword2} onChange={e => setNewPassword2(e.target.value)} />
+                {changePasswordError && <p className="text-red-500 text-sm">{changePasswordError}</p>}
+                <div className="flex gap-2 mt-2">
+                  <Button className="flex-1" onClick={handleChangePassword}>Сохранить</Button>
+                  <Button variant="outline" className="flex-1" onClick={() => { setShowChangePassword(false); setChangePasswordError(''); setOldPassword(''); setNewPassword(''); setNewPassword2(''); }}>Отмена</Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="max-w-6xl mx-auto p-6">
         <div className="flex flex-wrap gap-2 mb-6">

@@ -3,6 +3,8 @@ import os
 import hashlib
 import secrets
 import psycopg2
+import urllib.request
+from datetime import datetime
 
 SCHEMA = "t_p10284751_frozen_meat_sales_ap"
 
@@ -11,6 +13,13 @@ def get_conn():
 
 def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
+
+def send_telegram(token: str, chat_id: str, text: str):
+    url = f"https://api.telegram.org/bot{token}/sendMessage"
+    data = json.dumps({'chat_id': chat_id, 'text': text, 'parse_mode': 'HTML'}).encode('utf-8')
+    req = urllib.request.Request(url, data=data, headers={'Content-Type': 'application/json'}, method='POST')
+    with urllib.request.urlopen(req, timeout=5) as resp:
+        return json.loads(resp.read())
 
 def handler(event: dict, context) -> dict:
     """Авторизация администратора и покупателей. role=admin|user, action=login|register|check|logout"""
@@ -49,9 +58,45 @@ def handler(event: dict, context) -> dict:
                 cur.execute(f"INSERT INTO {SCHEMA}.admin_sessions (session_id, admin_id, login) VALUES (%s, %s, %s)", (session_id, row[0], login))
                 conn.commit()
                 cur.close(); conn.close()
+                ip = (event.get('requestContext') or {}).get('identity', {}).get('sourceIp', '—')
+                now = datetime.now().strftime('%d.%m.%Y %H:%M')
+                tg_token = os.environ.get('TELEGRAM_BOT_TOKEN', '')
+                tg_chat_id = os.environ.get('TELEGRAM_CHAT_ID', '')
+                if tg_token and tg_chat_id:
+                    try:
+                        send_telegram(tg_token, tg_chat_id, f"🔐 <b>Вход в админку</b>\n🕐 {now}\n👤 Логин: {login}\n🌐 IP: {ip}")
+                    except Exception as e:
+                        print(f"TG error: {e}")
                 return {'statusCode': 200, 'headers': headers, 'body': json.dumps({'ok': True, 'session_id': session_id})}
             cur.close(); conn.close()
             return {'statusCode': 401, 'headers': headers, 'body': json.dumps({'ok': False, 'error': 'Неверный логин или пароль'})}
+
+        # Смена пароля админа
+        if method == 'POST' and action == 'change_password':
+            session_id = event.get('headers', {}).get('X-Session-Id', '')
+            conn = get_conn(); cur = conn.cursor()
+            cur.execute(f"SELECT admin_id FROM {SCHEMA}.admin_sessions WHERE session_id = %s", (session_id,))
+            row = cur.fetchone()
+            if not row:
+                cur.close(); conn.close()
+                return {'statusCode': 401, 'headers': headers, 'body': json.dumps({'ok': False, 'error': 'Не авторизован'})}
+            admin_id = row[0]
+            body = json.loads(event.get('body') or '{}')
+            old_password = body.get('old_password', '')
+            new_password = body.get('new_password', '')
+            if not old_password or not new_password:
+                cur.close(); conn.close()
+                return {'statusCode': 400, 'headers': headers, 'body': json.dumps({'ok': False, 'error': 'Заполните все поля'})}
+            old_hash = hashlib.md5(old_password.encode()).hexdigest()
+            cur.execute(f"SELECT id FROM {SCHEMA}.admin_users WHERE id = %s AND password_hash = %s", (admin_id, old_hash))
+            if not cur.fetchone():
+                cur.close(); conn.close()
+                return {'statusCode': 401, 'headers': headers, 'body': json.dumps({'ok': False, 'error': 'Неверный текущий пароль'})}
+            new_hash = hashlib.md5(new_password.encode()).hexdigest()
+            cur.execute(f"UPDATE {SCHEMA}.admin_users SET password_hash = %s WHERE id = %s", (new_hash, admin_id))
+            conn.commit()
+            cur.close(); conn.close()
+            return {'statusCode': 200, 'headers': headers, 'body': json.dumps({'ok': True})}
 
         if method == 'DELETE' and action == 'logout':
             session_id = event.get('headers', {}).get('X-Session-Id', '')
