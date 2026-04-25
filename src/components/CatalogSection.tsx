@@ -21,6 +21,7 @@ export default function CatalogSection({ products, productsLoading, activeCatego
         <div>
           <p className="font-body text-primary text-sm font-medium mb-2 uppercase tracking-widest">Каталог</p>
           <h2 className="font-display text-4xl md:text-5xl font-bold">ВСЕ ПРОДУКТЫ</h2>
+          <p className="font-body text-sm text-muted-foreground mt-2">Товар, помеченный <span className="text-orange-500 font-semibold">«Под заказ»</span> — срок исполнения 1–2 дня. Принимаем заказы на определённую дату.</p>
         </div>
         <div className="flex flex-wrap gap-2">
           {categories.map(cat => (
@@ -70,7 +71,7 @@ export default function CatalogSection({ products, productsLoading, activeCatego
               {!product.inStock && (
                 <div className="absolute inset-0 bg-black/40 flex items-end">
                   <div className="w-full bg-orange-500 text-white text-center py-1.5 font-body text-xs font-semibold">
-                    Под заказ{product.availableDate ? ` — с ${product.availableDate}` : ''}
+                    {product.availableDate ? `Под заказ — с ${product.availableDate}` : 'Под заказ · срок 1–2 дня'}
                   </div>
                 </div>
               )}
