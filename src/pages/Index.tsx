@@ -79,7 +79,7 @@ export default function Index() {
   const [showPayment, setShowPayment] = useState(false);
   const [showDelivery, setShowDelivery] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'sbp' | 'cash' | 'terminal' | ''>('');
-  const [deliveryForm, setDeliveryForm] = useState({ name: '', phone: '', street: '', house: '', entrance: '', apartment: '', floor: '', intercom: '', comment: '', district: '', locality: '', distance_km: '' });
+  const [deliveryForm, setDeliveryForm] = useState({ name: '', phone: '', street: '', house: '', entrance: '', apartment: '', floor: '', intercom: '', comment: '', district: '', locality: '', distance_km: '', delivery_date: '' });
   const [deliverySent, setDeliverySent] = useState(false);
   const [deliverySending, setDeliverySending] = useState(false);
   const [cancelSeconds, setCancelSeconds] = useState(0);
@@ -573,6 +573,17 @@ export default function Index() {
                         <label className="font-body text-xs text-muted-foreground mb-1 block">Домофон</label>
                         <Input placeholder="15К" value={deliveryForm.intercom} onChange={e => setDeliveryForm(f => ({ ...f, intercom: e.target.value }))} className="bg-secondary border-border font-body text-sm" />
                       </div>
+                    </div>
+                    <div>
+                      <label className="font-body text-xs text-muted-foreground mb-1 block">Желаемая дата доставки</label>
+                      <Input
+                        type="date"
+                        min={new Date().toISOString().split('T')[0]}
+                        value={deliveryForm.delivery_date}
+                        onChange={e => setDeliveryForm(f => ({ ...f, delivery_date: e.target.value }))}
+                        className="bg-secondary border-border font-body text-sm"
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">Оставьте пустым для доставки сегодня. Товары под заказ — 1–2 дня.</p>
                     </div>
                     <div>
                       <label className="font-body text-xs text-muted-foreground mb-1 block">Комментарий курьеру</label>
