@@ -7,12 +7,32 @@
   "background_color": "#0a0a0a",
   "theme_color": "#e63946",
   "orientation": "portrait",
+  "lang": "ru",
   "icons": [
     {
-      "src": "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/16bfdb7a-2eea-4ca2-83d8-04c4d03bd86a.jpg",
+      "src": "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/f9d2965e-3ea3-4a4e-8366-8f81bef1f4bc.jpg",
       "sizes": "512x512",
       "type": "image/jpeg",
       "purpose": "any maskable"
+    },
+    {
+      "src": "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/f9d2965e-3ea3-4a4e-8366-8f81bef1f4bc.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["food", "shopping"],
+  "shortcuts": [
+    {
+      "name": "Каталог",
+      "url": "/#catalog",
+      "description": "Открыть каталог товаров"
+    },
+    {
+      "name": "Доставка",
+      "url": "/#delivery",
+      "description": "Условия доставки"
     }
   ]
 }

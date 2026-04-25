@@ -1,4 +1,9 @@
 import { useState, useEffect } from "react";
+
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
 import Icon from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -82,6 +87,8 @@ export default function Index() {
   const [cancelled, setCancelled] = useState(false);
   const [lastOrderId, setLastOrderId] = useState<number>(0);
   const [siteClosed, setSiteClosed] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [discount, setDiscount] = useState(0);
   const [orderCount, setOrderCount] = useState(0);
   const [showLoyaltyPopup, setShowLoyaltyPopup] = useState(false);
@@ -176,6 +183,28 @@ export default function Index() {
       })
       .finally(() => setProductsLoading(false));
   }, []);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setInstallPrompt(e as BeforeInstallPromptEvent);
+      if (!localStorage.getItem('pwa_dismissed')) setShowInstallBanner(true);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstall = async () => {
+    if (!installPrompt) return;
+    await installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === 'accepted') setShowInstallBanner(false);
+  };
+
+  const dismissInstall = () => {
+    localStorage.setItem('pwa_dismissed', '1');
+    setShowInstallBanner(false);
+  };
 
   const acceptCookie = () => {
     localStorage.setItem("cookie_accepted", "true");
@@ -1123,6 +1152,21 @@ export default function Index() {
           </div>
         </div>
       </footer>
+
+      {/* БАННЕР УСТАНОВКИ PWA */}
+      {showInstallBanner && (
+        <div className="fixed bottom-20 left-4 right-4 z-50 bg-card border border-border rounded-2xl shadow-2xl p-4 flex items-center gap-3 max-w-sm mx-auto">
+          <img src="https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/f9d2965e-3ea3-4a4e-8366-8f81bef1f4bc.jpg" className="w-12 h-12 rounded-xl shrink-0 object-cover" alt="icon" />
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-sm">Установить приложение</p>
+            <p className="text-xs text-muted-foreground">Быстрый доступ с экрана телефона</p>
+          </div>
+          <div className="flex gap-2 shrink-0">
+            <button onClick={dismissInstall} className="text-muted-foreground hover:text-foreground p-1"><Icon name="X" size={16} /></button>
+            <Button size="sm" className="bg-primary text-white text-xs px-3" onClick={handleInstall}>Установить</Button>
+          </div>
+        </div>
+      )}
 
       {/* БАННЕР СОГЛАСИЯ */}
       {!cookieAccepted && (
