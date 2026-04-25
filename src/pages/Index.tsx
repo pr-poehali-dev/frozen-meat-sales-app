@@ -365,9 +365,9 @@ export default function Index() {
                       <Input placeholder="+7 (___) ___-__-__" value={deliveryForm.phone} onChange={e => setDeliveryForm(f => ({ ...f, phone: e.target.value }))} className="bg-secondary border-border font-body text-sm" />
                     </div>
                     <div>
-                      <label className="font-body text-xs text-muted-foreground mb-1 block">Через сколько часов доставить *</label>
-                      <div className="grid grid-cols-4 gap-2">
-                        {['2 ч', '3 ч', '4 ч', '5 ч'].map(h => (
+                      <label className="font-body text-xs text-muted-foreground mb-1 block">Через сколько доставить *</label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {['30 мин', '1 ч', '2 ч', '3 ч', '4 ч', '5 ч'].map(h => (
                           <button
                             key={h}
                             type="button"

@@ -69,9 +69,10 @@ def handler(event: dict, context) -> dict:
     tg_chat_id = os.environ.get('TELEGRAM_CHAT_ID', '')
     if tg_token and tg_chat_id:
         try:
-            send_telegram(tg_token, tg_chat_id, tg_text)
-        except Exception:
-            pass
+            result = send_telegram(tg_token, tg_chat_id, tg_text)
+            print(f"Telegram OK: {result}")
+        except Exception as e:
+            print(f"Telegram ERROR: {e}")
 
     email_text = tg_text.replace('<b>', '').replace('</b>', '')
     smtp_password = os.environ.get('YANDEX_SMTP_PASSWORD', '')
