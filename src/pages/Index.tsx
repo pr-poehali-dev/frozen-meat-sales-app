@@ -77,6 +77,32 @@ export default function Index() {
   const [deliveryForm, setDeliveryForm] = useState({ name: '', phone: '', street: '', house: '', entrance: '', apartment: '', floor: '', intercom: '', comment: '' });
   const [deliverySent, setDeliverySent] = useState(false);
   const [deliverySending, setDeliverySending] = useState(false);
+  const [geoLoading, setGeoLoading] = useState(false);
+  const [geoError, setGeoError] = useState('');
+
+  const handleGeolocate = () => {
+    if (!navigator.geolocation) { setGeoError('Геолокация не поддерживается браузером'); return; }
+    setGeoLoading(true);
+    setGeoError('');
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&addressdetails=1&accept-language=ru`);
+          const data = await res.json();
+          const addr = data.address || {};
+          const street = addr.road || addr.pedestrian || addr.footway || '';
+          const house = addr.house_number || '';
+          setDeliveryForm(f => ({ ...f, street, house }));
+        } catch {
+          setGeoError('Не удалось определить адрес');
+        }
+        setGeoLoading(false);
+      },
+      () => { setGeoError('Нет доступа к геолокации — разрешите в браузере'); setGeoLoading(false); },
+      { timeout: 10000 }
+    );
+  };
 
   const handleDeliverySubmit = async () => {
     if (!deliveryForm.name || !deliveryForm.phone || !deliveryForm.street || !deliveryForm.house) return;
@@ -352,6 +378,18 @@ export default function Index() {
                           </button>
                         ))}
                       </div>
+                    </div>
+                    <div>
+                      <button
+                        type="button"
+                        onClick={handleGeolocate}
+                        disabled={geoLoading}
+                        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-primary/40 bg-primary/10 hover:bg-primary/20 text-primary font-body text-sm font-semibold transition-colors disabled:opacity-60"
+                      >
+                        <Icon name={geoLoading ? "Loader" : "LocateFixed"} size={16} className={geoLoading ? "animate-spin" : ""} />
+                        {geoLoading ? 'Определяем местоположение...' : 'Определить моё местоположение'}
+                      </button>
+                      {geoError && <p className="text-xs text-red-500 mt-1">{geoError}</p>}
                     </div>
                     <div>
                       <label className="font-body text-xs text-muted-foreground mb-1 block">Улица *</label>
