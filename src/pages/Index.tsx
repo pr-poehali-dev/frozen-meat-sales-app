@@ -930,7 +930,8 @@ export default function Index() {
             <ul className="space-y-3">
               {[
                 { icon: "Clock", text: "Доставка от 15 минут после оформления заказа" },
-                { icon: "Package", text: "Бесплатная доставка по городу от 2000 ₽, по району от 3000 ₽" },
+                { icon: "Package", text: "Бесплатная доставка по городу при заказе от 2000 ₽" },
+                { icon: "MapPin", text: "Бесплатная доставка по району при заказе от 3000 ₽" },
                 { icon: "Snowflake", text: "Изотермические сумки — продукты сохраняют свежесть" },
               ].map(item => (
                 <li key={item.text} className="flex items-start gap-3 font-body text-sm text-muted-foreground">
