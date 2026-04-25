@@ -17,7 +17,7 @@ const STATUS_COLORS: Record<string, string> = { new: "bg-blue-100 text-blue-700"
 interface Product {
   id: number; name: string; category: string; description: string;
   price: number; price_unit: string; badge: string | null; img_url: string;
-  is_active: boolean; sort_order: number;
+  is_active: boolean; sort_order: number; in_stock: boolean; available_date: string | null;
 }
 interface Order {
   id: number; name: string; phone: string; email: string;
@@ -26,7 +26,8 @@ interface Order {
 
 const emptyProduct = (): Omit<Product, 'id'> => ({
   name: '', category: CATEGORIES[0], description: '', price: 0,
-  price_unit: 'за кг', badge: '', img_url: '', is_active: true, sort_order: 0
+  price_unit: 'за кг', badge: '', img_url: '', is_active: true, sort_order: 0,
+  in_stock: true, available_date: null
 });
 
 export default function Admin() {
@@ -137,7 +138,7 @@ export default function Admin() {
     </div>
   );
 
-  const ProductForm = ({ data, onChange }: { data: Omit<Product, 'id'> | Product, onChange: (f: string, v: string | number | boolean) => void }) => (
+  const ProductForm = ({ data, onChange }: { data: Omit<Product, 'id'> | Product, onChange: (f: string, v: string | number | boolean | null) => void }) => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
       <Input placeholder="Название" value={data.name} onChange={e => onChange('name', e.target.value)} />
       <select className="border rounded-md px-3 py-2 text-sm bg-background" value={data.category} onChange={e => onChange('category', e.target.value)}>
@@ -148,6 +149,36 @@ export default function Admin() {
       <Input placeholder="Единица (за кг, за шт...)" value={data.price_unit} onChange={e => onChange('price_unit', e.target.value)} />
       <Input placeholder="Бейдж (Хит продаж...)" value={data.badge || ''} onChange={e => onChange('badge', e.target.value)} />
       <Input placeholder="Ссылка на фото" value={data.img_url} onChange={e => onChange('img_url', e.target.value)} />
+      <div className="md:col-span-2 flex flex-col gap-3 border rounded-lg p-3 bg-secondary/40">
+        <p className="text-sm font-semibold">Наличие товара</p>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => { onChange('in_stock', true); onChange('available_date', null); }}
+            className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-colors ${data.in_stock ? 'bg-green-500 text-white border-green-500' : 'bg-background border-border text-muted-foreground'}`}
+          >
+            В наличии
+          </button>
+          <button
+            type="button"
+            onClick={() => onChange('in_stock', false)}
+            className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-colors ${!data.in_stock ? 'bg-orange-500 text-white border-orange-500' : 'bg-background border-border text-muted-foreground'}`}
+          >
+            Под заказ
+          </button>
+        </div>
+        {!data.in_stock && (
+          <div>
+            <label className="text-xs text-muted-foreground mb-1 block">Ближайшая дата (когда будет готово)</label>
+            <Input
+              type="date"
+              value={data.available_date || ''}
+              onChange={e => onChange('available_date', e.target.value || null)}
+              className="max-w-xs"
+            />
+          </div>
+        )}
+      </div>
       <label className="flex items-center gap-2 text-sm">
         <input type="checkbox" checked={data.is_active} onChange={e => onChange('is_active', e.target.checked)} />
         Показывать на сайте
@@ -242,6 +273,7 @@ export default function Admin() {
                           <p className="font-semibold text-sm">{p.name}</p>
                           {p.badge && <Badge variant="secondary" className="text-xs">{p.badge}</Badge>}
                           {!p.is_active && <Badge variant="outline" className="text-xs text-muted-foreground">Скрыт</Badge>}
+                          {!p.in_stock && <Badge className="text-xs bg-orange-100 text-orange-700 border-orange-200">Под заказ{p.available_date ? ` — ${new Date(p.available_date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}` : ''}</Badge>}
                         </div>
                         <p className="text-xs text-muted-foreground">{p.category} • {p.price} руб. {p.price_unit}</p>
                       </div>

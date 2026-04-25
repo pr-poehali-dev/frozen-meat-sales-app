@@ -26,12 +26,13 @@ def handler(event: dict, context) -> dict:
     try:
         # Получить все товары
         if method == 'GET':
-            cur.execute(f"SELECT id, name, category, description, price, price_unit, badge, img_url, is_active, sort_order FROM {SCHEMA}.products ORDER BY sort_order, id")
+            cur.execute(f"SELECT id, name, category, description, price, price_unit, badge, img_url, is_active, sort_order, in_stock, available_date FROM {SCHEMA}.products ORDER BY sort_order, id")
             rows = cur.fetchall()
             products = [
                 {'id': r[0], 'name': r[1], 'category': r[2], 'description': r[3],
                  'price': r[4], 'price_unit': r[5], 'badge': r[6], 'img_url': r[7],
-                 'is_active': r[8], 'sort_order': r[9]}
+                 'is_active': r[8], 'sort_order': r[9], 'in_stock': r[10],
+                 'available_date': r[11].strftime('%Y-%m-%d') if r[11] else None}
                 for r in rows
             ]
             return {'statusCode': 200, 'headers': CORS, 'body': json.dumps({'ok': True, 'products': products})}
@@ -51,11 +52,13 @@ def handler(event: dict, context) -> dict:
         # Обновить товар
         if method == 'PUT':
             pid = body.get('id')
+            available_date = body.get('available_date') or None
             cur.execute(
-                f"UPDATE {SCHEMA}.products SET name=%s, category=%s, description=%s, price=%s, price_unit=%s, badge=%s, img_url=%s, is_active=%s, sort_order=%s, updated_at=NOW() WHERE id=%s",
+                f"UPDATE {SCHEMA}.products SET name=%s, category=%s, description=%s, price=%s, price_unit=%s, badge=%s, img_url=%s, is_active=%s, sort_order=%s, in_stock=%s, available_date=%s, updated_at=NOW() WHERE id=%s",
                 (body.get('name'), body.get('category'), body.get('description'),
                  body.get('price'), body.get('price_unit', 'за кг'), body.get('badge'),
-                 body.get('img_url'), body.get('is_active', True), body.get('sort_order', 0), pid)
+                 body.get('img_url'), body.get('is_active', True), body.get('sort_order', 0),
+                 body.get('in_stock', True), available_date, pid)
             )
             conn.commit()
             return {'statusCode': 200, 'headers': CORS, 'body': json.dumps({'ok': True})}

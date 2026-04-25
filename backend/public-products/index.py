@@ -19,7 +19,7 @@ def handler(event: dict, context) -> dict:
     conn = psycopg2.connect(os.environ['DATABASE_URL'])
     cur = conn.cursor()
     cur.execute(f"""
-        SELECT id, name, category, description, price, price_unit, badge, img_url
+        SELECT id, name, category, description, price, price_unit, badge, img_url, in_stock, available_date
         FROM {SCHEMA}.products
         WHERE is_active = true
         ORDER BY sort_order, id
@@ -31,7 +31,8 @@ def handler(event: dict, context) -> dict:
     products = [
         {
             'id': r[0], 'name': r[1], 'category': r[2], 'desc': r[3],
-            'price': r[4], 'priceUnit': r[5], 'badge': r[6], 'img': r[7]
+            'price': r[4], 'priceUnit': r[5], 'badge': r[6], 'img': r[7],
+            'inStock': r[8], 'availableDate': r[9].strftime('%d %B').replace('January','января').replace('February','февраля').replace('March','марта').replace('April','апреля').replace('May','мая').replace('June','июня').replace('July','июля').replace('August','августа').replace('September','сентября').replace('October','октября').replace('November','ноября').replace('December','декабря') if r[9] else None
         }
         for r in rows
     ]

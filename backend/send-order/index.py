@@ -43,7 +43,16 @@ def handler(event: dict, context) -> dict:
     now = datetime.now()
     order_time = now.strftime('%d.%m.%Y %H:%M')
 
-    items_text = '\n'.join([f"  • {item['name']} — {item['qty']} × {item['price']} ₽ = {item['sum']} ₽" for item in items])
+    preorder_items = [item for item in items if not item.get('inStock', True)]
+
+    def item_line(item):
+        line = f"  • {item['name']} — {item['qty']} × {item['price']} ₽ = {item['sum']} ₽"
+        if not item.get('inStock', True):
+            d = item.get('availableDate', '')
+            line += f" [ПОД ЗАКАЗ{' — с ' + d if d else ''}]"
+        return line
+
+    items_text = '\n'.join([item_line(i) for i in items])
     address = f"ул. {street}, д. {house}" + (f", подъезд {entrance}" if entrance else '') + (f", кв. {apartment}" if apartment else '') + (f", этаж {floor}" if floor else '') + (f", домофон {intercom}" if intercom else '')
     message = f"Имя: {name}\nРайон: {district}\nАдрес: {address}\nСостав:\n{items_text}\nИтого: {total} ₽\nДоставка: {delivery_cost} ₽\nОплата: {payment_method}\nКомментарий: {comment or '—'}"
 
@@ -57,8 +66,15 @@ def handler(event: dict, context) -> dict:
     except Exception:
         pass
 
+    preorder_warning = ''
+    if preorder_items:
+        dates_list = list(set([f"с {i['availableDate']}" for i in preorder_items if i.get('availableDate')]))
+        dates = ', '.join(dates_list) if dates_list else 'дата не указана'
+        names = '\n'.join([f"  • {i['name']}" for i in preorder_items])
+        preorder_warning = f"\n\n⚠️ <b>ВНИМАНИЕ: ТОВАРЫ ПОД ЗАКАЗ ({dates})</b>\n{names}"
+
     tg_text = f"""🛒 <b>НОВЫЙ ЗАКАЗ #{order_id}</b>
-🕐 Время заказа: {order_time}
+🕐 Время заказа: {order_time}{preorder_warning}
 
 👤 Имя: {name}
 📞 Телефон: {phone}

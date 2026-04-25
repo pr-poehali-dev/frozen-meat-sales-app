@@ -44,7 +44,7 @@ const IMG_KOTLETY_DEREVENSKIE = "https://cdn.poehali.dev/projects/304bf6cf-bb93-
 const IMG_KOTLETY_KURINY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/ec17dbbb-4bea-49cb-b2a4-c843ba6529c9.jpg";
 const IMG_KOTLETY_RYBNY = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/783a165f-2abe-42c1-b181-92866370629c.jpg";
 
-interface Product { id: number; name: string; category: string; desc: string; price: number; priceUnit: string; badge: string | null; img: string; }
+interface Product { id: number; name: string; category: string; desc: string; price: number; priceUnit: string; badge: string | null; img: string; inStock: boolean; availableDate: string | null; }
 
 
 const navLinks = [
@@ -107,7 +107,7 @@ export default function Index() {
   const handleDeliverySubmit = async () => {
     if (!deliveryForm.name || !deliveryForm.phone || !deliveryForm.street || !deliveryForm.house || !deliveryForm.district) return;
     setDeliverySending(true);
-    const items = cartItems.map(p => ({ name: p.name, qty: cartQty[p.id] || 1, price: p.price, sum: getItemPrice(p) }));
+    const items = cartItems.map(p => ({ name: p.name, qty: cartQty[p.id] || 1, price: p.price, sum: getItemPrice(p), inStock: p.inStock, availableDate: p.availableDate }));
     const info = getDeliveryInfo();
     await fetch("https://functions.poehali.dev/36d594d4-0de1-47a0-8704-a93dc25f659a", {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -266,6 +266,11 @@ export default function Index() {
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-base leading-tight">{p.name}</p>
                       <p className="text-sm text-muted-foreground mt-1">{p.price} ₽ {p.priceUnit}</p>
+                      {!p.inStock && (
+                        <span className="inline-block mt-1 text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">
+                          Под заказ{p.availableDate ? ` — с ${p.availableDate}` : ''}
+                        </span>
+                      )}
                     </div>
                     <div className="flex items-center gap-1 shrink-0">
                       <button onClick={() => removeFromCart(p.id)} className="w-7 h-7 rounded-full border flex items-center justify-center hover:bg-red-50 text-red-500"><Icon name="Trash2" size={12} /></button>
