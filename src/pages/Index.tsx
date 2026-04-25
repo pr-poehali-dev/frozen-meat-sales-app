@@ -929,7 +929,7 @@ export default function Index() {
             <ul className="space-y-3">
               {[
                 { icon: "Clock", text: "Доставка от 15 минут после оформления заказа" },
-                { icon: "Package", text: "Бесплатная доставка при заказе от 2000 ₽" },
+                { icon: "Package", text: "Бесплатная доставка по городу от 2000 ₽, по району от 3000 ₽" },
                 { icon: "Snowflake", text: "Изотермические сумки — продукты сохраняют свежесть" },
               ].map(item => (
                 <li key={item.text} className="flex items-start gap-3 font-body text-sm text-muted-foreground">
@@ -944,7 +944,11 @@ export default function Index() {
                 <span className="font-semibold text-foreground">250 ₽</span>
               </div>
               <div className="flex justify-between font-body text-sm mt-2">
-                <span className="text-muted-foreground">При заказе от 2000 ₽</span>
+                <span className="text-muted-foreground">По городу от 2000 ₽</span>
+                <span className="font-semibold text-primary">Бесплатно</span>
+              </div>
+              <div className="flex justify-between font-body text-sm mt-2">
+                <span className="text-muted-foreground">По району от 3000 ₽</span>
                 <span className="font-semibold text-primary">Бесплатно</span>
               </div>
             </div>
