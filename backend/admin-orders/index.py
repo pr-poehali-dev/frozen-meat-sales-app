@@ -24,6 +24,25 @@ def handler(event: dict, context) -> dict:
     cur = conn.cursor()
 
     try:
+        # Проверка лояльности по телефону
+        if method == 'GET' and params.get('type') == 'loyalty':
+            phone = params.get('phone', '').strip()
+            cur.execute(f"""
+                SELECT COUNT(*) FROM {SCHEMA}.orders
+                WHERE REGEXP_REPLACE(phone, '[^0-9]', '', 'g') = REGEXP_REPLACE(%s, '[^0-9]', '', 'g')
+                AND status NOT IN ('cancelled')
+            """, (phone,))
+            count = cur.fetchone()[0]
+            if count >= 20:
+                discount = 25
+            elif count >= 10:
+                discount = 15
+            elif count >= 3:
+                discount = 5
+            else:
+                discount = 0
+            return {'statusCode': 200, 'headers': CORS, 'body': json.dumps({'ok': True, 'count': count, 'discount': discount})}
+
         # Получить активные заявки (не в архиве)
         if method == 'GET' and params.get('type') != 'archive' and params.get('type') != 'stats':
             cur.execute(f"""

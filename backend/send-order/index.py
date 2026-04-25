@@ -88,6 +88,9 @@ def handler(event: dict, context) -> dict:
     delivery_minutes = body.get('delivery_minutes', 45)
     arrival_time = body.get('arrival_time', '')
     is_evening = body.get('is_evening', False)
+    discount_percent = body.get('discount_percent', 0)
+    discount_amount = body.get('discount_amount', 0)
+    order_count = body.get('order_count', 0)
 
     now = datetime.now()
     order_time = now.strftime('%d.%m.%Y %H:%M')
@@ -132,7 +135,7 @@ def handler(event: dict, context) -> dict:
 📦 <b>Состав заказа:</b>
 {items_text}
 
-🚚 Доставка: {'Бесплатно' if delivery_cost == 0 else f'{delivery_cost} ₽'}{' (вечерний тариф)' if is_evening else ''}
+🚚 Доставка: {'Бесплатно' if delivery_cost == 0 else f'{delivery_cost} ₽'}{' (вечерний тариф)' if is_evening else ''}{f'{chr(10)}🎁 Скидка постоянного клиента {discount_percent}% (заказ #{order_count}): −{discount_amount} ₽' if discount_percent > 0 else ''}
 💰 <b>Итого: {total} ₽</b>
 
 🏠 <b>Адрес ({district} район):</b>

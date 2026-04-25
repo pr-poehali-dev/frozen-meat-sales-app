@@ -81,6 +81,10 @@ export default function Index() {
   const [cancelLoading, setCancelLoading] = useState(false);
   const [cancelled, setCancelled] = useState(false);
   const [lastOrderId, setLastOrderId] = useState<number>(0);
+  const [discount, setDiscount] = useState(0);
+  const [orderCount, setOrderCount] = useState(0);
+  const [showLoyaltyPopup, setShowLoyaltyPopup] = useState(false);
+  const [loyaltyChecked, setLoyaltyChecked] = useState('');
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState('');
 
@@ -118,12 +122,15 @@ export default function Index() {
       body: JSON.stringify({
         ...deliveryForm,
         items,
-        total: cartTotal + DELIVERY_COST,
+        total: cartTotalWithDiscount + DELIVERY_COST,
         delivery_cost: DELIVERY_COST,
         payment_method: PAYMENT_LABELS[paymentMethod as string] || paymentMethod,
         delivery_minutes: info?.deliveryMinutes ?? 45,
         arrival_time: info?.arrivalStr ?? '',
         is_evening: info?.isEvening ?? false,
+        discount_percent: discount,
+        discount_amount: discountAmount,
+        order_count: orderCount,
       })
     }).then(r => r.json()).catch(() => ({}));
     if (res.order_id) setLastOrderId(res.order_id);
@@ -205,6 +212,21 @@ export default function Index() {
     return qty >= 1000 ? `${qty / 1000} кг` : `${qty} г`;
   };
 
+  const checkLoyalty = async (phone: string) => {
+    const digits = phone.replace(/\D/g, '');
+    if (digits.length < 10 || loyaltyChecked === digits) return;
+    setLoyaltyChecked(digits);
+    const res = await fetch(`https://functions.poehali.dev/010513ea-3143-4cc6-9e47-d5722ea1790b?type=loyalty&phone=${encodeURIComponent(phone)}`).then(r => r.json()).catch(() => null);
+    if (res?.ok && res.discount > 0) {
+      setDiscount(res.discount);
+      setOrderCount(res.count);
+      setShowLoyaltyPopup(true);
+    } else {
+      setDiscount(0);
+      setOrderCount(0);
+    }
+  };
+
   const cartItems = products.filter(p => cart[p.id]);
   const cartCount = cartItems.length;
   const cartTotal = cartItems.reduce((sum, p) => sum + getItemPrice(p), 0);
@@ -234,6 +256,8 @@ export default function Index() {
   const deliveryInfo = getDeliveryInfo();
   const freeThreshold = isOutOfCity ? 3000 : 2000;
   const DELIVERY_COST = deliveryInfo?.deliveryCost ?? ((cartTotal >= freeThreshold ? 0 : 250) + outOfCityCost);
+  const discountAmount = discount > 0 ? Math.round(cartTotal * discount / 100) : 0;
+  const cartTotalWithDiscount = cartTotal - discountAmount;
 
   const scrollTo = (href: string) => {
     const el = document.querySelector(href);
@@ -339,9 +363,15 @@ export default function Index() {
                   {cartTotal < freeThreshold && (
                     <p className="text-xs text-muted-foreground">Добавьте ещё на {freeThreshold - cartTotal} ₽ для бесплатной доставки</p>
                   )}
+                  {discount > 0 && (
+                    <div className="flex justify-between font-body text-sm text-green-600">
+                      <span>Скидка {discount}% (заказ #{orderCount})</span>
+                      <span className="font-semibold">−{discountAmount} ₽</span>
+                    </div>
+                  )}
                   <div className="border-t border-border pt-2 flex justify-between font-body text-sm">
                     <span className="font-bold">Итого</span>
-                    <span className="font-bold text-primary">{cartTotal >= freeThreshold ? cartTotal : cartTotal + 250} ₽</span>
+                    <span className="font-bold text-primary">{cartTotalWithDiscount + (cartTotal >= freeThreshold ? 0 : 250)} ₽</span>
                   </div>
                 </div>
 
@@ -431,7 +461,7 @@ export default function Index() {
 
                     <div>
                       <label className="font-body text-xs text-muted-foreground mb-1 block">Телефон *</label>
-                      <Input placeholder="+7 (___) ___-__-__" value={deliveryForm.phone} onChange={e => setDeliveryForm(f => ({ ...f, phone: e.target.value }))} className="bg-secondary border-border font-body text-sm" />
+                      <Input placeholder="+7 (___) ___-__-__" value={deliveryForm.phone} onChange={e => { setDeliveryForm(f => ({ ...f, phone: e.target.value })); checkLoyalty(e.target.value); }} onBlur={e => checkLoyalty(e.target.value)} className="bg-secondary border-border font-body text-sm" />
                     </div>
 
                     <div>
@@ -557,6 +587,25 @@ export default function Index() {
                 )}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* POPUP ЛОЯЛЬНОСТИ */}
+      {showLoyaltyPopup && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setShowLoyaltyPopup(false)} />
+          <div className="relative bg-card rounded-2xl shadow-2xl p-8 max-w-sm w-full text-center z-10 border border-primary/30">
+            <div className="text-5xl mb-4">🎉</div>
+            <p className="font-display text-2xl font-bold mb-2">Вы наш постоянный клиент!</p>
+            <p className="text-muted-foreground text-sm mb-4">У вас уже <span className="font-bold text-foreground">{orderCount}</span> {orderCount < 5 ? 'заказа' : 'заказов'} — вам полагается скидка</p>
+            <div className="bg-primary/10 border border-primary/30 rounded-xl py-4 px-6 mb-6">
+              <p className="font-display text-5xl font-bold text-primary">{discount}%</p>
+              <p className="text-sm text-muted-foreground mt-1">применена к вашему заказу</p>
+            </div>
+            <Button className="w-full bg-primary text-white" onClick={() => setShowLoyaltyPopup(false)}>
+              Отлично, спасибо!
+            </Button>
           </div>
         </div>
       )}
