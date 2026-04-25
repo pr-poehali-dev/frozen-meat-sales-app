@@ -138,8 +138,9 @@ def handler(event: dict, context) -> dict:
             body = json.loads(event.get('body') or '{}')
             phone = body.get('phone', '').strip()
             name = body.get('name', '').strip()
+            email = body.get('email', '').strip().lower()
             password = body.get('password', '')
-            if not phone or not name or not password:
+            if not phone or not name or not password or not email:
                 return {'statusCode': 400, 'headers': headers, 'body': json.dumps({'ok': False, 'error': 'Заполните все поля'})}
             pw_hash = hash_password(password)
             conn = get_conn(); cur = conn.cursor()
@@ -147,7 +148,7 @@ def handler(event: dict, context) -> dict:
             if cur.fetchone():
                 cur.close(); conn.close()
                 return {'statusCode': 409, 'headers': headers, 'body': json.dumps({'ok': False, 'error': 'Номер уже зарегистрирован'})}
-            cur.execute(f"INSERT INTO {SCHEMA}.users (phone, name, password_hash) VALUES (%s, %s, %s) RETURNING id", (phone, name, pw_hash))
+            cur.execute(f"INSERT INTO {SCHEMA}.users (phone, name, password_hash, email) VALUES (%s, %s, %s, %s) RETURNING id", (phone, name, pw_hash, email))
             user_id = cur.fetchone()[0]
             session_id = secrets.token_hex(32)
             cur.execute(f"INSERT INTO {SCHEMA}.user_sessions (session_id, user_id) VALUES (%s, %s)", (session_id, user_id))
@@ -187,6 +188,63 @@ def handler(event: dict, context) -> dict:
             session_id = event.get('headers', {}).get('X-User-Session', '')
             conn = get_conn(); cur = conn.cursor()
             cur.execute(f"DELETE FROM {SCHEMA}.user_sessions WHERE session_id = %s", (session_id,))
+            conn.commit()
+            cur.close(); conn.close()
+            return {'statusCode': 200, 'headers': headers, 'body': json.dumps({'ok': True})}
+
+        # Восстановление пароля — отправка временного пароля на email
+        if method == 'POST' and action == 'reset_password':
+            body = json.loads(event.get('body') or '{}')
+            phone = body.get('phone', '').strip()
+            conn = get_conn(); cur = conn.cursor()
+            cur.execute(f"SELECT id, name, email FROM {SCHEMA}.users WHERE phone = %s", (phone,))
+            row = cur.fetchone()
+            if not row:
+                cur.close(); conn.close()
+                return {'statusCode': 404, 'headers': headers, 'body': json.dumps({'ok': False, 'error': 'Номер не найден'})}
+            user_id, name, email = row
+            if not email:
+                cur.close(); conn.close()
+                return {'statusCode': 400, 'headers': headers, 'body': json.dumps({'ok': False, 'error': 'Email не указан при регистрации'})}
+            tmp_password = secrets.token_urlsafe(8)
+            new_hash = hash_password(tmp_password)
+            cur.execute(f"UPDATE {SCHEMA}.users SET password_hash = %s WHERE id = %s", (new_hash, user_id))
+            conn.commit()
+            cur.close(); conn.close()
+            smtp_password = os.environ.get('YANDEX_SMTP_PASSWORD', '')
+            if smtp_password:
+                import smtplib
+                from email.mime.text import MIMEText
+                from email.mime.multipart import MIMEMultipart
+                sender = 'yupomosh@yandex.ru'
+                msg = MIMEMultipart()
+                msg['From'] = sender
+                msg['To'] = email
+                msg['Subject'] = 'Восстановление пароля — ФАБРИКАНТ ЮРКО'
+                text = f"Привет, {name}!\n\nВаш временный пароль: {tmp_password}\n\nВойдите на сайт и смените пароль в личном кабинете.\n\nС уважением,\nФАБРИКАНТ ЮРКО"
+                msg.attach(MIMEText(text, 'plain', 'utf-8'))
+                try:
+                    with smtplib.SMTP_SSL('smtp.yandex.ru', 465) as server:
+                        server.login(sender, smtp_password)
+                        server.sendmail(sender, email, msg.as_string())
+                except Exception as e:
+                    print(f"Email ERROR: {e}")
+            masked = email[:2] + '***' + email[email.find('@'):]
+            return {'statusCode': 200, 'headers': headers, 'body': json.dumps({'ok': True, 'masked_email': masked})}
+
+        # Смена пароля пользователем
+        if method == 'POST' and action == 'change_password':
+            session_id = event.get('headers', {}).get('X-User-Session', '')
+            body = json.loads(event.get('body') or '{}')
+            old_password = body.get('old_password', '')
+            new_password = body.get('new_password', '')
+            conn = get_conn(); cur = conn.cursor()
+            cur.execute(f"SELECT u.id FROM {SCHEMA}.user_sessions s JOIN {SCHEMA}.users u ON u.id = s.user_id WHERE s.session_id = %s AND u.password_hash = %s", (session_id, hash_password(old_password)))
+            row = cur.fetchone()
+            if not row:
+                cur.close(); conn.close()
+                return {'statusCode': 401, 'headers': headers, 'body': json.dumps({'ok': False, 'error': 'Неверный текущий пароль'})}
+            cur.execute(f"UPDATE {SCHEMA}.users SET password_hash = %s WHERE id = %s", (hash_password(new_password), row[0]))
             conn.commit()
             cur.close(); conn.close()
             return {'statusCode': 200, 'headers': headers, 'body': json.dumps({'ok': True})}
