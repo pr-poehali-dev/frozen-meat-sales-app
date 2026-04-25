@@ -4,6 +4,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
 import urllib.request
+from datetime import datetime
 
 ADMIN_ORDERS_URL = "https://functions.poehali.dev/010513ea-3143-4cc6-9e47-d5722ea1790b"
 
@@ -21,7 +22,7 @@ def handler(event: dict, context) -> dict:
 
     body = json.loads(event.get('body') or '{}')
 
-    delivery_in = body.get('name', '')
+    name = body.get('name', '')
     phone = body.get('phone', '')
     street = body.get('street', '')
     house = body.get('house', '')
@@ -30,18 +31,25 @@ def handler(event: dict, context) -> dict:
     floor = body.get('floor', '')
     intercom = body.get('intercom', '')
     comment = body.get('comment', '')
+    district = body.get('district', '')
     items = body.get('items', [])
     total = body.get('total', 0)
     delivery_cost = body.get('delivery_cost', 0)
     payment_method = body.get('payment_method', '')
+    delivery_minutes = body.get('delivery_minutes', 45)
+    arrival_time = body.get('arrival_time', '')
+    is_evening = body.get('is_evening', False)
+
+    now = datetime.now()
+    order_time = now.strftime('%d.%m.%Y %H:%M')
 
     items_text = '\n'.join([f"  • {item['name']} — {item['qty']} × {item['price']} ₽ = {item['sum']} ₽" for item in items])
     address = f"ул. {street}, д. {house}" + (f", подъезд {entrance}" if entrance else '') + (f", кв. {apartment}" if apartment else '') + (f", этаж {floor}" if floor else '') + (f", домофон {intercom}" if intercom else '')
-    message = f"Доставить через: {delivery_in}\nАдрес: {address}\nСостав:\n{items_text}\nИтого: {total} ₽\nДоставка: {delivery_cost} ₽\nОплата: {payment_method}\nКомментарий: {comment or '—'}"
+    message = f"Имя: {name}\nРайон: {district}\nАдрес: {address}\nСостав:\n{items_text}\nИтого: {total} ₽\nДоставка: {delivery_cost} ₽\nОплата: {payment_method}\nКомментарий: {comment or '—'}"
 
     order_id = 0
     try:
-        save_data = json.dumps({'name': delivery_in, 'phone': phone, 'message': message}).encode('utf-8')
+        save_data = json.dumps({'name': name, 'phone': phone, 'message': message}).encode('utf-8')
         req = urllib.request.Request(ADMIN_ORDERS_URL, data=save_data, headers={'Content-Type': 'application/json'}, method='POST')
         with urllib.request.urlopen(req, timeout=5) as resp:
             result = json.loads(resp.read())
@@ -50,18 +58,22 @@ def handler(event: dict, context) -> dict:
         pass
 
     tg_text = f"""🛒 <b>НОВЫЙ ЗАКАЗ #{order_id}</b>
+🕐 Время заказа: {order_time}
 
+👤 Имя: {name}
 📞 Телефон: {phone}
 💳 Оплата: {payment_method}
 
 📦 <b>Состав заказа:</b>
 {items_text}
 
-🚚 Доставка: {'Бесплатно' if delivery_cost == 0 else f'{delivery_cost} ₽'}
+🚚 Доставка: {'Бесплатно' if delivery_cost == 0 else f'{delivery_cost} ₽'}{' (вечерний тариф)' if is_evening else ''}
 💰 <b>Итого: {total} ₽</b>
 
-🏠 <b>Адрес:</b>
+🏠 <b>Адрес ({district} район):</b>
 {address}
+
+⏰ <b>Привезти к: {arrival_time} (через {delivery_minutes} мин)</b>
 
 💬 Комментарий: {comment or '—'}"""
 
@@ -82,7 +94,7 @@ def handler(event: dict, context) -> dict:
     msg = MIMEMultipart()
     msg['From'] = sender
     msg['To'] = recipient
-    msg['Subject'] = f'Заказ #{order_id} на {total} ₽ — {payment_method}'
+    msg['Subject'] = f'Заказ #{order_id} на {total} ₽ — {payment_method} — к {arrival_time}'
     msg.attach(MIMEText(email_text, 'plain', 'utf-8'))
 
     try:

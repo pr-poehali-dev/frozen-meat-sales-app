@@ -74,7 +74,7 @@ export default function Index() {
   const [showPayment, setShowPayment] = useState(false);
   const [showDelivery, setShowDelivery] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'sbp' | 'cash' | 'terminal' | ''>('');
-  const [deliveryForm, setDeliveryForm] = useState({ name: '', phone: '', street: '', house: '', entrance: '', apartment: '', floor: '', intercom: '', comment: '' });
+  const [deliveryForm, setDeliveryForm] = useState({ name: '', phone: '', street: '', house: '', entrance: '', apartment: '', floor: '', intercom: '', comment: '', district: '' });
   const [deliverySent, setDeliverySent] = useState(false);
   const [deliverySending, setDeliverySending] = useState(false);
   const [geoLoading, setGeoLoading] = useState(false);
@@ -105,12 +105,22 @@ export default function Index() {
   };
 
   const handleDeliverySubmit = async () => {
-    if (!deliveryForm.name || !deliveryForm.phone || !deliveryForm.street || !deliveryForm.house) return;
+    if (!deliveryForm.name || !deliveryForm.phone || !deliveryForm.street || !deliveryForm.house || !deliveryForm.district) return;
     setDeliverySending(true);
     const items = cartItems.map(p => ({ name: p.name, qty: cartQty[p.id] || 1, price: p.price, sum: getItemPrice(p) }));
+    const info = getDeliveryInfo();
     await fetch("https://functions.poehali.dev/36d594d4-0de1-47a0-8704-a93dc25f659a", {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...deliveryForm, items, total: cartTotal + DELIVERY_COST, delivery_cost: DELIVERY_COST, payment_method: PAYMENT_LABELS[paymentMethod as string] || paymentMethod })
+      body: JSON.stringify({
+        ...deliveryForm,
+        items,
+        total: cartTotal + DELIVERY_COST,
+        delivery_cost: DELIVERY_COST,
+        payment_method: PAYMENT_LABELS[paymentMethod as string] || paymentMethod,
+        delivery_minutes: info?.deliveryMinutes ?? 45,
+        arrival_time: info?.arrivalStr ?? '',
+        is_evening: info?.isEvening ?? false,
+      })
     });
     setDeliverySending(false);
     setDeliverySent(true);
@@ -188,8 +198,26 @@ export default function Index() {
   const cartItems = products.filter(p => cart[p.id]);
   const cartCount = cartItems.length;
   const cartTotal = cartItems.reduce((sum, p) => sum + getItemPrice(p), 0);
-  const DELIVERY_COST = cartTotal >= 2000 ? 0 : 250;
   const PAYMENT_LABELS: Record<string, string> = { sbp: 'СБП', cash: 'Наличные курьеру', terminal: 'Терминал (карта курьеру)' };
+
+  const DISTRICTS = ['Октябрьский', 'Правобережный', 'Свердловский', 'Ленинский'];
+
+  const getDeliveryInfo = () => {
+    const now = new Date();
+    const hour = now.getHours();
+    const isEvening = hour >= 18 || hour < 0; // 18:00 - 00:00
+    const isDay = hour >= 10 && hour < 18;
+    if (!isDay && !isEvening) return null; // недоступно
+    const basePrice = cartTotal >= 2000 ? 0 : 250;
+    const deliveryCost = isEvening ? basePrice * 2 : basePrice;
+    const deliveryMinutes = isEvening ? 60 : 45;
+    const arrivalTime = new Date(now.getTime() + deliveryMinutes * 60 * 1000);
+    const arrivalStr = arrivalTime.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    return { deliveryCost, deliveryMinutes, arrivalStr, isEvening };
+  };
+
+  const deliveryInfo = getDeliveryInfo();
+  const DELIVERY_COST = deliveryInfo?.deliveryCost ?? (cartTotal >= 2000 ? 0 : 250);
 
   const scrollTo = (href: string) => {
     const el = document.querySelector(href);
@@ -360,24 +388,45 @@ export default function Index() {
                     </button>
                     <p className="font-display text-xl font-bold">Адрес доставки</p>
 
+                    {deliveryInfo ? (
+                      <div className={`rounded-xl p-3 flex items-center gap-3 ${deliveryInfo.isEvening ? 'bg-orange-50 border border-orange-200' : 'bg-green-50 border border-green-200'}`}>
+                        <Icon name="Clock" size={20} className={deliveryInfo.isEvening ? 'text-orange-500' : 'text-green-600'} />
+                        <div>
+                          <p className="font-body text-sm font-semibold">Доставим через {deliveryInfo.deliveryMinutes} мин — к {deliveryInfo.arrivalStr}</p>
+                          <p className="font-body text-xs text-muted-foreground">{deliveryInfo.isEvening ? 'Вечерний тариф — доставка дороже' : 'Дневной тариф'} · Доставка: {DELIVERY_COST === 0 ? 'Бесплатно' : `${DELIVERY_COST} ₽`}</p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="rounded-xl p-3 flex items-center gap-3 bg-red-50 border border-red-200">
+                        <Icon name="AlertCircle" size={20} className="text-red-500" />
+                        <p className="font-body text-sm font-semibold text-red-700">Доставка работает с 10:00 до 00:00</p>
+                      </div>
+                    )}
+
                     <div>
                       <label className="font-body text-xs text-muted-foreground mb-1 block">Телефон *</label>
                       <Input placeholder="+7 (___) ___-__-__" value={deliveryForm.phone} onChange={e => setDeliveryForm(f => ({ ...f, phone: e.target.value }))} className="bg-secondary border-border font-body text-sm" />
                     </div>
+
                     <div>
-                      <label className="font-body text-xs text-muted-foreground mb-1 block">Через сколько доставить *</label>
-                      <div className="grid grid-cols-3 gap-2">
-                        {['30 мин', '1 ч', '2 ч', '3 ч', '4 ч', '5 ч'].map(h => (
+                      <label className="font-body text-xs text-muted-foreground mb-1 block">Район *</label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {DISTRICTS.map(d => (
                           <button
-                            key={h}
+                            key={d}
                             type="button"
-                            onClick={() => setDeliveryForm(f => ({ ...f, name: h }))}
-                            className={`py-2 rounded-lg font-body text-sm font-semibold border transition-colors ${deliveryForm.name === h ? 'bg-primary text-white border-primary' : 'bg-secondary border-border text-foreground hover:border-primary'}`}
+                            onClick={() => setDeliveryForm(f => ({ ...f, district: d }))}
+                            className={`py-2 rounded-lg font-body text-sm font-semibold border transition-colors ${deliveryForm.district === d ? 'bg-primary text-white border-primary' : 'bg-secondary border-border text-foreground hover:border-primary'}`}
                           >
-                            {h}
+                            {d}
                           </button>
                         ))}
                       </div>
+                    </div>
+
+                    <div>
+                      <label className="font-body text-xs text-muted-foreground mb-1 block">Имя получателя *</label>
+                      <Input placeholder="Иван" value={deliveryForm.name} onChange={e => setDeliveryForm(f => ({ ...f, name: e.target.value }))} className="bg-secondary border-border font-body text-sm" />
                     </div>
                     <div>
                       <button
@@ -425,7 +474,7 @@ export default function Index() {
                     </div>
                     <Button
                       onClick={handleDeliverySubmit}
-                      disabled={deliverySending || !deliveryForm.name || !deliveryForm.phone || !deliveryForm.street || !deliveryForm.house}
+                      disabled={deliverySending || !deliveryForm.name || !deliveryForm.phone || !deliveryForm.street || !deliveryForm.house || !deliveryForm.district || !deliveryInfo}
                       className="w-full bg-primary hover:bg-primary/90 text-white font-display tracking-wide h-12"
                     >
                       <Icon name="Send" size={16} className="mr-2" />
@@ -436,7 +485,13 @@ export default function Index() {
                   <div className="flex flex-col items-center justify-center flex-1 text-center gap-4 py-10">
                     <Icon name="CheckCircle" size={56} className="text-green-500" />
                     <p className="font-display text-2xl font-bold">Заказ принят!</p>
-                    <p className="text-sm text-muted-foreground">Мы получили ваш заказ и адрес доставки. Скоро свяжемся с вами.</p>
+                    {deliveryInfo && (
+                      <div className="bg-green-50 border border-green-200 rounded-xl px-5 py-3">
+                        <p className="font-body text-base font-semibold text-green-800">Ваш заказ приедет через {deliveryInfo.deliveryMinutes} мин</p>
+                        <p className="font-body text-sm text-green-700">Ориентировочно к {deliveryInfo.arrivalStr}</p>
+                      </div>
+                    )}
+                    <p className="text-sm text-muted-foreground">Курьер свяжется с вами перед приездом.</p>
                     <Button className="bg-primary text-white mt-4" onClick={() => { setCartOpen(false); setCart({}); setShowPayment(false); setShowDelivery(false); setDeliverySent(false); }}>
                       Закрыть
                     </Button>
