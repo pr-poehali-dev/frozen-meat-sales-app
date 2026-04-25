@@ -1,1 +1,4 @@
-{"tests": [{"name": "OPTIONS preflight", "method": "OPTIONS", "path": "/", "expectedStatus": 200, "bodyMatcher": "partial"}]}
+{"tests": [
+  {"name": "OPTIONS preflight", "method": "OPTIONS", "path": "/", "expectedStatus": 200, "bodyMatcher": "partial"},
+  {"name": "Обратная связь", "method": "POST", "path": "/", "body": {"type": "contact", "name": "Тест", "phone": "+79001234567", "email": "", "message": "Тест"}, "expectedStatus": 200, "expectedBody": {"ok": true}, "bodyMatcher": "partial"}
+]}

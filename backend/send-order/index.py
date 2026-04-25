@@ -35,6 +35,48 @@ def handler(event: dict, context) -> dict:
 
     body = json.loads(event.get('body') or '{}')
 
+    # Обратная связь
+    if event.get('httpMethod') == 'POST' and body.get('type') == 'contact':
+        name = body.get('name', '')
+        phone = body.get('phone', '')
+        email = body.get('email', '')
+        message = body.get('message', '')
+        now = datetime.now().strftime('%d.%m.%Y %H:%M')
+
+        tg_text = f"""💬 <b>ОБРАТНАЯ СВЯЗЬ</b>
+🕐 {now}
+
+👤 Имя: {name}
+📞 Телефон: {phone}
+📧 Email: {email or '—'}
+
+📝 Сообщение: {message or '—'}"""
+
+        tg_token = os.environ.get('TELEGRAM_BOT_TOKEN', '')
+        tg_chat_id = os.environ.get('TELEGRAM_CHAT_ID', '')
+        if tg_token and tg_chat_id:
+            try:
+                send_telegram(tg_token, tg_chat_id, tg_text)
+            except Exception as e:
+                print(f"Telegram ERROR: {e}")
+
+        smtp_password = os.environ.get('YANDEX_SMTP_PASSWORD', '')
+        if smtp_password:
+            try:
+                sender = 'yupomosh@yandex.ru'
+                msg = MIMEMultipart()
+                msg['From'] = sender
+                msg['To'] = sender
+                msg['Subject'] = f'Обратная связь от {name} — {phone}'
+                msg.attach(MIMEText(tg_text.replace('<b>', '').replace('</b>', ''), 'plain', 'utf-8'))
+                with smtplib.SMTP_SSL('smtp.yandex.ru', 465) as server:
+                    server.login(sender, smtp_password)
+                    server.sendmail(sender, sender, msg.as_string())
+            except Exception as e:
+                print(f"Email ERROR: {e}")
+
+        return {'statusCode': 200, 'headers': {'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'ok': True})}
+
     # Отмена заказа покупателем
     if event.get('httpMethod') == 'PUT':
         order_id = body.get('order_id', 0)

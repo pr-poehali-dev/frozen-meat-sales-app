@@ -163,9 +163,9 @@ export default function Index() {
   const handleFormSubmit = async () => {
     if (!form.name || !form.phone) return;
     setFormSending(true);
-    await fetch("https://functions.poehali.dev/010513ea-3143-4cc6-9e47-d5722ea1790b", {
+    await fetch("https://functions.poehali.dev/36d594d4-0de1-47a0-8704-a93dc25f659a", {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form)
+      body: JSON.stringify({ ...form, type: 'contact' })
     });
     setFormSent(true);
     setFormSending(false);
