@@ -762,6 +762,15 @@ export default function Index() {
           </div>
 
           <div className="flex items-center gap-3">
+            {localStorage.getItem('user_name') ? (
+              <a href="/account" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-secondary text-foreground rounded-lg text-sm font-semibold hover:bg-secondary/80 transition-colors">
+                <Icon name="User" size={15} /> <span className="hidden sm:inline">{localStorage.getItem('user_name')!.split(' ')[0]}</span>
+              </a>
+            ) : (
+              <a href="/account" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors">
+                <Icon name="User" size={15} /> Войти
+              </a>
+            )}
             <button onClick={() => setCartOpen(true)} className="relative p-2 text-muted-foreground hover:text-foreground transition-colors" style={{zIndex: 9999, position: 'relative'}}>
               <Icon name="ShoppingCart" size={20} />
               {cartCount > 0 && (
