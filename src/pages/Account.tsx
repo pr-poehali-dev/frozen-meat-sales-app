@@ -149,13 +149,18 @@ export default function Account() {
                 onChange={e => setPhone(e.target.value)}
                 type="tel"
               />
-              <Input
-                placeholder="Пароль"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                type="password"
-                onKeyDown={e => e.key === "Enter" && handleSubmit()}
-              />
+              <div>
+                <Input
+                  placeholder={mode === "register" ? "Придумайте пароль" : "Пароль"}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  type="password"
+                  onKeyDown={e => e.key === "Enter" && handleSubmit()}
+                />
+                {mode === "register" && (
+                  <p className="text-xs text-muted-foreground mt-1.5 ml-1">Придумайте любой пароль — он нужен для входа в ваш кабинет</p>
+                )}
+              </div>
             </div>
 
             {error && <p className="text-red-500 text-sm mt-3">{error}</p>}
