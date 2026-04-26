@@ -174,3 +174,239 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+@keyframes shimmer-gold {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes shimmer-silver {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes shimmer-bronze {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes glow-gold {
+  0%,
+  100% {
+    box-shadow:
+      0 0 20px rgba(255, 200, 50, 0.4),
+      0 0 40px rgba(255, 180, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 200, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 35px rgba(255, 200, 50, 0.7),
+      0 0 70px rgba(255, 180, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 200, 0.5);
+  }
+}
+
+@keyframes glow-silver {
+  0%,
+  100% {
+    box-shadow:
+      0 0 20px rgba(180, 200, 220, 0.4),
+      0 0 40px rgba(160, 185, 210, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 35px rgba(180, 200, 220, 0.7),
+      0 0 70px rgba(160, 185, 210, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+}
+
+@keyframes glow-bronze {
+  0%,
+  100% {
+    box-shadow:
+      0 0 20px rgba(180, 110, 50, 0.4),
+      0 0 40px rgba(160, 90, 30, 0.2),
+      inset 0 1px 0 rgba(255, 200, 150, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 35px rgba(180, 110, 50, 0.7),
+      0 0 70px rgba(160, 90, 30, 0.4),
+      inset 0 1px 0 rgba(255, 200, 150, 0.5);
+  }
+}
+
+@keyframes float-crown {
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-6px) scale(1.08);
+  }
+}
+
+@keyframes spin-trophy {
+  0%,
+  80%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  90% {
+    transform: rotate(-15deg) scale(1.1);
+  }
+}
+
+.loyalty-gold {
+  background: linear-gradient(
+    135deg,
+    #2a1f00 0%,
+    #4a3500 20%,
+    #6b4e00 40%,
+    #8b6800 50%,
+    #6b4e00 60%,
+    #4a3500 80%,
+    #2a1f00 100%
+  );
+  background-size: 200% auto;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+  animation: glow-gold 2.5s ease-in-out infinite;
+}
+
+.loyalty-gold::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    #ffd700,
+    #ffec6e,
+    #ffa500,
+    #ffe066,
+    #ffd700,
+    #ffb700,
+    #ffd700
+  );
+  background-size: 300% auto;
+  animation: shimmer-gold 2s linear infinite;
+  z-index: 0;
+  border-radius: 1rem;
+}
+
+.loyalty-gold > * {
+  position: relative;
+  z-index: 1;
+}
+
+.loyalty-silver {
+  background: linear-gradient(
+    135deg,
+    #0d1117 0%,
+    #1a2030 20%,
+    #252f40 40%,
+    #2e3a50 50%,
+    #252f40 60%,
+    #1a2030 80%,
+    #0d1117 100%
+  );
+  background-size: 200% auto;
+  border: 2px solid transparent;
+  position: relative;
+  animation: glow-silver 2.5s ease-in-out infinite;
+}
+
+.loyalty-silver::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    #b0c4d8,
+    #dce9f5,
+    #8fa8c0,
+    #c8dff0,
+    #e8f4ff,
+    #a0bcd4,
+    #b0c4d8
+  );
+  background-size: 300% auto;
+  animation: shimmer-silver 2s linear infinite;
+  z-index: 0;
+  border-radius: 1rem;
+}
+
+.loyalty-silver > * {
+  position: relative;
+  z-index: 1;
+}
+
+.loyalty-bronze {
+  background: linear-gradient(
+    135deg,
+    #1a0e00 0%,
+    #2e1800 20%,
+    #3d2200 40%,
+    #4a2a00 50%,
+    #3d2200 60%,
+    #2e1800 80%,
+    #1a0e00 100%
+  );
+  background-size: 200% auto;
+  border: 2px solid transparent;
+  position: relative;
+  animation: glow-bronze 2.5s ease-in-out infinite;
+}
+
+.loyalty-bronze::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    #cd7f32,
+    #e8a050,
+    #a0522d,
+    #d4894a,
+    #f0b060,
+    #b8622a,
+    #cd7f32
+  );
+  background-size: 300% auto;
+  animation: shimmer-bronze 2s linear infinite;
+  z-index: 0;
+  border-radius: 1rem;
+}
+
+.loyalty-bronze > * {
+  position: relative;
+  z-index: 1;
+}
+
+.crown-float {
+  display: inline-block;
+  animation: float-crown 2s ease-in-out infinite;
+}
+
+.trophy-spin {
+  display: inline-block;
+  animation: spin-trophy 3s ease-in-out infinite;
+}

@@ -1043,19 +1043,33 @@ export default function Index() {
           <h2 className="font-display text-4xl md:text-5xl font-bold">ПРОГРАММА ЛОЯЛЬНОСТИ</h2>
           <p className="font-body text-muted-foreground mt-4 max-w-xl mx-auto">Чем больше заказываете — тем больше экономите. Скидка применяется автоматически при оформлении заказа.</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          {[
-            { orders: '3 заказа', discount: '5%', icon: '🥩', desc: 'Начало пути', color: 'border-amber-200 bg-amber-50', textColor: 'text-amber-700' },
-            { orders: '10 заказов', discount: '15%', icon: '🏆', desc: 'Постоянный клиент', color: 'border-primary/30 bg-primary/5', textColor: 'text-primary' },
-            { orders: '20 заказов', discount: '25%', icon: '👑', desc: 'VIP клиент', color: 'border-purple-200 bg-purple-50', textColor: 'text-purple-700' },
-          ].map((tier, i) => (
-            <div key={i} className={`border-2 ${tier.color} rounded-2xl p-8 text-center`}>
-              <div className="text-5xl mb-4">{tier.icon}</div>
-              <p className={`font-display text-5xl font-bold ${tier.textColor} mb-2`}>{tier.discount}</p>
-              <p className="font-display text-lg font-semibold mb-1">от {tier.orders}</p>
-              <p className="font-body text-sm text-muted-foreground">{tier.desc}</p>
-            </div>
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          {/* БРОНЗОВАЯ */}
+          <div className="loyalty-bronze rounded-2xl p-8 text-center relative overflow-hidden">
+            <div className="text-6xl mb-3">🏆</div>
+            <p className="font-display text-2xl font-bold mb-1" style={{color: '#f0b060', textShadow: '0 0 12px rgba(205,127,50,0.8)'}}>БРОНЗА</p>
+            <p className="font-display text-6xl font-bold mb-2" style={{color: '#f0b060', textShadow: '0 2px 16px rgba(205,127,50,0.9)'}}>5%</p>
+            <p className="font-display text-base font-semibold mb-1" style={{color: '#d4894a'}}>от 3 заказов</p>
+            <p className="font-body text-sm" style={{color: '#a0724a'}}>Начало пути</p>
+          </div>
+
+          {/* СЕРЕБРЯНАЯ */}
+          <div className="loyalty-silver rounded-2xl p-9 text-center relative overflow-hidden" style={{transform: 'scale(1.04)'}}>
+            <div className="trophy-spin text-6xl mb-3">🥈</div>
+            <p className="font-display text-2xl font-bold mb-1" style={{color: '#dce9f5', textShadow: '0 0 14px rgba(176,196,222,0.9)'}}>СЕРЕБРО</p>
+            <p className="font-display text-6xl font-bold mb-2" style={{color: '#e8f4ff', textShadow: '0 2px 18px rgba(176,196,222,1)'}}>15%</p>
+            <p className="font-display text-base font-semibold mb-1" style={{color: '#b0c4d8'}}>от 10 заказов</p>
+            <p className="font-body text-sm" style={{color: '#8fa8c0'}}>Постоянный клиент</p>
+          </div>
+
+          {/* ЗОЛОТАЯ */}
+          <div className="loyalty-gold rounded-2xl p-8 text-center relative overflow-hidden">
+            <div className="crown-float text-7xl mb-3">👑</div>
+            <p className="font-display text-2xl font-bold mb-1" style={{color: '#ffe066', textShadow: '0 0 16px rgba(255,215,0,0.9)'}}>VIP</p>
+            <p className="font-display text-7xl font-bold mb-2" style={{color: '#ffd700', textShadow: '0 2px 20px rgba(255,215,0,1), 0 0 40px rgba(255,180,0,0.6)'}}>25%</p>
+            <p className="font-display text-base font-semibold mb-1" style={{color: '#ffb700'}}>от 20 заказов</p>
+            <p className="font-body text-sm" style={{color: '#c8941a'}}>Золотой клиент</p>
+          </div>
         </div>
         <p className="text-center text-sm text-muted-foreground mt-8">Скидка определяется автоматически по номеру телефона при оформлении заказа</p>
       </section>
