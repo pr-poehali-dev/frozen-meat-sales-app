@@ -23,12 +23,13 @@ function ClockCalendar() {
   const year = now.getFullYear();
 
   return (
-    <div className="absolute top-24 right-6 z-20 flex flex-col items-end gap-1 select-none">
-      <div className="bg-card/70 border border-border backdrop-blur-sm rounded-xl px-5 py-3 flex flex-col items-center gap-0.5">
-        <span className="font-display text-4xl font-bold text-foreground tracking-widest leading-none">
-          {hh}<span className="text-primary animate-pulse">:</span>{mm}<span className="text-muted-foreground text-2xl">{ss}</span>
+    <div className="inline-flex items-center gap-3 bg-card/60 border border-border backdrop-blur-sm rounded-xl px-5 py-3 select-none">
+      <Icon name="Clock" size={20} className="text-primary" />
+      <div className="flex flex-col">
+        <span className="font-display text-2xl font-bold text-foreground tracking-widest leading-none">
+          {hh}<span className="text-primary">:</span>{mm}<span className="text-muted-foreground text-lg">:{ss}</span>
         </span>
-        <span className="font-body text-sm text-muted-foreground mt-1">
+        <span className="font-body text-xs text-muted-foreground capitalize">
           {day}, {date} {month} {year}
         </span>
       </div>
@@ -69,7 +70,6 @@ export default function HeroSection({ onAddToCart, scrollTo }: HeroSectionProps)
     <>
       {/* HERO */}
       <section id="hero" className="relative min-h-screen flex items-center pt-16 overflow-hidden">
-        <ClockCalendar />
         <div className="absolute inset-0 hero-glow" />
         <div className="absolute inset-0">
           <div className="absolute top-0 right-0 w-1/2 h-full opacity-30 md:opacity-50">
@@ -117,7 +117,11 @@ export default function HeroSection({ onAddToCart, scrollTo }: HeroSectionProps)
               </Button>
             </div>
 
-            <div className="flex items-center gap-8 mt-12 animate-fade-in-up delay-400">
+            <div className="mt-10 animate-fade-in-up delay-350">
+              <ClockCalendar />
+            </div>
+
+            <div className="flex items-center gap-8 mt-8 animate-fade-in-up delay-400">
               {[
                 { value: "500+", label: "Постоянных клиентов" },
                 { value: "24ч", label: "Срок свежести" },
