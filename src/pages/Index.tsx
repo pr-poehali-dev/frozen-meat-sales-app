@@ -1144,6 +1144,15 @@ export default function Index() {
                 <p className="font-body text-xs text-orange-200/80 mb-4 leading-relaxed">
                   Заказывайте быстрее — приложение на экране телефона, без браузера и поиска!
                 </p>
+                {installPrompt && (
+                  <button
+                    onClick={handleInstall}
+                    className="w-full mb-4 py-3 rounded-xl font-display font-bold text-sm tracking-wide transition-all"
+                    style={{background: 'linear-gradient(135deg, #ff6b00, #ff9500)', color: '#fff', boxShadow: '0 0 20px rgba(255,120,0,0.5)'}}
+                  >
+                    📲 Установить приложение сейчас
+                  </button>
+                )}
                 <div className="space-y-3">
                   <div className="bg-black/30 rounded-xl p-3 border border-orange-500/20">
                     <p className="font-display text-xs font-bold text-orange-300 mb-1.5 flex items-center gap-1.5"><span>🤖</span> Android</p>
