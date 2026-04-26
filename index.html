@@ -62,6 +62,10 @@
             });
             reg.update();
           });
+          // Получаем сигнал от SW — перезагружаемся
+          navigator.serviceWorker.addEventListener('message', e => {
+            if (e.data && e.data.type === 'SW_UPDATED') window.location.reload();
+          });
         });
       });
     });

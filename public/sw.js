@@ -1,8 +1,8 @@
-// v6 — 2026-04-26
-const CACHE_NAME = 'fabricant-v6';
+// v7 — 2026-04-26
+const CACHE_NAME = 'fabricant-v7';
 
 self.addEventListener('install', e => {
-  self.skipWaiting();
+  e.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener('activate', e => {
@@ -10,6 +10,12 @@ self.addEventListener('activate', e => {
     caches.keys()
       .then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
+      .then(() => {
+        // Говорим всем открытым вкладкам/PWA перезагрузиться
+        self.clients.matchAll({ type: 'window' }).then(clients => {
+          clients.forEach(c => c.postMessage({ type: 'SW_UPDATED' }));
+        });
+      })
   );
 });
 
