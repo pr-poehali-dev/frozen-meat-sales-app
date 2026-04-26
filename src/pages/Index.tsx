@@ -106,6 +106,7 @@ export default function Index() {
   const [siteClosed, setSiteClosed] = useState(false);
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
+  const [showInstallGuide, setShowInstallGuide] = useState(false);
   const [discount, setDiscount] = useState(0);
   const [orderCount, setOrderCount] = useState(0);
   const [showLoyaltyPopup, setShowLoyaltyPopup] = useState(false);
@@ -247,9 +248,8 @@ export default function Index() {
       const { outcome } = await installPrompt.userChoice;
       if (outcome === 'accepted') setShowInstallBanner(false);
     } else {
-      // Если prompt недоступен — показываем инструкцию
-      alert('Чтобы установить: нажмите меню браузера (⋮) → "Добавить на главный экран"');
-      setShowInstallBanner(false);
+      setShowInstallGuide(true);
+      setMobileMenu(false);
     }
   };
 
@@ -1322,6 +1322,33 @@ export default function Index() {
           </div>
         </div>
       </footer>
+
+      {/* ПОПАП ИНСТРУКЦИЯ УСТАНОВКИ */}
+      {showInstallGuide && (
+        <div className="fixed inset-0 z-[300] flex items-end justify-center p-4 pb-8">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setShowInstallGuide(false)} />
+          <div className="relative bg-card rounded-2xl shadow-2xl p-6 w-full max-w-sm z-10 border border-border">
+            <button onClick={() => setShowInstallGuide(false)} className="absolute top-4 right-4 text-muted-foreground"><Icon name="X" size={20} /></button>
+            <div className="text-3xl mb-3 text-center">📲</div>
+            <p className="font-display text-xl font-bold text-center mb-4">Добавить на экран</p>
+            <div className="space-y-3">
+              <div className="flex items-start gap-3 bg-secondary rounded-xl p-3">
+                <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">1</span>
+                <p className="font-body text-sm">Нажмите <b>⋮</b> (три точки) в правом верхнем углу браузера</p>
+              </div>
+              <div className="flex items-start gap-3 bg-secondary rounded-xl p-3">
+                <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">2</span>
+                <p className="font-body text-sm">Выберите <b>"Добавить на главный экран"</b> или <b>"Установить приложение"</b></p>
+              </div>
+              <div className="flex items-start gap-3 bg-secondary rounded-xl p-3">
+                <span className="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">3</span>
+                <p className="font-body text-sm">Нажмите <b>"Добавить"</b> — иконка появится на рабочем столе</p>
+              </div>
+            </div>
+            <Button className="w-full mt-5 bg-primary text-white" onClick={() => setShowInstallGuide(false)}>Понятно</Button>
+          </div>
+        </div>
+      )}
 
       {/* БАННЕР УСТАНОВКИ PWA */}
       {showInstallBanner && (
