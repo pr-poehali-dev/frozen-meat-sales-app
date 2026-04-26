@@ -107,6 +107,10 @@ def handler(event: dict, context) -> dict:
                 date_filter = "created_at >= CURRENT_DATE"
             elif period == 'week':
                 date_filter = "created_at >= CURRENT_DATE - INTERVAL '7 days'"
+            elif period == '10days':
+                date_filter = "created_at >= CURRENT_DATE - INTERVAL '10 days'"
+            elif period == '20days':
+                date_filter = "created_at >= CURRENT_DATE - INTERVAL '20 days'"
             else:
                 date_filter = "created_at >= DATE_TRUNC('month', CURRENT_DATE)"
 
@@ -122,16 +126,17 @@ def handler(event: dict, context) -> dict:
             cur.execute(f"""
                 SELECT item->>'name' as name,
                        SUM((item->>'qty')::numeric) as total_qty,
-                       SUM((item->>'sum')::numeric) as total_sum
+                       SUM((item->>'sum')::numeric) as total_sum,
+                       MAX(item->>'priceUnit') as price_unit
                 FROM {SCHEMA}.orders,
                      jsonb_array_elements(items) as item
                 WHERE status = 'done' AND {date_filter} AND items IS NOT NULL
                 GROUP BY item->>'name'
                 ORDER BY total_sum DESC
-                LIMIT 10
+                LIMIT 20
             """)
             items_rows = cur.fetchall()
-            top_items = [{'name': r[0], 'qty': float(r[1]), 'sum': int(r[2])} for r in items_rows]
+            top_items = [{'name': r[0], 'qty': float(r[1]), 'sum': int(r[2]), 'priceUnit': r[3] or ''} for r in items_rows]
 
             # Заказы по дням
             cur.execute(f"""

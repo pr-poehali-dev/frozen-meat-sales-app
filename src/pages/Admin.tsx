@@ -15,7 +15,7 @@ const CATEGORIES = ["Пельмени", "Вареники", "Позы / Хинк
 const STATUS_LABELS: Record<string, string> = { new: "Новая", in_progress: "В работе", done: "Выполнена", cancelled: "Отменена", archived: "Архив" };
 const STATUS_COLORS: Record<string, string> = { new: "bg-blue-100 text-blue-700", in_progress: "bg-yellow-100 text-yellow-700", done: "bg-green-100 text-green-700", cancelled: "bg-gray-100 text-gray-500", archived: "bg-gray-100 text-gray-400" };
 
-interface Stats { count: number; revenue: number; top_items: { name: string; qty: number; sum: number }[]; by_day: { day: string; count: number; revenue: number }[] }
+interface Stats { count: number; revenue: number; top_items: { name: string; qty: number; sum: number; priceUnit: string }[]; by_day: { day: string; count: number; revenue: number }[] }
 
 interface Product {
   id: number; name: string; category: string; description: string;
@@ -47,7 +47,7 @@ export default function Admin() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [archive, setArchive] = useState<Order[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
-  const [statsPeriod, setStatsPeriod] = useState<'today' | 'week' | 'month'>('month');
+  const [statsPeriod, setStatsPeriod] = useState<'today' | 'week' | '10days' | '20days' | 'month'>('month');
   const [statsLoading, setStatsLoading] = useState(false);
   const [userStats, setUserStats] = useState<{ total: number; today: number; week: number } | null>(null);
   const [editProduct, setEditProduct] = useState<Product | null>(null);
@@ -494,11 +494,17 @@ export default function Admin() {
               </div>
             )}
             <div className="flex items-center justify-between flex-wrap gap-3 mb-6">
-              <div className="flex gap-2">
-                {(['today', 'week', 'month'] as const).map(p => (
-                  <Button key={p} size="sm" variant={statsPeriod === p ? 'default' : 'outline'}
-                    onClick={() => { setStatsPeriod(p); loadStats(p); }}>
-                    {p === 'today' ? 'Сегодня' : p === 'week' ? 'Неделя' : 'Месяц'}
+              <div className="flex flex-wrap gap-2">
+                {([
+                  { id: 'today', label: 'Сегодня' },
+                  { id: 'week', label: '7 дней' },
+                  { id: '10days', label: '10 дней' },
+                  { id: '20days', label: '20 дней' },
+                  { id: 'month', label: 'Месяц' },
+                ] as const).map(p => (
+                  <Button key={p.id} size="sm" variant={statsPeriod === p.id ? 'default' : 'outline'}
+                    onClick={() => { setStatsPeriod(p.id); loadStats(p.id); }}>
+                    {p.label}
                   </Button>
                 ))}
               </div>
@@ -532,17 +538,31 @@ export default function Admin() {
                 </div>
                 {stats.top_items.length > 0 && (
                   <div className="border rounded-xl bg-card overflow-hidden">
-                    <div className="px-5 py-3 border-b bg-secondary/40">
+                    <div className="px-5 py-3 border-b bg-secondary/40 flex items-center justify-between">
                       <p className="font-semibold text-sm">Продано по товарам</p>
+                      <p className="text-xs text-muted-foreground">кол-во · сумма</p>
                     </div>
                     <div className="divide-y">
-                      {stats.top_items.map((item, i) => (
+                      {stats.top_items.map((item, i) => {
+                        const isByPiece = item.priceUnit?.includes('шт');
+                        const isHalfKg = item.priceUnit?.includes('0.5 кг');
+                        let qtyLabel = '';
+                        if (isByPiece) {
+                          qtyLabel = `${item.qty} шт`;
+                        } else if (isHalfKg) {
+                          const grams = item.qty * 500;
+                          qtyLabel = grams >= 1000 ? `${(grams / 1000).toFixed(1)} кг` : `${grams} г`;
+                        } else {
+                          qtyLabel = item.qty >= 1000 ? `${(item.qty / 1000).toFixed(1)} кг` : `${item.qty} г`;
+                        }
+                        return (
                         <div key={i} className="flex items-center justify-between px-5 py-3 gap-4">
                           <p className="text-sm font-medium flex-1">{item.name}</p>
-                          <p className="text-xs text-muted-foreground">{item.qty % 1 === 0 ? item.qty : item.qty.toFixed(0)} г/шт</p>
+                          <p className="text-xs text-muted-foreground font-semibold">{qtyLabel}</p>
                           <p className="text-sm font-bold text-green-600 w-24 text-right">{item.sum.toLocaleString('ru')} ₽</p>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 )}

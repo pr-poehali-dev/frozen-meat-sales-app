@@ -141,7 +141,7 @@ export default function Index() {
   const handleDeliverySubmit = async () => {
     if (!deliveryForm.name || !deliveryForm.phone || !deliveryForm.street || !deliveryForm.house || !deliveryForm.district) return;
     setDeliverySending(true);
-    const items = cartItems.map(p => ({ name: p.name, qty: cartQty[p.id] || 1, price: p.price, sum: getItemPrice(p), inStock: p.inStock, availableDate: p.availableDate }));
+    const items = cartItems.map(p => ({ name: p.name, qty: cartQty[p.id] || 1, price: p.price, sum: getItemPrice(p), inStock: p.inStock, availableDate: p.availableDate, priceUnit: p.priceUnit }));
     const info = getDeliveryInfo();
     const userSession = localStorage.getItem('user_session') || '';
     const res = await fetch("https://functions.poehali.dev/36d594d4-0de1-47a0-8704-a93dc25f659a", {
