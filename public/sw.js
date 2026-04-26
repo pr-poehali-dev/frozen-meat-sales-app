@@ -1,6 +1,8 @@
-const CACHE_NAME = 'fabricant-yurko-2026-04-26-v1';
+// Меняй версию при каждом деплое — браузер увидит изменение и обновится
+const CACHE_NAME = 'fabricant-yurko-2026-04-26-v3';
 
 self.addEventListener('install', e => {
+  // Сразу активируемся, не ждём закрытия вкладок
   self.skipWaiting();
 });
 
@@ -17,16 +19,10 @@ self.addEventListener('fetch', e => {
   if (e.request.url.includes('functions.poehali.dev')) return;
   if (e.request.url.includes('api.telegram.org')) return;
   if (e.request.url.includes('mc.yandex.ru')) return;
+  if (e.request.url.includes('fonts.googleapis.com')) return;
+  if (e.request.url.includes('fonts.gstatic.com')) return;
 
-  // HTML всегда из сети — чтобы обновления сразу приходили
-  if (e.request.headers.get('accept')?.includes('text/html')) {
-    e.respondWith(
-      fetch(e.request).catch(() => caches.match(e.request))
-    );
-    return;
-  }
-
-  // Остальное: сеть → кеш
+  // Всё всегда из сети, кеш только как запасной вариант
   e.respondWith(
     fetch(e.request)
       .then(res => {
