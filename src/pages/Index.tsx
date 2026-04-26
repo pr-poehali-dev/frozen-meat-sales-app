@@ -985,14 +985,7 @@ export default function Index() {
                 <span className="text-muted-foreground">Стандартная доставка</span>
                 <span className="font-semibold text-foreground">250 ₽</span>
               </div>
-              <div className="flex justify-between font-body text-sm mt-2">
-                <span className="text-muted-foreground">По городу от 2000 ₽</span>
-                <span className="font-semibold text-primary">Бесплатно</span>
-              </div>
-              <div className="flex justify-between font-body text-sm mt-2">
-                <span className="text-muted-foreground">По району от 3000 ₽</span>
-                <span className="font-semibold text-primary">Бесплатно</span>
-              </div>
+
             </div>
           </div>
 
@@ -1029,7 +1022,7 @@ export default function Index() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { icon: "ThumbsUp", title: "Гарантия качества", desc: "Возврат при любых нареканиях" },
+            { icon: "ThumbsUp", title: "Гарантия качества", desc: "Мы отвечаем за каждый продукт" },
             { icon: "Leaf", title: "Без консервантов", desc: "Только натуральные ингредиенты" },
             { icon: "Award", title: "Сертифицировано", desc: "Все продукты сертифицированы" },
             { icon: "Heart", title: "Сделано с душой", desc: "Рецепты проверены годами" },

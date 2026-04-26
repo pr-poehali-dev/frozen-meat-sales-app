@@ -37,6 +37,7 @@ export default function Account() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [pdConsent, setPdConsent] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [resetSent, setResetSent] = useState("");
@@ -77,6 +78,7 @@ export default function Account() {
       if (!phone || !password || !name || !email) { setError("Заполните все поля"); return; }
       const pwErr = validatePassword(password);
       if (pwErr) { setError(pwErr); return; }
+      if (!pdConsent) { setError("Необходимо согласие на обработку персональных данных"); return; }
     }
     if (mode === "login" && (!phone || !password)) { setError("Заполните все поля"); return; }
     setLoading(true);
@@ -199,6 +201,19 @@ export default function Account() {
                   <p className="text-xs text-muted-foreground mt-1.5 ml-1">Латинские буквы + цифры, мин. 6 символов. Пример: <span className="font-mono">MyPass1!</span></p>
                 )}
               </div>
+              {mode === "register" && (
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={pdConsent}
+                    onChange={e => setPdConsent(e.target.checked)}
+                    className="mt-0.5 accent-primary"
+                  />
+                  <span className="text-xs text-muted-foreground">
+                    Я согласен(а) на обработку персональных данных в соответствии с Федеральным законом №152-ФЗ
+                  </span>
+                </label>
+              )}
               {error && <p className="text-red-500 text-sm">{error}</p>}
               <Button className="w-full mt-1" onClick={handleSubmit} disabled={loading}>
                 {loading ? "..." : mode === "login" ? "Войти" : "Зарегистрироваться"}
