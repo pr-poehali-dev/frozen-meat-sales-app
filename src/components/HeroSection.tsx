@@ -1,7 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Icon from "@/components/ui/icon";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+
+function ClockCalendar() {
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const days = ["вс", "пн", "вт", "ср", "чт", "пт", "сб"];
+  const months = ["янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"];
+
+  const hh = String(now.getHours()).padStart(2, "0");
+  const mm = String(now.getMinutes()).padStart(2, "0");
+  const ss = String(now.getSeconds()).padStart(2, "0");
+  const day = days[now.getDay()];
+  const date = now.getDate();
+  const month = months[now.getMonth()];
+  const year = now.getFullYear();
+
+  return (
+    <div className="absolute top-24 right-6 z-20 hidden lg:flex flex-col items-end gap-1 select-none">
+      <div className="bg-card/70 border border-border backdrop-blur-sm rounded-xl px-5 py-3 flex flex-col items-center gap-0.5">
+        <span className="font-display text-4xl font-bold text-foreground tracking-widest leading-none">
+          {hh}<span className="text-primary animate-pulse">:</span>{mm}<span className="text-muted-foreground text-2xl">{ss}</span>
+        </span>
+        <span className="font-body text-sm text-muted-foreground mt-1">
+          {day}, {date} {month} {year}
+        </span>
+      </div>
+    </div>
+  );
+}
 
 const HERO_IMAGE = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/2ae814dc-027e-4ce5-868f-8b2909498366.jpg";
 const BURGER_IMAGE = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/files/405af508-4c90-4e69-b4dc-5be136775306.jpg";
@@ -36,6 +69,7 @@ export default function HeroSection({ onAddToCart, scrollTo }: HeroSectionProps)
     <>
       {/* HERO */}
       <section id="hero" className="relative min-h-screen flex items-center pt-16 overflow-hidden">
+        <ClockCalendar />
         <div className="absolute inset-0 hero-glow" />
         <div className="absolute inset-0">
           <div className="absolute top-0 right-0 w-1/2 h-full opacity-30 md:opacity-50">
