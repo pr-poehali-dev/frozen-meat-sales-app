@@ -38,6 +38,7 @@ export default function Account() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [pdConsent, setPdConsent] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [resetSent, setResetSent] = useState("");
@@ -192,11 +193,21 @@ export default function Account() {
               )}
               <Input placeholder="Телефон (+79001234567)" value={phone} onChange={e => setPhone(e.target.value)} type="tel" />
               <div>
-                <Input
-                  placeholder={mode === "register" ? "Придумайте пароль" : "Пароль"}
-                  value={password} onChange={e => setPassword(e.target.value)}
-                  type="password" onKeyDown={e => e.key === "Enter" && handleSubmit()}
-                />
+                <div className="relative">
+                  <Input
+                    placeholder={mode === "register" ? "Придумайте пароль" : "Пароль"}
+                    value={password} onChange={e => setPassword(e.target.value)}
+                    type={showPassword ? "text" : "password"} onKeyDown={e => e.key === "Enter" && handleSubmit()}
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(v => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <Icon name={showPassword ? "EyeOff" : "Eye"} size={16} />
+                  </button>
+                </div>
                 {mode === "register" && (
                   <p className="text-xs text-muted-foreground mt-1.5 ml-1">Латинские буквы + цифры, мин. 6 символов. Пример: <span className="font-mono">MyPass1!</span></p>
                 )}
