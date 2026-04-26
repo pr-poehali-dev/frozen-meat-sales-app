@@ -139,6 +139,15 @@ def handler(event: dict, context) -> dict:
                             f'Ваш временный пароль для входа в административную панель:\n\n{tmp_password}\n\nПосле входа смените пароль в настройках.')
                     except Exception as e:
                         print(f"Email error: {e}")
+                ip = (event.get('requestContext') or {}).get('identity', {}).get('sourceIp', '—')
+                now = datetime.now().strftime('%d.%m.%Y %H:%M')
+                tg_token = os.environ.get('TELEGRAM_BOT_TOKEN', '')
+                tg_chat_id = os.environ.get('TELEGRAM_CHAT_ID', '')
+                if tg_token and tg_chat_id:
+                    try:
+                        send_telegram(tg_token, tg_chat_id, f"🔑 <b>Запрос сброса пароля</b>\n🕐 {now}\n👤 Логин: {login_val}\n🌐 IP: {ip}\n📧 Временный пароль отправлен на почту")
+                    except Exception as e:
+                        print(f"TG error: {e}")
             cur.close(); conn.close()
             return {'statusCode': 200, 'headers': headers, 'body': json.dumps({'ok': True})}
 
