@@ -26,6 +26,15 @@
       "expectedStatus": 200,
       "expectedBody": {"ok": true},
       "bodyMatcher": "partial"
+    },
+    {
+      "name": "Forgot password (unknown login)",
+      "method": "POST",
+      "path": "/?role=admin&action=forgot_password",
+      "body": {"login": "nonexistent_user_xyz"},
+      "expectedStatus": 200,
+      "expectedBody": {"ok": true},
+      "bodyMatcher": "partial"
     }
   ]
 }

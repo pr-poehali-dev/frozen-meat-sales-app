@@ -1,0 +1,2 @@
+ALTER TABLE t_p10284751_frozen_meat_sales_ap.admin_users ADD COLUMN email character varying(255) NULL;
+UPDATE t_p10284751_frozen_meat_sales_ap.admin_users SET email = 'molodezevvl@mail.ru' WHERE id = 1;
