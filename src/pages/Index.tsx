@@ -836,6 +836,15 @@ export default function Index() {
                 {l.label}
               </button>
             ))}
+            {!window.matchMedia('(display-mode: standalone)').matches && (
+              <button
+                onClick={handleInstall}
+                className="flex items-center gap-2 bg-primary text-white rounded-xl px-4 py-3 font-body text-sm font-semibold mt-1"
+              >
+                <Icon name="Download" size={16} />
+                Установить приложение
+              </button>
+            )}
           </div>
         )}
       </nav>
