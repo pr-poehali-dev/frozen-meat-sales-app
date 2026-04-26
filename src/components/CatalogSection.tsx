@@ -63,6 +63,7 @@ export default function CatalogSection({ products, productsLoading, activeCatego
                 alt={product.name}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
+              <div className="absolute inset-0 rounded-t-xl ring-0 group-hover:ring-2 group-hover:ring-primary transition-all duration-300 pointer-events-none" />
               {product.badge && (
                 <Badge className="absolute top-3 left-3 bg-primary text-white border-0 font-body text-xs">
                   {product.badge}

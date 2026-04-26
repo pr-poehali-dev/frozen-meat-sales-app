@@ -4,6 +4,8 @@ import hashlib
 import secrets
 import psycopg2
 import urllib.request
+import smtplib
+from email.mime.text import MIMEText
 from datetime import datetime
 
 SCHEMA = "t_p10284751_frozen_meat_sales_ap"
@@ -13,6 +15,18 @@ def get_conn():
 
 def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
+
+def send_email(to: str, subject: str, body: str):
+    smtp_password = os.environ.get('YANDEX_SMTP_PASSWORD', '')
+    if not smtp_password:
+        return
+    msg = MIMEText(body, 'plain', 'utf-8')
+    msg['Subject'] = subject
+    msg['From'] = 'yupomosh@yandex.ru'
+    msg['To'] = to
+    with smtplib.SMTP_SSL('smtp.yandex.ru', 465) as server:
+        server.login('yupomosh@yandex.ru', smtp_password)
+        server.sendmail('yupomosh@yandex.ru', [to], msg.as_string())
 
 def send_telegram(token: str, chat_id: str, text: str):
     url = f"https://api.telegram.org/bot{token}/sendMessage"
@@ -104,6 +118,27 @@ def handler(event: dict, context) -> dict:
             new_hash = hashlib.md5(new_password.encode()).hexdigest()
             cur.execute(f"UPDATE {SCHEMA}.admin_users SET password_hash = %s WHERE id = %s", (new_hash, admin_id))
             conn.commit()
+            cur.close(); conn.close()
+            return {'statusCode': 200, 'headers': headers, 'body': json.dumps({'ok': True})}
+
+        if method == 'POST' and action == 'forgot_password':
+            body = json.loads(event.get('body') or '{}')
+            login_val = body.get('login', '').strip()
+            conn = get_conn(); cur = conn.cursor()
+            cur.execute(f"SELECT id, email FROM {SCHEMA}.admin_users WHERE login = %s", (login_val,))
+            row = cur.fetchone()
+            if row:
+                admin_id, email = row
+                tmp_password = secrets.token_urlsafe(8)
+                tmp_hash = hashlib.md5(tmp_password.encode()).hexdigest()
+                cur.execute(f"UPDATE {SCHEMA}.admin_users SET password_hash = %s WHERE id = %s", (tmp_hash, admin_id))
+                conn.commit()
+                if email:
+                    try:
+                        send_email(email, 'Временный пароль — Фабрикант Юрко',
+                            f'Ваш временный пароль для входа в административную панель:\n\n{tmp_password}\n\nПосле входа смените пароль в настройках.')
+                    except Exception as e:
+                        print(f"Email error: {e}")
             cur.close(); conn.close()
             return {'statusCode': 200, 'headers': headers, 'body': json.dumps({'ok': True})}
 

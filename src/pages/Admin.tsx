@@ -39,7 +39,10 @@ export default function Admin() {
   const [checking, setChecking] = useState(true);
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [forgotSent, setForgotSent] = useState(false);
+  const [forgotLoading, setForgotLoading] = useState(false);
   const [tab, setTab] = useState<'orders' | 'archive' | 'stats' | 'products'>('orders');
   const [siteClosed, setSiteClosed] = useState(false);
   const [siteClosedLoading, setSiteClosedLoading] = useState(false);
@@ -113,6 +116,16 @@ export default function Admin() {
     fetch(`${API_ORDERS}?type=stats&period=${period}`, { headers: { 'X-Session-Id': sessionId } })
       .then(r => r.json()).then(d => { if (d.ok) setStats(d); })
       .finally(() => setStatsLoading(false));
+  };
+
+  const handleForgotPassword = async () => {
+    setForgotLoading(true);
+    await fetch(`${API_AUTH}?role=admin&action=forgot_password`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ login })
+    }).then(r => r.json());
+    setForgotSent(true);
+    setForgotLoading(false);
   };
 
   const handleLogin = async () => {
@@ -255,10 +268,36 @@ export default function Admin() {
         <h1 className="font-display text-2xl font-bold mb-6 text-center">Вход в кабинет</h1>
         <div className="space-y-4">
           <Input placeholder="Логин" value={login} onChange={e => setLogin(e.target.value)} />
-          <Input placeholder="Пароль" type="password" value={password} onChange={e => setPassword(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && handleLogin()} />
+          <div className="relative">
+            <Input
+              placeholder="Пароль"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleLogin()}
+              className="pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(v => !v)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <Icon name={showPassword ? 'EyeOff' : 'Eye'} size={16} />
+            </button>
+          </div>
           {loginError && <p className="text-sm text-red-500">{loginError}</p>}
           <Button className="w-full" onClick={handleLogin}>Войти</Button>
+          {forgotSent
+            ? <p className="text-sm text-green-600 text-center">Временный пароль отправлен на почту</p>
+            : <button
+                type="button"
+                onClick={handleForgotPassword}
+                disabled={forgotLoading || !login}
+                className="w-full text-sm text-muted-foreground hover:text-primary text-center transition-colors disabled:opacity-40"
+              >
+                {forgotLoading ? 'Отправка...' : 'Забыл пароль'}
+              </button>
+          }
         </div>
       </div>
     </div>
