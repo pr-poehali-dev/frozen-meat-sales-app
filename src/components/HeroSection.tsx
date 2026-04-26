@@ -23,7 +23,7 @@ function ClockCalendar() {
   const year = now.getFullYear();
 
   return (
-    <div className="absolute top-24 right-6 z-20 hidden lg:flex flex-col items-end gap-1 select-none">
+    <div className="absolute top-24 right-6 z-20 flex flex-col items-end gap-1 select-none">
       <div className="bg-card/70 border border-border backdrop-blur-sm rounded-xl px-5 py-3 flex flex-col items-center gap-0.5">
         <span className="font-display text-4xl font-bold text-foreground tracking-widest leading-none">
           {hh}<span className="text-primary animate-pulse">:</span>{mm}<span className="text-muted-foreground text-2xl">{ss}</span>
