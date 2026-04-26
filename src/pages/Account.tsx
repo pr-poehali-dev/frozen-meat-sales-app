@@ -210,7 +210,8 @@ export default function Account() {
                     className="mt-0.5 accent-primary"
                   />
                   <span className="text-xs text-muted-foreground">
-                    Я согласен(а) на обработку персональных данных в соответствии с Федеральным законом №152-ФЗ
+                    Я согласен(а) на обработку персональных данных в соответствии с{" "}
+                    <a href="/privacy" target="_blank" className="text-primary hover:underline">Политикой конфиденциальности</a>
                   </span>
                 </label>
               )}
