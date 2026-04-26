@@ -55,7 +55,7 @@ export default function CatalogSection({ products, productsLoading, activeCatego
         {!productsLoading && filtered.map((product) => (
           <div
             key={product.id}
-            className="bg-card border border-border rounded-xl overflow-hidden card-hover group transition-all duration-300 hover:ring-2 hover:ring-primary"
+            className="bg-card border border-border rounded-xl card-hover group transition-all duration-300 hover:ring-2 hover:ring-primary"
           >
             <div className="relative h-48 overflow-hidden">
               <img
