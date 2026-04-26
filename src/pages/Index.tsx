@@ -224,17 +224,33 @@ export default function Index() {
     const handler = (e: Event) => {
       e.preventDefault();
       setInstallPrompt(e as BeforeInstallPromptEvent);
-      if (!localStorage.getItem('pwa_dismissed')) setShowInstallBanner(true);
+      if (!localStorage.getItem('pwa_dismissed')) {
+        setTimeout(() => setShowInstallBanner(true), 3000);
+      }
     };
     window.addEventListener('beforeinstallprompt', handler);
-    return () => window.removeEventListener('beforeinstallprompt', handler);
+    // Если событие уже было (повторный визит) — показываем баннер сами через 5 сек
+    const timer = setTimeout(() => {
+      if (!localStorage.getItem('pwa_dismissed') && !window.matchMedia('(display-mode: standalone)').matches) {
+        setShowInstallBanner(true);
+      }
+    }, 5000);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+      clearTimeout(timer);
+    };
   }, []);
 
   const handleInstall = async () => {
-    if (!installPrompt) return;
-    await installPrompt.prompt();
-    const { outcome } = await installPrompt.userChoice;
-    if (outcome === 'accepted') setShowInstallBanner(false);
+    if (installPrompt) {
+      await installPrompt.prompt();
+      const { outcome } = await installPrompt.userChoice;
+      if (outcome === 'accepted') setShowInstallBanner(false);
+    } else {
+      // Если prompt недоступен — показываем инструкцию
+      alert('Чтобы установить: нажмите меню браузера (⋮) → "Добавить на главный экран"');
+      setShowInstallBanner(false);
+    }
   };
 
   const dismissInstall = () => {
