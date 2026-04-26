@@ -127,7 +127,8 @@ def handler(event: dict, context) -> dict:
                 SELECT item->>'name' as name,
                        SUM((item->>'qty')::numeric) as total_qty,
                        SUM((item->>'sum')::numeric) as total_sum,
-                       MAX(item->>'priceUnit') as price_unit
+                       MAX(item->>'priceUnit') as price_unit,
+                       COUNT(*) as order_count
                 FROM {SCHEMA}.orders,
                      jsonb_array_elements(items) as item
                 WHERE status = 'done' AND {date_filter} AND items IS NOT NULL
@@ -136,7 +137,7 @@ def handler(event: dict, context) -> dict:
                 LIMIT 20
             """)
             items_rows = cur.fetchall()
-            top_items = [{'name': r[0], 'qty': float(r[1]), 'sum': int(r[2]), 'priceUnit': r[3] or ''} for r in items_rows]
+            top_items = [{'name': r[0], 'qty': float(r[1]), 'sum': int(r[2]), 'priceUnit': r[3] or '', 'order_count': int(r[4])} for r in items_rows]
 
             # Заказы по дням
             cur.execute(f"""

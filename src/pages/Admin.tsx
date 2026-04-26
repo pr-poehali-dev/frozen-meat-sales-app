@@ -15,7 +15,7 @@ const CATEGORIES = ["Пельмени", "Вареники", "Позы / Хинк
 const STATUS_LABELS: Record<string, string> = { new: "Новая", in_progress: "В работе", done: "Выполнена", cancelled: "Отменена", archived: "Архив" };
 const STATUS_COLORS: Record<string, string> = { new: "bg-blue-100 text-blue-700", in_progress: "bg-yellow-100 text-yellow-700", done: "bg-green-100 text-green-700", cancelled: "bg-gray-100 text-gray-500", archived: "bg-gray-100 text-gray-400" };
 
-interface Stats { count: number; revenue: number; top_items: { name: string; qty: number; sum: number; priceUnit: string }[]; by_day: { day: string; count: number; revenue: number }[] }
+interface Stats { count: number; revenue: number; top_items: { name: string; qty: number; sum: number; priceUnit: string; order_count: number }[]; by_day: { day: string; count: number; revenue: number }[] }
 
 interface Product {
   id: number; name: string; category: string; description: string;
@@ -538,9 +538,10 @@ export default function Admin() {
                 </div>
                 {stats.top_items.length > 0 && (
                   <div className="border rounded-xl bg-card overflow-hidden">
-                    <div className="px-5 py-3 border-b bg-secondary/40 flex items-center justify-between">
-                      <p className="font-semibold text-sm">Продано по товарам</p>
-                      <p className="text-xs text-muted-foreground">кол-во · сумма</p>
+                    <div className="px-5 py-3 border-b bg-secondary/40 grid grid-cols-4 gap-2">
+                      <p className="font-semibold text-sm col-span-2">Товар</p>
+                      <p className="text-xs text-muted-foreground text-center">заказов</p>
+                      <p className="text-xs text-muted-foreground text-right">кол-во · сумма</p>
                     </div>
                     <div className="divide-y">
                       {stats.top_items.map((item, i) => {
@@ -556,10 +557,13 @@ export default function Admin() {
                           qtyLabel = item.qty >= 1000 ? `${(item.qty / 1000).toFixed(1)} кг` : `${item.qty} г`;
                         }
                         return (
-                        <div key={i} className="flex items-center justify-between px-5 py-3 gap-4">
-                          <p className="text-sm font-medium flex-1">{item.name}</p>
-                          <p className="text-xs text-muted-foreground font-semibold">{qtyLabel}</p>
-                          <p className="text-sm font-bold text-green-600 w-24 text-right">{item.sum.toLocaleString('ru')} ₽</p>
+                        <div key={i} className="grid grid-cols-4 gap-2 items-center px-5 py-3">
+                          <p className="text-sm font-medium col-span-2 leading-tight">{item.name}</p>
+                          <p className="text-xs text-blue-500 font-semibold text-center">{item.order_count} шт</p>
+                          <div className="text-right">
+                            <p className="text-xs text-muted-foreground font-semibold">{qtyLabel}</p>
+                            <p className="text-sm font-bold text-green-600">{item.sum.toLocaleString('ru')} ₽</p>
+                          </div>
                         </div>
                         );
                       })}
