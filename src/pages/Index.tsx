@@ -94,7 +94,8 @@ export default function Index() {
   const [cartOrderSending, setCartOrderSending] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
   const [showDelivery, setShowDelivery] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'sbp' | 'cash' | 'terminal' | ''>('');
+  const [paymentMethod, setPaymentMethod] = useState<'online' | 'sbp' | 'cash' | 'terminal' | ''>('');
+  const [yukassaLoading, setYukassaLoading] = useState(false);
   const [deliveryForm, setDeliveryForm] = useState({ name: '', phone: '', street: '', house: '', entrance: '', apartment: '', floor: '', intercom: '', comment: '', district: '', locality: '', distance_km: '', delivery_date: '' });
   const [deliverySent, setDeliverySent] = useState(false);
   const [deliverySending, setDeliverySending] = useState(false);
@@ -162,6 +163,13 @@ export default function Index() {
     }).then(r => r.json()).catch(() => ({}));
     if (res.order_id) setLastOrderId(res.order_id);
     setDeliverySending(false);
+
+    // Онлайн-оплата через ЮКассу — редиректим сразу после сохранения заказа
+    if (paymentMethod === 'online' && res.order_id) {
+      await handleYukassaPay(res.order_id);
+      return;
+    }
+
     setDeliverySent(true);
     setCancelled(false);
     setCancelSeconds(600);
@@ -294,7 +302,7 @@ export default function Index() {
   const cartItems = products.filter(p => cart[p.id]);
   const cartCount = cartItems.length;
   const cartTotal = cartItems.reduce((sum, p) => sum + getItemPrice(p), 0);
-  const PAYMENT_LABELS: Record<string, string> = { sbp: 'СБП', cash: 'Наличные курьеру', terminal: 'Терминал (карта курьеру)' };
+  const PAYMENT_LABELS: Record<string, string> = { online: 'Онлайн (ЮКасса)', sbp: 'СБП', cash: 'Наличные курьеру', terminal: 'Терминал (карта курьеру)' };
 
   const DISTRICTS = ['Октябрьский', 'Правобережный', 'Свердловский', 'Ленинский', 'За пределы города'];
   const isOutOfCity = deliveryForm.district === 'За пределы города';
@@ -343,6 +351,26 @@ export default function Index() {
   };
 
   const QR_URL = "https://cdn.poehali.dev/projects/304bf6cf-bb93-4762-8412-559a2722c1ba/bucket/23de37a0-6e3e-470a-aad2-4570b0f3757c.png";
+  const SEND_ORDER_URL = "https://functions.poehali.dev/36d594d4-0de1-47a0-8704-a93dc25f659a";
+
+  const handleYukassaPay = async (orderId: number) => {
+    setYukassaLoading(true);
+    const amount = cartTotalWithDiscount + DELIVERY_COST;
+    const res = await fetch(SEND_ORDER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'create_payment',
+        amount,
+        order_id: orderId,
+        description: `Заказ #${orderId} — Фабрикант Юрко`,
+      })
+    }).then(r => r.json()).catch(() => ({}));
+    setYukassaLoading(false);
+    if (res.confirmation_url) {
+      window.location.href = res.confirmation_url;
+    }
+  };
 
   if (siteClosed) return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center text-center px-4">
@@ -478,6 +506,7 @@ export default function Index() {
                   <p className="font-body text-sm font-semibold mb-3">Способ оплаты</p>
                   <div className="space-y-2">
                     {[
+                      { id: 'online' as const, icon: 'Globe', label: 'Онлайн — ЮКасса', sub: 'Карта, СБП, ApplePay, GooglePay' },
                       { id: 'sbp' as const, icon: 'Smartphone', label: 'СБП (QR-код)', sub: 'Оплата через приложение банка' },
                       { id: 'cash' as const, icon: 'Banknote', label: 'Наличными курьеру', sub: 'Оплата при получении' },
                       { id: 'terminal' as const, icon: 'CreditCard', label: 'Картой через терминал', sub: 'Терминал у курьера при доставке' },
@@ -499,6 +528,14 @@ export default function Index() {
                     ))}
                   </div>
                 </div>
+
+                {/* Онлайн оплата ЮКасса */}
+                {paymentMethod === 'online' && (
+                  <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-3 text-sm font-body">
+                    <p className="text-green-400 font-semibold mb-1">💳 Безопасная онлайн-оплата</p>
+                    <p className="text-muted-foreground text-xs">После оформления заказа вы будете перенаправлены на страницу оплаты ЮКасса. Принимаются все карты, СБП, Apple Pay, Google Pay.</p>
+                  </div>
+                )}
 
                 {/* QR для СБП */}
                 {paymentMethod === 'sbp' && (
@@ -523,7 +560,7 @@ export default function Index() {
                   disabled={!paymentMethod}
                   className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-display font-bold rounded-2xl py-4 text-base tracking-wide transition-colors"
                 >
-                  {paymentMethod === 'sbp' ? 'Оплатил — указать адрес →' : paymentMethod ? 'Указать адрес доставки →' : 'Выберите способ оплаты'}
+                  {paymentMethod === 'sbp' ? 'Оплатил — указать адрес →' : paymentMethod === 'online' ? 'Указать адрес → оплатить онлайн →' : paymentMethod ? 'Указать адрес доставки →' : 'Выберите способ оплаты'}
                 </button>
               </div>
             )}
@@ -996,6 +1033,7 @@ export default function Index() {
             <h3 className="font-display text-2xl font-bold mb-4">Оплата</h3>
             <ul className="space-y-3">
               {[
+                { icon: "Globe", text: "Онлайн через ЮКасса — карта, СБП, Apple Pay, Google Pay" },
                 { icon: "Smartphone", text: "Онлайн картой Visa, Mastercard, МИР" },
                 { icon: "Wallet", text: "СБП — перевод по номеру телефона" },
                 { icon: "QrCode", text: "Оплата по QR-коду через приложение банка" },

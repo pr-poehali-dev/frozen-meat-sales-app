@@ -4,11 +4,29 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
 import urllib.request
+import urllib.error
 import psycopg2
+import uuid
+import base64
 from datetime import datetime
 
 SCHEMA = "t_p10284751_frozen_meat_sales_ap"
 ADMIN_ORDERS_URL = "https://functions.poehali.dev/010513ea-3143-4cc6-9e47-d5722ea1790b"
+YUKASSA_SHOP_ID = "1339557"
+
+def yukassa_request(method: str, path: str, data: dict = None) -> dict:
+    secret_key = os.environ.get('YUKASSA_SECRET_KEY', '')
+    credentials = base64.b64encode(f"{YUKASSA_SHOP_ID}:{secret_key}".encode()).decode()
+    url = f"https://api.yookassa.ru/v3/{path}"
+    headers = {
+        'Authorization': f'Basic {credentials}',
+        'Content-Type': 'application/json',
+        'Idempotence-Key': str(uuid.uuid4())
+    }
+    body_bytes = json.dumps(data, ensure_ascii=False).encode('utf-8') if data else None
+    req = urllib.request.Request(url, data=body_bytes, headers=headers, method=method)
+    with urllib.request.urlopen(req, timeout=15) as resp:
+        return json.loads(resp.read())
 
 def send_telegram(token: str, chat_id: str, text: str):
     url = f"https://api.telegram.org/bot{token}/sendMessage"
@@ -29,11 +47,52 @@ def send_email(subject: str, text: str, smtp_password: str):
         server.sendmail(sender, sender, msg.as_string())
 
 def handler(event: dict, context) -> dict:
-    """Сохранение заказа, отмена заказа с уведомлениями, Telegram и почта"""
-    if event.get('httpMethod') == 'OPTIONS':
-        return {'statusCode': 200, 'headers': {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, PUT, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Max-Age': '86400'}, 'body': ''}
+    """Сохранение заказа, отмена заказа, ЮКасса оплата"""
+    CORS_HEADERS = {'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, X-User-Session', 'Access-Control-Max-Age': '86400'}
 
+    if event.get('httpMethod') == 'OPTIONS':
+        return {'statusCode': 200, 'headers': CORS_HEADERS, 'body': ''}
+
+    params = event.get('queryStringParameters') or {}
     body = json.loads(event.get('body') or '{}')
+
+    # Проверка статуса платежа ЮКасса
+    if event.get('httpMethod') == 'GET' and params.get('action') == 'payment_status':
+        payment_id = params.get('payment_id', '')
+        order_id = params.get('order_id', 0)
+        result = yukassa_request('GET', f'payments/{payment_id}')
+        status = result.get('status')
+        if status == 'succeeded' and order_id:
+            try:
+                conn = psycopg2.connect(os.environ['DATABASE_URL'])
+                cur = conn.cursor()
+                cur.execute(f"UPDATE {SCHEMA}.orders SET status='in_progress' WHERE id=%s AND status='new'", (order_id,))
+                conn.commit()
+                cur.close()
+                conn.close()
+            except Exception as e:
+                print(f"DB update ERROR: {e}")
+        return {'statusCode': 200, 'headers': {**CORS_HEADERS, 'Content-Type': 'application/json'}, 'body': json.dumps({'ok': True, 'status': status, 'paid': status == 'succeeded'})}
+
+    # Создание платежа ЮКасса
+    if event.get('httpMethod') == 'POST' and body.get('type') == 'create_payment':
+        amount = body.get('amount', 0)
+        order_id = body.get('order_id', 0)
+        description = body.get('description', 'Заказ — Фабрикант Юрко')
+        return_url = f"https://фабрикант-ирко-рф.shop/?order_id={order_id}&paid=1"
+        payment_data = {
+            'amount': {'value': f"{float(amount):.2f}", 'currency': 'RUB'},
+            'confirmation': {'type': 'redirect', 'return_url': return_url},
+            'capture': True,
+            'description': description,
+            'metadata': {'order_id': str(order_id)}
+        }
+        result = yukassa_request('POST', 'payments', payment_data)
+        return {'statusCode': 200, 'headers': {**CORS_HEADERS, 'Content-Type': 'application/json'}, 'body': json.dumps({
+            'ok': True,
+            'payment_id': result.get('id', ''),
+            'confirmation_url': result.get('confirmation', {}).get('confirmation_url', '')
+        })}
 
     # Обратная связь
     if event.get('httpMethod') == 'POST' and body.get('type') == 'contact':
@@ -75,7 +134,7 @@ def handler(event: dict, context) -> dict:
             except Exception as e:
                 print(f"Email ERROR: {e}")
 
-        return {'statusCode': 200, 'headers': {'Access-Control-Allow-Origin': '*'}, 'body': json.dumps({'ok': True})}
+        return {'statusCode': 200, 'headers': {**CORS_HEADERS, 'Content-Type': 'application/json'}, 'body': json.dumps({'ok': True})}
 
     # Отмена заказа покупателем
     if event.get('httpMethod') == 'PUT':
