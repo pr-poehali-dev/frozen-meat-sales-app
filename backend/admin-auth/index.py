@@ -153,6 +153,14 @@ def handler(event: dict, context) -> dict:
             session_id = secrets.token_hex(32)
             cur.execute(f"INSERT INTO {SCHEMA}.user_sessions (session_id, user_id) VALUES (%s, %s)", (session_id, user_id))
             conn.commit()
+            now = datetime.now().strftime('%d.%m.%Y %H:%M')
+            tg_token = os.environ.get('TELEGRAM_BOT_TOKEN', '')
+            tg_chat_id = os.environ.get('TELEGRAM_CHAT_ID', '')
+            if tg_token and tg_chat_id:
+                try:
+                    send_telegram(tg_token, tg_chat_id, f"🎉 <b>Новый покупатель!</b>\n🕐 {now}\n👤 {name}\n📞 {phone}\n📧 {email or '—'}")
+                except Exception as e:
+                    print(f"TG error: {e}")
             cur.close(); conn.close()
             return {'statusCode': 200, 'headers': headers, 'body': json.dumps({'ok': True, 'session_id': session_id, 'user_id': user_id, 'name': name, 'phone': phone})}
 

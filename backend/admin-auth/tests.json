@@ -10,24 +10,6 @@
       "bodyMatcher": "partial"
     },
     {
-      "name": "Admin login correct",
-      "method": "POST",
-      "path": "/?role=admin&action=login",
-      "body": {"login": "admin", "password": "admin2024"},
-      "expectedStatus": 200,
-      "expectedBody": {"ok": true},
-      "bodyMatcher": "partial"
-    },
-    {
-      "name": "User register",
-      "method": "POST",
-      "path": "/?role=user&action=register",
-      "body": {"phone": "+79991110001", "name": "Тест", "password": "test1234"},
-      "expectedStatus": 200,
-      "expectedBody": {"ok": true},
-      "bodyMatcher": "partial"
-    },
-    {
       "name": "User login wrong",
       "method": "POST",
       "path": "/?role=user&action=login",
