@@ -57,13 +57,12 @@ export default function CatalogSection({ products, productsLoading, activeCatego
             key={product.id}
             className="bg-card border border-border rounded-xl overflow-hidden card-hover group transition-all duration-300 hover:ring-2 hover:ring-primary"
           >
-            <div className="relative h-48 overflow-hidden">
+            <div className="product-img-wrap h-48 overflow-hidden">
               <img
                 src={product.img}
                 alt={product.name}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
-              <div className="absolute inset-0 pointer-events-none transition-all duration-300 group-hover:shadow-[inset_0_0_0_3px_#2dd4bf]" />
               {product.badge && (
                 <Badge className="absolute top-3 left-3 bg-primary text-white border-0 font-body text-xs">
                   {product.badge}

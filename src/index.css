@@ -96,6 +96,24 @@
     box-shadow: 0 20px 40px rgba(245, 62, 30, 0.15);
   }
 
+  .product-img-wrap {
+    position: relative;
+  }
+
+  .product-img-wrap::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 3px solid transparent;
+    transition: border-color 0.3s ease;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .group:hover .product-img-wrap::after {
+    border-color: #2dd4bf;
+  }
+
   .noise-overlay::before {
     content: "";
     position: absolute;
