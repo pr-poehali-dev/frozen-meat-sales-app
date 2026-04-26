@@ -1133,6 +1133,38 @@ export default function Index() {
                 </div>
               </div>
 
+              {/* УСТАНОВКА ПРИЛОЖЕНИЯ */}
+              <div className="mt-6 rounded-2xl p-5 relative overflow-hidden" style={{background: 'linear-gradient(135deg, #1a0a00 0%, #2d1500 40%, #1a0a00 100%)', border: '1.5px solid transparent', backgroundClip: 'padding-box', boxShadow: '0 0 24px rgba(245,120,30,0.25), 0 0 48px rgba(245,80,10,0.1)'}}>
+                <div className="absolute inset-0 pointer-events-none" style={{background: 'linear-gradient(135deg, rgba(245,120,30,0.08) 0%, transparent 60%)'}} />
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl animate-pulse">✦</span>
+                  <p className="font-display text-base font-bold" style={{color: '#ff8c3a', textShadow: '0 0 12px rgba(255,120,40,0.7)'}}>УСТАНОВИТЕ ПРИЛОЖЕНИЕ</p>
+                  <span className="text-2xl animate-pulse">✦</span>
+                </div>
+                <p className="font-body text-xs text-orange-200/80 mb-4 leading-relaxed">
+                  Заказывайте быстрее — приложение на экране телефона, без браузера и поиска!
+                </p>
+                <div className="space-y-3">
+                  <div className="bg-black/30 rounded-xl p-3 border border-orange-500/20">
+                    <p className="font-display text-xs font-bold text-orange-300 mb-1.5 flex items-center gap-1.5"><span>🤖</span> Android</p>
+                    <ol className="font-body text-xs text-orange-100/70 space-y-1 list-decimal list-inside">
+                      <li>Откройте сайт в браузере Chrome</li>
+                      <li>Нажмите <span className="font-semibold text-orange-300">⋮</span> (три точки) в правом верхнем углу</li>
+                      <li>Выберите <span className="font-semibold text-orange-300">«Добавить на главный экран»</span></li>
+                      <li>Нажмите <span className="font-semibold text-orange-300">«Установить»</span></li>
+                    </ol>
+                  </div>
+                  <div className="bg-black/30 rounded-xl p-3 border border-orange-500/20">
+                    <p className="font-display text-xs font-bold text-orange-300 mb-1.5 flex items-center gap-1.5"><span>🍎</span> iPhone / iPad</p>
+                    <ol className="font-body text-xs text-orange-100/70 space-y-1 list-decimal list-inside">
+                      <li>Откройте сайт в браузере Safari</li>
+                      <li>Нажмите кнопку <span className="font-semibold text-orange-300">«Поделиться»</span> внизу экрана</li>
+                      <li>Выберите <span className="font-semibold text-orange-300">«На экран «Домой»»</span></li>
+                      <li>Нажмите <span className="font-semibold text-orange-300">«Добавить»</span></li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
 
             </div>
 
