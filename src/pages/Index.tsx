@@ -813,7 +813,7 @@ export default function Index() {
             </h1>
 
             <p className="font-body text-lg text-muted-foreground mb-8 max-w-lg animate-fade-in-up delay-200">
-              Замороженные полуфабрикаты из домашнего мяса с доставкой на дом. Котлеты, пельмени, голубцы, долма, чебуреки — без консервантов и добавок.
+              Замороженные полуфабрикаты из домашнего мяса с доставкой на дом. Котлеты, пельмени, голубцы, долма, чебуреки и другие полуфабрикаты — без консервантов и добавок.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in-up delay-300">
